@@ -3,7 +3,6 @@ cache: pip
 python:
     - "3.5"
 # install dependencies
-before_install: cd hbapi
 install: "pip install -r requirements.txt"
 services: postgresql
 #before_script:
