@@ -1,2 +1,4 @@
-Django
-psycopg2
+Django==1.9.7
+djangorestframework==3.3.3
+psycopg2==2.6.1
+ipython

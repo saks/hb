@@ -1,0 +1,13 @@
+language: python
+cache: pip
+python:
+    - "3.5"
+# install dependencies
+before_install: cd hbapi
+install: "pip install -r requirements.txt"
+services: postgresql
+#before_script:
+#    - psql -c 'create database test_postgres;' -U postgres
+#    - python manage.py migrate
+script: python manage.py test
+
