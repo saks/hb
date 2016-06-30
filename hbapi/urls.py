@@ -21,3 +21,12 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^records/', include('records.urls')),
 ]
+
+
+from django.contrib.staticfiles import views
+from django.conf import settings
+
+if settings.DEBUG:
+    urlpatterns += [
+        url(r'^static/(?P<path>.*)$', views.serve),
+    ]

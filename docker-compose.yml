@@ -2,6 +2,8 @@ version: '2'
 services:
   db:
     image: postgres
+    volumes:
+      - "pg_data:/var/lib/postgresql/data"
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:8000
@@ -11,3 +13,5 @@ services:
       - "8000:8000"
     depends_on:
       - db
+volumes:
+  pg_data:
