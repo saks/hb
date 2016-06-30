@@ -1,17 +1,18 @@
-version: '2'
+version: "2"
 services:
   db:
-    image: postgres
+    image: "postgres"
     volumes:
       - "pg_data:/var/lib/postgresql/data"
+
   web:
-    build: .
-    command: python manage.py runserver 0.0.0.0:8000
+    build: "."
     volumes:
-      - .:/code
+      - ".:/code"
     ports:
       - "8000:8000"
-    depends_on:
-      - db
+    links:
+      - "db"
+
 volumes:
   pg_data:
