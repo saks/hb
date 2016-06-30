@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    #'djmoney_rates',
+    'djmoney',
     'records.apps.RecordsConfig',
 ]
 

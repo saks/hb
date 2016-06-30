@@ -5,3 +5,7 @@ ipython
 dj-database-url
 gunicorn
 whitenoise
+django-money-rates
+py-moneyed
+django-money
+django-bitfield
