@@ -45,10 +45,9 @@ class Record(models.Model):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(auto_now_add=True)
 
-
     def comma_separated_tags_list(self):
-        return ', '.join([ k for k, v in self.tags.items() if v])
+        return ', '.join([k for k, v in self.tags.items() if v])
     comma_separated_tags_list.short_description = 'Comma separated tags'
 
     def __str__(self):
-        return '%s %s' % (', '.join([ k for k, v in self.tags.items() if v]), self.amount)
+        return '%s %s' % (', '.join([k for k, v in self.tags.items() if v]), self.amount)

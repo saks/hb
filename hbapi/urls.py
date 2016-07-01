@@ -18,6 +18,10 @@ from django.contrib import admin
 from django.core.urlresolvers import reverse_lazy
 from django.views.generic.base import RedirectView
 
+# for local static serve
+from django.contrib.staticfiles import views
+from django.conf import settings
+
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
@@ -25,9 +29,6 @@ urlpatterns = [
     url(r'^records/', include('records.urls')),
 ]
 
-
-from django.contrib.staticfiles import views
-from django.conf import settings
 
 if settings.DEBUG:
     urlpatterns += [

@@ -11,5 +11,3 @@ if 'TRAVIS' in os.environ:
             'PORT': 5432,
         }
     }
-
-
