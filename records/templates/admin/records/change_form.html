@@ -1,7 +1,6 @@
-{# Load the tag library #}
-{% load bootstrap3 %}
+{% load i18n admin_urls admin_static admin_modify bootstrap3 %}
 
-{% load i18n admin_static %}<!DOCTYPE html>
+<!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
@@ -79,8 +78,11 @@
 
       {% bootstrap_form adminform.form %}
       {% buttons %}
-        <button type="submit" class="btn btn-success btn-lg">
-          {% bootstrap_icon "plus" %} Add
+        <button type="submit" class="btn btn-success btn-default">
+          Save
+        </button>
+        <button name="_addanother" type="submit" class="btn btn-default">
+          {% bootstrap_icon "plus" %} Save and add another
         </button>
       {% endbuttons %}
     </form>
