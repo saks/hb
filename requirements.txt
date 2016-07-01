@@ -10,3 +10,4 @@ py-moneyed
 django-money
 django-bitfield
 pep8
+django-bootstrap3

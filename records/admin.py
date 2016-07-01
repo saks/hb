@@ -2,7 +2,6 @@ from django.contrib import admin
 
 from bitfield import BitField
 from bitfield.forms import BitFieldCheckboxSelectMultiple
-from bitfield.admin import BitFieldListFilter
 
 from records.models import Record
 
@@ -18,6 +17,8 @@ class RecordAdmin(admin.ModelAdmin):
     formfield_overrides = {
         BitField: {'widget': BitFieldCheckboxSelectMultiple},
     }
+
+    fields = ('amount', 'tags', 'transaction_type', 'user', )
 
     class Media:
         css = {
