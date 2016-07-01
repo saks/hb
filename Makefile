@@ -18,6 +18,6 @@ createsuperuser:
 	@bin/exec createsuperuser
 
 lint:
-	@bin/docker_exec pep8 . --max-line-length=99
+	@bin/docker_exec pep8 . --max-line-length=99 --count --exclude=*migrations/*.py
 
 .PHONY: all test lint build run migrate setup createsuperuser
