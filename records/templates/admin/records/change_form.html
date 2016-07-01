@@ -9,22 +9,20 @@
 <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
 <meta name="current-user-id" content="{{ request.user.id }}">
 
-{% block extrastyle %}
-<link rel="stylesheet" type="text/css" href="{% static "css/admin/change_records.css" %}" />
-{% endblock %}
-
 {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}" />{% endif %}
-{% block extrahead %}{% endblock %}
 {% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-<script src="{% static "js/admin/change_records.js" %}"></script>
-
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
+
+{% block extrahead %}
+<script type="text/javascript" src="{% url 'admin:jsi18n' %}"></script>
+{{ media }}
+{% endblock %}
 
 </head>
 {% load i18n %}
@@ -67,10 +65,10 @@
     </div>
   </nav>
 
-  {# Display django.contrib.messages as Bootstrap alerts #}
-  {% bootstrap_messages %}
-
   <div class="container theme-showcase" role="main">
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+
     {# Display a form #}
     <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>
       {% csrf_token %}
