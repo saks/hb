@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     #'djmoney_rates',
     'djmoney',
     'records.apps.RecordsConfig',
+    'bootstrap3',
 ]
 
 MIDDLEWARE_CLASSES = [
