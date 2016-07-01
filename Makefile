@@ -14,10 +14,13 @@ setup: createsuperuser migrate
 migrate:
 	@bin/exec migrate
 
+production_dbshell:
+	heroku run python manage.py dbshell --settings=hbapi.settings.heroku --app home-b
+
 createsuperuser:
 	@bin/exec createsuperuser
 
 lint:
 	@bin/docker_exec pep8 . --max-line-length=99 --count --exclude=*migrations/*.py
 
-.PHONY: all test lint build run migrate setup createsuperuser
+.PHONY: all test lint build run migrate setup createsuperuser production_dbshell
