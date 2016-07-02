@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djmoney',
     'records.apps.RecordsConfig',
+    'bootstrap3'
 ]
 
 MIDDLEWARE_CLASSES = [
