@@ -34,10 +34,19 @@ TAGS = (
     ('toys', 'Toys'),
     ('transport', 'Transport'),
     ('travel', 'Travel'),
+    ('salary', 'Salary'),
+    ('other', 'Other'),
 )
 
 
 class Record(models.Model):
+    '''
+        Record model defines the storage of income/expences records.
+
+        Tags field is BitField. Order of tags items shouldn't be changed.
+        Amount field is MoneyField. Determines amount of money and currency. HKD by default.
+        Transaction type determines EXP(Expences) or INC(Income) the record is.
+    '''
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     tags = BitField(flags=TAGS)
