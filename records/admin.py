@@ -11,6 +11,7 @@ class RecordAdmin(admin.ModelAdmin):
                     'comma_separated_tags_list', 'amount',)
     list_editable = ('amount',)
     list_filter = (
+        'created_at',
         'transaction_type',
     )
     ordering = ('-created_at', )
