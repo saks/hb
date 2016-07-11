@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'djmoney',
     'records.apps.RecordsConfig',
+    'budgets.apps.BudgetsConfig',
     'bootstrap3'
 ]
 
