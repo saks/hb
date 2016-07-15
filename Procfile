@@ -1,1 +1,1 @@
-web: gunicorn hbapi.wsgi --log-file -
+web: newrelic-admin run-program gunicorn hbapi.wsgi --log-file -
