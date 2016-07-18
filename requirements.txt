@@ -12,3 +12,4 @@ django-bitfield
 pep8
 django-bootstrap3
 newrelic
+freezegun

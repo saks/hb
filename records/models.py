@@ -1,5 +1,8 @@
 from django.db import models
 from django.conf import settings
+from django.core.validators import MinValueValidator
+from django.utils.translation import ugettext_lazy as _
+
 from bitfield import BitField
 
 from djmoney.models.fields import MoneyField
@@ -49,7 +52,7 @@ class Record(models.Model):
     '''
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    tags = BitField(flags=TAGS)
+    tags = BitField(flags=TAGS, validators=[MinValueValidator(1, message=_(u'Select any tag.'))])
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='HKD')
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(auto_now_add=True)

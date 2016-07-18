@@ -1,5 +1,6 @@
 import datetime
 from decimal import Decimal
+from freezegun import freeze_time
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -45,6 +46,7 @@ class BudgetsTests(TestCase):
         budget = self._add_budget()
         self.assertEqual(budget.average_per_day(), Decimal('3.22'))
 
+    @freeze_time("2016-07-11")
     def test_04_calculation(self):
         budget = self._add_budget()
         self._add_record(10, bits=[0])
@@ -68,4 +70,30 @@ class BudgetsTests(TestCase):
         self.assertEqual(budget.spent(), 30)
         self.assertEqual(budget.left(), 70)
         self.assertEqual(budget.left_average_per_day(), Decimal('3.33'))
+        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+
+    @freeze_time("2016-08-10")
+    def test_05_calculation_next_month(self):
+        budget = self._add_budget()
+        self._add_record(10, bits=[0])
+        self._add_record(10, bits=[1])
+        self._add_record(10, bits=[2])
+
+        self.assertEqual(budget.spent(), 20)
+        self.assertEqual(budget.left(), 80)
+        self.assertEqual(budget.left_average_per_day(), Decimal('3.63'))
+        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+
+        # add record which shouldn't be taken into account
+        self._add_record(10, bits=[0, 4])
+        self.assertEqual(budget.spent(), 20)
+        self.assertEqual(budget.left(), 80)
+        self.assertEqual(budget.left_average_per_day(), Decimal('3.63'))
+        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+
+        # add record which should be taken into account
+        self._add_record(10, bits=[3, 1])
+        self.assertEqual(budget.spent(), 30)
+        self.assertEqual(budget.left(), 70)
+        self.assertEqual(budget.left_average_per_day(), Decimal('3.18'))
         self.assertEqual(budget.average_per_day(), Decimal('3.22'))
