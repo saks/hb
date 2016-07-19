@@ -1,9 +1,10 @@
 from django.contrib import admin
+from django import forms
 
 from bitfield import BitField
-from bitfield.forms import BitFieldCheckboxSelectMultiple
 
 from records.models import Record
+from records.widgets import TagsWidget
 
 
 class RecordAdmin(admin.ModelAdmin):
@@ -16,10 +17,15 @@ class RecordAdmin(admin.ModelAdmin):
     )
     ordering = ('-created_at', )
     formfield_overrides = {
-        BitField: {'widget': BitFieldCheckboxSelectMultiple},
+        BitField: {'widget': TagsWidget},
     }
-
     fields = ('amount', 'tags', 'transaction_type', 'user', )
+
+    def get_form(self, request, obj=None, **kwargs):
+        form = super(RecordAdmin, self).get_form(request, obj, **kwargs)
+        user_tags_order = request.user.get_user_tags_order()
+        form.base_fields['tags'].widget.attrs.update({'user_tags_order': user_tags_order})
+        return form
 
     class Media:
         css = {

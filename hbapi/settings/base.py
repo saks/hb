@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'djmoney',
     'records.apps.RecordsConfig',
     'budgets.apps.BudgetsConfig',
+    'userprofile.apps.UserprofileConfig',
     'bootstrap3'
 ]
 
@@ -81,6 +82,7 @@ WSGI_APPLICATION = 'hbapi.wsgi.application'
 
 DATABASES = {}
 
+AUTH_USER_MODEL = 'userprofile.HBUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
