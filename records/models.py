@@ -57,9 +57,30 @@ class Record(models.Model):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def get_tags_list(self):
+        return [k for k,v in self.tags.items() if v]
+
     def comma_separated_tags_list(self):
-        return ', '.join([k for k, v in self.tags.items() if v])
+        return ', '.join(self.get_tags_list())
     comma_separated_tags_list.short_description = 'Comma separated tags'
 
     def __str__(self):
         return '%s %s' % (', '.join([k for k, v in self.tags.items() if v]), self.amount)
+
+
+from django.db.models.signals import pre_save
+def update_tags_weight(sender, **kwargs):
+    instance = kwargs['instance']
+    _tags_updated = False
+    if instance.pk:
+        orig = Record.objects.get(pk=instance.pk)
+        if orig.tags.mask != instance.tags.mask:
+            _tags_updated = True
+            # remove weights if update
+            for tag in orig.get_tags_list():
+                settings.REDIS_CONN.zincrby('tags_%s' % (instance.user_id,), tag, -1)
+    # add tags weight on create or update tags
+    if not instance.pk or _tags_updated:
+        for tag in instance.get_tags_list():
+            settings.REDIS_CONN.zincrby('tags_%s' % (instance.user_id,), tag, 1)
+pre_save.connect(update_tags_weight, sender=Record)
