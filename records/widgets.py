@@ -40,13 +40,14 @@ class TagRenderer(CheckboxFieldRenderer):
                     choices=choice_label,
                 )
                 sub_ul_renderer.choice_input_class = self.choice_input_class
-                output[choice[0]]=format_html(
+                output[choice[0]] = format_html(
                     self.inner_html, choice_value=choice_value,
                     sub_widgets=sub_ul_renderer.render(),
                 )
             else:
                 w = self.choice_input_class(self.name, self.value, self.attrs.copy(), choice, i)
-                output[choice[0]]=format_html(self.inner_html, choice_value=force_text(w), sub_widgets='')
+                output[choice[0]] = format_html(self.inner_html, choice_value=force_text(w),
+                                                sub_widgets='')
 
         # sort tags
         sorted_output = []
@@ -60,7 +61,8 @@ class TagRenderer(CheckboxFieldRenderer):
             self.outer_html,
             id_attr=format_html(' id="{}"', id_) if id_ else '',
             content=mark_safe('\n'.join(sorted_output)),
-)
+        )
+
 
 class TagsWidget(BitFieldCheckboxSelectMultiple):
     renderer = TagRenderer

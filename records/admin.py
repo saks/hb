@@ -8,6 +8,7 @@ from records.widgets import TagsWidget
 
 
 class RecordAdmin(admin.ModelAdmin):
+
     list_display = ('user', 'created_at', 'transaction_type',
                     'comma_separated_tags_list', 'amount',)
     list_editable = ('amount',)
@@ -24,6 +25,7 @@ class RecordAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(RecordAdmin, self).get_form(request, obj, **kwargs)
         user_tags_order = request.user.get_user_tags_order()
+        # update widget attrs for admin
         form.base_fields['tags'].widget.attrs.update({'user_tags_order': user_tags_order})
         return form
 

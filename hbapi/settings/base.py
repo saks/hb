@@ -124,4 +124,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Redis keys
-REDIS_KEY_USER_TAGS = 'tags_%s'
+REDIS_KEY_USER_TAGS = 'user_tags_%s'

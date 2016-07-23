@@ -10,8 +10,6 @@ services:
     command: "redis-server --bind 0.0.0.0"
     volumes:
       - "redis_data:/data"
-    ports:
-      - "6379:6379"
 
   web:
     build: "."

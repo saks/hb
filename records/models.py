@@ -66,7 +66,7 @@ class Record(models.Model):
         return settings.REDIS_KEY_USER_TAGS % (self.user_id,)
 
     def get_tags_list(self):
-        return [k for k,v in self.tags.items() if v]
+        return [k for k, v in self.tags.items() if v]
 
     def comma_separated_tags_list(self):
         return ', '.join(self.get_tags_list())
@@ -76,6 +76,9 @@ class Record(models.Model):
         return '%s %s' % (', '.join([k for k, v in self.tags.items() if v]), self.amount)
 
     def remove_tags_weights(self):
+        '''
+            Remove tags from frequency tags set.
+        '''
         r = settings.REDIS_CONN
         for tag in self.get_tags_list():
             r.zincrby(self.redis_tags_key, tag, -1)
@@ -83,17 +86,23 @@ class Record(models.Model):
                 r.zrem(self.redis_tags_key, tag)
 
     def add_tags_weights(self):
+        '''
+            Add tags to usage frequency set.
+        '''
         for tag in self.get_tags_list():
             settings.REDIS_CONN.zincrby(self.redis_tags_key, tag, 1)
 
 
 def update_tags_weight(sender, **kwargs):
+    '''
+        Update frequency of tags usage.
+    '''
     instance = kwargs['instance']
     _tags_updated = False
 
     # remove weights if update
     if instance.pk:
-        orig = Record.objects.get(pk=instance.pk)
+        orig = sender.objects.get(pk=instance.pk)
         if orig.tags.mask != instance.tags.mask:
             _tags_updated = True
             orig.remove_tags_weights()
@@ -102,9 +111,14 @@ def update_tags_weight(sender, **kwargs):
     if not instance.pk or _tags_updated:
         instance.add_tags_weights()
 
+
 def delete_tags_weight(sender, **kwargs):
+    '''
+    Singnal to remove tags for correct ordering by frequency of usage.
+    '''
     instance = kwargs['instance']
     instance.remove_tags_weights()
+
 
 pre_save.connect(update_tags_weight, sender=Record)
 pre_delete.connect(delete_tags_weight, sender=Record)
