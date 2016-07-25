@@ -1,6 +1,5 @@
 from django.db import models
 from django.conf import settings
-from django.db.models.signals import pre_save, pre_delete
 from django.core.validators import MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -79,46 +78,19 @@ class Record(models.Model):
         '''
             Remove tags from frequency tags set.
         '''
-        r = settings.REDIS_CONN
+        pipe = settings.REDIS_CONN.pipeline()
         for tag in self.get_tags_list():
-            r.zincrby(self.redis_tags_key, tag, -1)
-            if not r.zscore(self.redis_tags_key, tag):
-                r.zrem(self.redis_tags_key, tag)
+            pipe.zincrby(self.redis_tags_key, tag, -1)
+
+        # remove 0 score tags
+        pipe.zremrangebyscore(self.redis_tags_key, 0, 0)
+        pipe.execute()
 
     def add_tags_weights(self):
         '''
             Add tags to usage frequency set.
         '''
+        pipe = settings.REDIS_CONN.pipeline()
         for tag in self.get_tags_list():
-            settings.REDIS_CONN.zincrby(self.redis_tags_key, tag, 1)
-
-
-def update_tags_weight(sender, **kwargs):
-    '''
-        Update frequency of tags usage.
-    '''
-    instance = kwargs['instance']
-    _tags_updated = False
-
-    # remove weights if update
-    if instance.pk:
-        orig = sender.objects.get(pk=instance.pk)
-        if orig.tags.mask != instance.tags.mask:
-            _tags_updated = True
-            orig.remove_tags_weights()
-
-    # add tags weight on create or update tags
-    if not instance.pk or _tags_updated:
-        instance.add_tags_weights()
-
-
-def delete_tags_weight(sender, **kwargs):
-    '''
-    Singnal to remove tags for correct ordering by frequency of usage.
-    '''
-    instance = kwargs['instance']
-    instance.remove_tags_weights()
-
-
-pre_save.connect(update_tags_weight, sender=Record)
-pre_delete.connect(delete_tags_weight, sender=Record)
+            pipe.zincrby(self.redis_tags_key, tag, 1)
+        pipe.execute()

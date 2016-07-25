@@ -1,12 +1,9 @@
 from bitfield.forms import BitFieldCheckboxSelectMultiple
-from bitfield.types import BitHandler
 
 from django.forms.widgets import CheckboxFieldRenderer
-from django.utils.html import conditional_escape, format_html, html_safe
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from django.utils.encoding import (
-    force_str, force_text, python_2_unicode_compatible,
-)
+from django.utils.encoding import force_text
 
 
 class TagRenderer(CheckboxFieldRenderer):
@@ -17,14 +14,7 @@ class TagRenderer(CheckboxFieldRenderer):
         self.choices = choices
         self.tags_weight = self.attrs.pop('user_tags_order', [])
 
-    def render(self, name=None, value=None, attrs=None):
-        """
-
-        Outputs a <ul> for this set of ordered choice fields.
-        If an id was given to the field, it is applied to the <ul> (each
-        item in the list will get an id of `$id_$i`).
-        """
-        id_ = self.attrs.get('id')
+    def _get_choices(self, id_, name, value, attrs):
         output = {}
 
         for i, choice in enumerate(sorted(self.choices)):
@@ -48,7 +38,9 @@ class TagRenderer(CheckboxFieldRenderer):
                 w = self.choice_input_class(self.name, self.value, self.attrs.copy(), choice, i)
                 output[choice[0]] = format_html(self.inner_html, choice_value=force_text(w),
                                                 sub_widgets='')
+        return output
 
+    def _sort_tags(self, output):
         # sort tags
         sorted_output = []
         for tag in self.tags_weight:
@@ -56,6 +48,19 @@ class TagRenderer(CheckboxFieldRenderer):
         rest_output = list(output.items())
         rest_output.sort(key=lambda x: x[0])
         sorted_output.extend([v for i, v in rest_output])
+        return sorted_output
+
+    def render(self, name=None, value=None, attrs=None):
+        """
+
+        Outputs a <ul> for this set of ordered choice fields.
+        If an id was given to the field, it is applied to the <ul> (each
+        item in the list will get an id of `$id_$i`).
+        """
+
+        id_ = self.attrs.get('id')
+        output = self._get_choices(id_, name, value, attrs)
+        sorted_output = self._sort_tags(output)
 
         return format_html(
             self.outer_html,
