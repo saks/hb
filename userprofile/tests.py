@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.test import TestCase, override_settings
 
-from userprofile.models import HBUser
+from userprofile.models import User
 
 
 @override_settings(REDIS_KEY_USER_TAGS='test_tags_%s')
-class HBUserTests(TestCase):
+class UserTests(TestCase):
 
     def setUp(self):
         self._flush_redis()
-        self.user = HBUser(username='test')
+        self.user = User(username='test')
         self.user.save()
 
     def tearDown(self):

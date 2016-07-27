@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'hbapi.wsgi.application'
 
 DATABASES = {}
 
-AUTH_USER_MODEL = 'userprofile.HBUser'
+AUTH_USER_MODEL = 'userprofile.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators

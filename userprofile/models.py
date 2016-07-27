@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
 
-class HBUser(AbstractUser):
+class User(AbstractUser):
     '''
         User model.
         Uses old table 'auth_user'.
