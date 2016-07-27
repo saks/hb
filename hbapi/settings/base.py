@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import redis
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'djmoney',
     'records.apps.RecordsConfig',
     'budgets.apps.BudgetsConfig',
+    'userprofile.apps.UserprofileConfig',
     'bootstrap3'
 ]
 
@@ -81,6 +83,7 @@ WSGI_APPLICATION = 'hbapi.wsgi.application'
 
 DATABASES = {}
 
+AUTH_USER_MODEL = 'userprofile.HBUser'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -119,3 +122,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Redis keys
+REDIS_KEY_USER_TAGS = 'user_tags_%s'

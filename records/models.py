@@ -57,9 +57,40 @@ class Record(models.Model):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def redis_tags_key(self):
+        '''
+            Return Redis key where stored sorted set of tags frequency usage.
+        '''
+        return settings.REDIS_KEY_USER_TAGS % (self.user_id,)
+
+    def get_tags_list(self):
+        return [k for k, v in self.tags.items() if v]
+
     def comma_separated_tags_list(self):
-        return ', '.join([k for k, v in self.tags.items() if v])
+        return ', '.join(self.get_tags_list())
     comma_separated_tags_list.short_description = 'Comma separated tags'
 
     def __str__(self):
         return '%s %s' % (', '.join([k for k, v in self.tags.items() if v]), self.amount)
+
+    def remove_tags_weights(self):
+        '''
+            Remove tags from frequency tags set.
+        '''
+        pipe = settings.REDIS_CONN.pipeline()
+        for tag in self.get_tags_list():
+            pipe.zincrby(self.redis_tags_key, tag, -1)
+
+        # remove 0 score tags
+        pipe.zremrangebyscore(self.redis_tags_key, 0, 0)
+        pipe.execute()
+
+    def add_tags_weights(self):
+        '''
+            Add tags to usage frequency set.
+        '''
+        pipe = settings.REDIS_CONN.pipeline()
+        for tag in self.get_tags_list():
+            pipe.zincrby(self.redis_tags_key, tag, 1)
+        pipe.execute()

@@ -1,4 +1,4 @@
-all: lint test
+all: pep test
 
 test:
 	@bin/exec test
@@ -20,7 +20,7 @@ production_dbshell:
 createsuperuser:
 	@bin/exec createsuperuser
 
-lint:
+pep:
 	@bin/docker_exec pep8 . --max-line-length=99 --count --exclude=*migrations/*.py
 
-.PHONY: all test lint build run migrate setup createsuperuser production_dbshell
+.PHONY: pep all test build run migrate setup createsuperuser production_dbshell

@@ -1,4 +1,5 @@
 import dj_database_url
+import os
 
 from .base import *
 
@@ -14,3 +15,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
 
 ALLOWED_HOSTS = [".herokuapp.com", ]
+
+REDIS_POOL = redis.ConnectionPool.from_url(os.environ.get('REDISCLOUD_URL'))
+REDIS_CONN = redis.Redis(connection_pool=REDIS_POOL)
