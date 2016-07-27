@@ -1,10 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from userprofile.models import HBUser
+from userprofile.models import User
 
 
-class HBUserAdmin(UserAdmin):
+class UserAdmin(UserAdmin):
     pass
 
-admin.site.register(HBUser, HBUserAdmin)
+admin.site.register(User, UserAdmin)
