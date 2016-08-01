@@ -56,6 +56,7 @@ class Budget(models.Model):
         today = date.today()
         first_month_day = date(today.year, today.month, 1)
         spent = Record.objects.filter(user=self.user,
+                                      transaction_type='EXP',
                                       created_at__gte=first_month_day)
         if self.tags_type == 'INCL':
             for t in self.get_tags_list():
