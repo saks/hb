@@ -8,9 +8,9 @@ from records.widgets import TagsWidget
 
 class RecordAdmin(admin.ModelAdmin):
 
-    list_display = ('user', 'created_at', 'transaction_type',
+    list_display = ('id', 'user', 'created_at', 'transaction_type',
                     'comma_separated_tags_list', 'amount',)
-    list_editable = ('amount',)
+    list_editable = ('amount', 'user', 'created_at')
     list_filter = (
         'created_at',
         'transaction_type',

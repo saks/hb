@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.utils import timezone
 from django.core.validators import MinValueValidator
 from django.utils.translation import ugettext_lazy as _
 
@@ -55,7 +56,7 @@ class Record(models.Model):
     tags = BitField(flags=TAGS, validators=[MinValueValidator(1, message=_(u'Select any tag.'))])
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='HKD')
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, blank=True)
 
     @property
     def redis_tags_key(self):
