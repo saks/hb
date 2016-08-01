@@ -52,6 +52,7 @@ class BudgetsTests(TestCase):
         self._add_record(10, bits=[0])
         self._add_record(10, bits=[1])
         self._add_record(10, bits=[2])
+        self._add_record(10, transaction_type='INC', bits=[2])
 
         self.assertEqual(budget.spent(), 20)
         self.assertEqual(budget.left(), 80)
