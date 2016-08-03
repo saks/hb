@@ -27,3 +27,4 @@ traitlets==4.2.2
 wcwidth==0.1.7
 whitenoise==3.2
 redis==2.10.5
+pylint==1.6.4

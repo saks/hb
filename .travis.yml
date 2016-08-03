@@ -10,5 +10,8 @@ services:
 #before_script:
 #    - psql -c 'create database test_postgres;' -U postgres
 #    - python manage.py migrate
+before_script:
+  - pep8
+  - pylint budgets/
 script: python manage.py test --settings=hbapi.settings.travis
 

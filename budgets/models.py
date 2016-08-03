@@ -58,11 +58,11 @@ class Budget(models.Model):
         spent = Record.objects.filter(user=self.user,
                                       created_at__gte=first_month_day)
         if self.tags_type == 'INCL':
-            for t in self.get_tags_list():
-                spent = spent.include(tags=getattr(Record.tags, t))
+            for tag in self.get_tags_list():
+                spent = spent.include(tags=getattr(Record.tags, tag))
         if self.tags_type == 'EXCL':
-            for t in self.get_tags_list():
-                spent = spent.exclude(tags=getattr(Record.tags, t))
+            for tag in self.get_tags_list():
+                spent = spent.exclude(tags=getattr(Record.tags, tag))
         spent = spent.aggregate(spent=Sum('amount'))
         return spent['spent']
 

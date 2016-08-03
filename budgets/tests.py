@@ -11,10 +11,10 @@ from records.models import Record
 
 class BudgetsTests(TestCase):
     def setUp(self):
-        userModel = get_user_model()
-        self.user = userModel(username='test')
+        user_model = get_user_model()
+        self.user = user_model(username='test')
         self.user.save()
-        self.other_user = userModel(username='other_test')
+        self.other_user = user_model(username='other_test')
         self.other_user.save()
 
     def _add_budget(self):
@@ -24,7 +24,9 @@ class BudgetsTests(TestCase):
         budget.save()
         return budget
 
-    def _add_record(self, amount, transaction_type='EXP', bits=[]):
+    def _add_record(self, amount, transaction_type='EXP', bits=None):
+        bits = bits or []
+
         record = Record(user=self.user, transaction_type=transaction_type, amount=amount)
         for bit in bits:
             record.tags.set_bit(bit, True)
