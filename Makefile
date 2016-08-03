@@ -9,7 +9,7 @@ build:
 run:
 	@docker-compose run --rm -p 8000:8000 web python manage.py runserver 0.0.0.0:8000
 
-setup: createsuperuser migrate
+setup: migrate createsuperuser
 
 migrate:
 	@bin/exec migrate
