@@ -1,4 +1,4 @@
-body {
+body.change-record-page {
   padding-top: 70px;
   padding-bottom: 30px;
 }
@@ -12,6 +12,6 @@ body {
 }
 
 #id_tags {
-  height: 130px;
+  max-height: 130px;
   overflow: auto;
 }
