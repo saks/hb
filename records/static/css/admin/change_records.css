@@ -3,6 +3,15 @@ body {
   padding-bottom: 30px;
 }
 
-div #id_tags input {
+#id_tags input, #id_amount_1 {
   display: none;
+}
+
+#id_tags .btn {
+  margin: 2px;
+}
+
+#id_tags {
+  height: 130px;
+  overflow: auto;
 }

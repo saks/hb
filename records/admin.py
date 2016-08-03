@@ -25,9 +25,11 @@ class RecordAdmin(admin.ModelAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(RecordAdmin, self).get_form(request, obj, **kwargs)
         user_tags_order = request.user.get_user_tags_order()
+
         # update widget attrs for admin
-        form.base_fields['amount'].widget.widgets[0]=TextInput(attrs={'pattern': '[0-9]',
-                                                                      'inputmode': 'numeric'})
+        form.base_fields['amount'].widget.widgets[0] = TextInput(attrs={'pattern': '[0-9]',
+                                                                        'type': 'tel',
+                                                                        'autocomplete': 'off'})
         form.base_fields['tags'].widget.attrs.update({'user_tags_order': user_tags_order})
         return form
 

@@ -1,15 +1,23 @@
 $(function() {
   var userId = $('meta[name="current-user-id"]').attr('content');
+  var $amount = $('#id_amount_0')
 
   $('#id_transaction_type').val('EXP');
   $('#id_user').val(userId);
-  if ($('#id_amount_0').val() == 0) {
-    $('#id_amount_0').val('');
+  if ($amount.val() == 0) {
+    $amount.val('');
   };
-  $('#id_amount_0').focus();
+
+  // calc
+  $amount.wrap('<div id="id_with_calc" class="input-group"></div>')
+  $('#id_with_calc').append('<span class="input-group-btn">\
+      <button id="calc" class="btn btn-default" type="button">calculate</button>\
+    </span>')
+  $amount.focus();
 
   $('#calc').click(function(){
-    $('#id_amount_0').val(eval($('#id_amount_0').val()));
+    $amount.val(eval($amount.val()));
+    $amount.focus();
   });
 
   $('#id_user').parents('.form-group').hide();
