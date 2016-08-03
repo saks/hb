@@ -8,6 +8,10 @@ $(function() {
   };
   $('#id_amount_0').focus();
 
+  $('#calc').click(function(){
+    $('#id_amount_0').val(eval($('#id_amount_0').val()));
+  });
+
   $('#id_user').parents('.form-group').hide();
 
   // tags
