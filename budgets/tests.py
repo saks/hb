@@ -44,7 +44,7 @@ class BudgetsTests(TestCase):
 
     def test_03_average_per_day(self):
         budget = self._add_budget()
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
     @freeze_time("2016-07-11")
     def test_04_calculation(self):
@@ -54,24 +54,26 @@ class BudgetsTests(TestCase):
         self._add_record(10, bits=[2])
         self._add_record(10, transaction_type='INC', bits=[2])
 
-        self.assertEqual(budget.spent(), 20)
-        self.assertEqual(budget.left(), 80)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.80'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        self.assertEqual(budget.spent, 20)
+        self.assertEqual(budget.left, 80)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.80'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
         # add record which shouldn't be taken into account
         self._add_record(10, bits=[0, 4])
-        self.assertEqual(budget.spent(), 20)
-        self.assertEqual(budget.left(), 80)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.80'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        budget._update_spent()
+        self.assertEqual(budget.spent, 20)
+        self.assertEqual(budget.left, 80)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.80'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
         # add record which should be taken into account
         self._add_record(10, bits=[3, 1])
-        self.assertEqual(budget.spent(), 30)
-        self.assertEqual(budget.left(), 70)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.33'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        budget._update_spent()
+        self.assertEqual(budget.spent, 30)
+        self.assertEqual(budget.left, 70)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.33'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
     @freeze_time("2016-08-10")
     def test_05_calculation_next_month(self):
@@ -80,21 +82,23 @@ class BudgetsTests(TestCase):
         self._add_record(10, bits=[1])
         self._add_record(10, bits=[2])
 
-        self.assertEqual(budget.spent(), 20)
-        self.assertEqual(budget.left(), 80)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.63'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        self.assertEqual(budget.spent, 20)
+        self.assertEqual(budget.left, 80)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.63'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
         # add record which shouldn't be taken into account
         self._add_record(10, bits=[0, 4])
-        self.assertEqual(budget.spent(), 20)
-        self.assertEqual(budget.left(), 80)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.63'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        budget._update_spent()
+        self.assertEqual(budget.spent, 20)
+        self.assertEqual(budget.left, 80)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.63'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
 
         # add record which should be taken into account
         self._add_record(10, bits=[3, 1])
-        self.assertEqual(budget.spent(), 30)
-        self.assertEqual(budget.left(), 70)
-        self.assertEqual(budget.left_average_per_day(), Decimal('3.18'))
-        self.assertEqual(budget.average_per_day(), Decimal('3.22'))
+        budget._update_spent()
+        self.assertEqual(budget.spent, 30)
+        self.assertEqual(budget.left, 70)
+        self.assertEqual(budget.left_average_per_day, Decimal('3.18'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
