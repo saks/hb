@@ -24,6 +24,6 @@ pep:
 	@bin/docker_exec pep8 .
 
 pylint:
-	@bin/docker_exec pylint budgets/
+	@bin/docker_exec prospector .
 
-.PHONY: pep all test build run migrate setup createsuperuser production_dbshell
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell

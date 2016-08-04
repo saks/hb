@@ -11,10 +11,10 @@ from records.models import Record
 
 class BudgetsTests(TestCase):
     def setUp(self):
-        user_model = get_user_model()
-        self.user = user_model(username='test')
+        UserModel = get_user_model()
+        self.user = UserModel(username='test')
         self.user.save()
-        self.other_user = user_model(username='other_test')
+        self.other_user = UserModel(username='other_test')
         self.other_user.save()
 
     def _add_budget(self):

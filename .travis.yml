@@ -7,11 +7,10 @@ install: "pip install -r requirements.txt"
 services:
     - postgresql
     - redis-server
-#before_script:
-#    - psql -c 'create database test_postgres;' -U postgres
-#    - python manage.py migrate
 before_script:
   - pep8
-  - pylint budgets/
+#    - psql -c 'create database test_postgres;' -U postgres
+#    - python manage.py migrate
+#  - prospector
 script: python manage.py test --settings=hbapi.settings.travis
 
