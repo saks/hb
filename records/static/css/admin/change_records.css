@@ -1,8 +1,17 @@
-body {
+body.change-record-page {
   padding-top: 70px;
   padding-bottom: 30px;
 }
 
-div #id_tags input {
+#id_tags input, #id_amount_1 {
   display: none;
+}
+
+#id_tags .btn {
+  margin: 2px;
+}
+
+#id_tags {
+  max-height: 130px;
+  overflow: auto;
 }

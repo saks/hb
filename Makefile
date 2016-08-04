@@ -1,4 +1,4 @@
-all: pep test
+all: pep pylint test
 
 test:
 	@bin/exec test
@@ -21,6 +21,9 @@ createsuperuser:
 	@bin/exec createsuperuser
 
 pep:
-	@bin/docker_exec pep8 . --max-line-length=99 --count --exclude=*migrations/*.py
+	@bin/docker_exec pep8 .
 
-.PHONY: pep all test build run migrate setup createsuperuser production_dbshell
+pylint:
+	@bin/docker_exec prospector .
+
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell
