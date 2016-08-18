@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
@@ -42,6 +44,8 @@ TAGS = (
     ('other', 'Other'),
 )
 
+log = logging.getLogger('apps')
+
 
 class Record(models.Model):
     '''
@@ -79,6 +83,7 @@ class Record(models.Model):
         '''
             Remove tags from frequency tags set.
         '''
+        log.debug('Remove tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.get_tags_list():
             pipe.zincrby(self.redis_tags_key, tag, -1)
@@ -91,6 +96,7 @@ class Record(models.Model):
         '''
             Add tags to usage frequency set.
         '''
+        log.debug('Add tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.get_tags_list():
             pipe.zincrby(self.redis_tags_key, tag, 1)
