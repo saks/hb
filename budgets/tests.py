@@ -104,3 +104,14 @@ class BudgetsTests(TestCase):
         self.assertEqual(budget.left, 70)
         self.assertEqual(budget.left_average_per_day, Decimal('3.18'))
         self.assertEqual(budget.average_per_day, Decimal('3.22'))
+
+    @freeze_time("2016-08-12")
+    def test_06_include_budget_and_no_records(self):
+        budget = Budget(user=self.user, amount=100, tags_type='INCL',
+                        start_date=datetime.date(2016, 7, 1))
+        budget.tags.set_bit(0, True)
+        budget.save()
+        self.assertEqual(budget.spent, 0)
+        self.assertEqual(budget.left, 100)
+        self.assertEqual(budget.left_average_per_day, Decimal('5.00'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
