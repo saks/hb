@@ -71,7 +71,7 @@ class Budget(models.Model):
             for tag in self.get_tags_list():
                 spent = spent.exclude(tags=getattr(Record.tags, tag))
         spent = spent.aggregate(spent=Sum('amount'))
-        self.__spent = spent['spent'] if spent['spent'] else 0
+        self.__spent = spent['spent'] or 0
 
     @property
     def spent(self):
