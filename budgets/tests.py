@@ -43,6 +43,7 @@ class BudgetsTests(TestCase):
         budget = self._add_budget()
         self.assertEqual(budget.comma_separated_tags_list(), 'books')
 
+    @freeze_time("2016-07-11")
     def test_03_average_per_day(self):
         budget = self._add_budget()
         self.assertEqual(budget.average_per_day, Decimal('3.22'))
