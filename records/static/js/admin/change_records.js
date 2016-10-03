@@ -16,7 +16,10 @@ $(function() {
   $amount.focus();
 
   $('#calc').click(function(){
-    $amount.val(eval($amount.val()));
+    var val = eval($amount.val());
+    val = Math.round(val * 100) / 100;
+
+    $amount.val(val);
     $amount.focus();
   });
 
