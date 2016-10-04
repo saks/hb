@@ -1,6 +1,7 @@
 $(function() {
   var userId = $('meta[name="current-user-id"]').attr('content');
-  var $amount = $('#id_amount_0')
+  var $amount = $('#id_amount_0');
+  var $tagsCloud = $('#id_tags');
 
   $('#id_transaction_type').val('EXP');
   $('#id_user').val(userId);
@@ -22,12 +23,23 @@ $(function() {
 
   $('#id_user').parents('.form-group').hide();
 
-  // tags
-  updateTags = function(){
-    $('div#id_tags div').attr('class', 'btn btn-default');
-    $('#id_tags div input:checked').parent().parent().removeClass('btn-default');
-    $('#id_tags div input:checked').parent().parent().addClass('btn-danger');
-  };
-  updateTags();
-  $('#id_tags div').click(updateTags);
+  //----- tags -----//
+
+  // fix tag buttons
+  $tagsCloud.find('div')
+    .removeClass('checkbox')
+    .addClass('btn btn-default')
+  ;
+
+  // handle click on tag buttons -> delegate to a checkbox click
+  $tagsCloud.on('click', 'div', function(e) {
+    if (e.target == e.currentTarget) {
+      $(e.target).find('input').click();
+    };
+  });
+
+  // handle click on tag checkbox
+  $tagsCloud.on('click', 'input', function(e) {
+    $(e.target).closest('div.btn').toggleClass('btn-danger btn-default');
+  });
 });
