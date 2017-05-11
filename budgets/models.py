@@ -1,8 +1,11 @@
 from datetime import date
 from decimal import Decimal, ROUND_DOWN
 from calendar import monthrange
+from operator import __or__ as OR
+from functools import reduce
 
 from django.db import models
+from django.db.models import Q
 from django.db.models import Sum
 from django.conf import settings
 
@@ -64,14 +67,15 @@ class Budget(models.Model):
         spent = Record.objects.filter(user=self.user,
                                       transaction_type='EXP',
                                       created_at__gte=first_month_day)
+        tags_list = []
+        for tag in self.get_tags_list():
+            tags_list.append(Q(tags=getattr(Record.tags, tag)))
         if self.tags_type == 'INCL':
-            for tag in self.get_tags_list():
-                spent = spent.include(tags=getattr(Record.tags, tag))
+            spent = spent.filter(reduce(OR, tags_list))
         if self.tags_type == 'EXCL':
-            for tag in self.get_tags_list():
-                spent = spent.exclude(tags=getattr(Record.tags, tag))
+            spent = spent.exclude(reduce(OR, tags_list))
         spent = spent.aggregate(spent=Sum('amount'))
-        self.__spent = spent['spent']
+        self.__spent = spent['spent'] if spent['spent'] else 0
 
     @property
     def spent(self):

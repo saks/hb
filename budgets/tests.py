@@ -30,7 +30,6 @@ class BudgetsTests(TestCase):
         record = Record(user=self.user, transaction_type=transaction_type, amount=amount)
         for bit in bits:
             record.tags.set_bit(bit, True)
-            record.save()
         record.save()
         return record
 
@@ -103,4 +102,31 @@ class BudgetsTests(TestCase):
         self.assertEqual(budget.spent, 30)
         self.assertEqual(budget.left, 70)
         self.assertEqual(budget.left_average_per_day, Decimal('3.18'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
+
+    @freeze_time("2016-08-12")
+    def test_06_include_budget_and_no_records(self):
+        budget = Budget(user=self.user, amount=100, tags_type='INCL',
+                        start_date=datetime.date(2016, 7, 1))
+        budget.tags.set_bit(0, True)
+        budget.save()
+        self.assertEqual(budget.spent, 0)
+        self.assertEqual(budget.left, 100)
+        self.assertEqual(budget.left_average_per_day, Decimal('5.00'))
+        self.assertEqual(budget.average_per_day, Decimal('3.22'))
+
+    @freeze_time("2016-08-12")
+    def test_06_include_budget_with_records(self):
+        budget = Budget(user=self.user, amount=100, tags_type='INCL',
+                        start_date=datetime.date(2016, 7, 1))
+        budget.tags.set_bit(0, True)
+        budget.save()
+        # add record
+        record = Record(user=self.user, transaction_type='EXP', amount='10')
+        for bit in [0, 1]:
+            record.tags.set_bit(bit, True)
+        record.save()
+        self.assertEqual(budget.spent, 10)
+        self.assertEqual(budget.left, 90)
+        self.assertEqual(budget.left_average_per_day, Decimal('4.50'))
         self.assertEqual(budget.average_per_day, Decimal('3.22'))
