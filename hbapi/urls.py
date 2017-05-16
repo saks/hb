@@ -23,8 +23,12 @@ from django.contrib.staticfiles import views
 from django.conf import settings
 
 
+favicon_view = RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)
+
+
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
+    url(r'^favicon\.ico$', favicon_view),
     url(r'^admin/', admin.site.urls),
     url(r'^records/', include('records.urls')),
 ]
