@@ -52,13 +52,13 @@ class Record(models.Model):
         Record model defines the storage of income/expences records.
 
         Tags field is BitField. Order of tags items shouldn't be changed.
-        Amount field is MoneyField. Determines amount of money and currency. HKD by default.
+        Amount field is MoneyField. Determines amount of money and currency. CAD by default.
         Transaction type determines EXP(Expences) or INC(Income) the record is.
     '''
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     tags = BitField(flags=TAGS, validators=[MinValueValidator(1, message=_(u'Select any tag.'))])
-    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='BYN')
+    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
