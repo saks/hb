@@ -131,3 +131,12 @@ class BudgetsTests(TestCase):
         self.assertEqual(budget.left, 90)
         self.assertEqual(budget.left_average_per_day, Decimal('4.50'))
         self.assertEqual(budget.average_per_day, Decimal('3.22'))
+
+    def test_07_budget_with_name(self):
+        name = u'Test name'
+        budget = Budget(name=name, user=self.user, amount=100, tags_type='INCL',
+                        start_date=datetime.date(2016, 7, 1))
+        budget.tags.set_bit(0, True)
+        budget.save()
+        budget.refresh_from_db()
+        self.assertEqual(budget.name, name)
