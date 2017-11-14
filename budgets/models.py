@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models import Q
 from django.db.models import Sum
 from django.conf import settings
+from django.utils.translation import ugettext_lazy as _
 
 from bitfield import BitField
 from djmoney.models.fields import MoneyField
@@ -30,6 +31,9 @@ class Budget(models.Model):
         Amount field is MoneyField. Determines amount of money and currency. HKD by default.
         Start date field determines a start month for budget history.
     '''
+    name = models.CharField(max_length=100,
+                            default=_(u'Monthly budget'),
+                            verbose_name=_(u'Budget name'))
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='HKD')
     start_date = models.DateField()
