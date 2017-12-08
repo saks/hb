@@ -21,7 +21,7 @@ createsuperuser:
 	@bin/exec createsuperuser
 
 pep:
-	@bin/docker_exec pep8 .
+	@bin/docker_exec pycodestyle .
 
 pylint:
 	@bin/docker_exec prospector .

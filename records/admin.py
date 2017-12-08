@@ -39,4 +39,5 @@ class RecordAdmin(admin.ModelAdmin):
         }
         js = ('/static/js/admin/change_records.js',)
 
+
 admin.site.register(Record, RecordAdmin)
