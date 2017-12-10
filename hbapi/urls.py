@@ -32,6 +32,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/records/', include('records.urls')),
     url(r'^api/user/', include('userprofile.urls')),
+    url(r'^api/budgets/', include('budgets.urls')),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
