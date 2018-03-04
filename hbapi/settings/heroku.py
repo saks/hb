@@ -18,3 +18,6 @@ ALLOWED_HOSTS = [".herokuapp.com", ]
 
 REDIS_POOL = redis.ConnectionPool.from_url(os.environ.get('REDISCLOUD_URL'))
 REDIS_CONN = redis.Redis(connection_pool=REDIS_POOL)
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
