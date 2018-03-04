@@ -4,12 +4,14 @@
     const $ = function(id) { return document.getElementById(id) };
 
     class Auth {
-        constructor () {
+        constructor (spinner) {
+            this.spinner = spinner;
             this.dialogContainer = $('signInDialogContainer');
             this.bind();
 
             this.token = localStorage.getItem(Auth.STORAGE_KEY);
             if (!this.isSignedIn) {
+                this.spinner.hide();
                 this.toggleDialog(true);
             }
         }
@@ -22,6 +24,7 @@
             const classList = this.dialogContainer.classList;
 
             if (visible) {
+                this.spinner.hide();
                 classList.add('dialog-container--visible');
             } else {
                 classList.remove('dialog-container--visible');
@@ -30,8 +33,33 @@
 
         bind() {
             $('butSubmitSignIn').addEventListener('click', function() {
-                console.log('sign in...');
-                this.toggleDialog(false);
+                fetch('/auth/jwt/create/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: $('username').value,
+                        password: $('password').value,
+                    }),
+                    headers: {
+                        'user-agent': 'Home Budget PWA',
+                        'content-type': 'application/json',
+                    },
+                }).then(async function(response) {
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.token = data.token;
+                        localStorage.setItem(Auth.STORAGE_KEY, this.token);
+                    } else {
+                        const data = await response.json();
+                        console.log('failed to sign in:');
+                        console.log(data);
+                    }
+                }.bind(this)).catch(async function(response) {
+                    const data = await response.json();
+                    console.log('failed to sign in:');
+                    console.log(data);
+                }.bind(this)).finally(function() {
+                    this.toggleDialog(false);
+                }.bind(this));
             }.bind(this));
 
             $('butCancelSignIn').addEventListener('click', function() {
@@ -61,8 +89,8 @@
 
     /* PAGE INITIALIZATION */
     const spinner = new Spinner();
-    spinner.hide();
-    const auth = new Auth();
+    // spinner.hide();
+    const auth = new Auth(spinner);
 })();
 
 
