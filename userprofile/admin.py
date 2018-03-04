@@ -7,4 +7,5 @@ from userprofile.models import User
 class UserAdmin(UserAdmin):
     pass
 
+
 admin.site.register(User, UserAdmin)

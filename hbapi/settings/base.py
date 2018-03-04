@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'records.apps.RecordsConfig',
     'budgets.apps.BudgetsConfig',
     'userprofile.apps.UserprofileConfig',
-    'bootstrap3'
+    'bootstrap3',
+    'djoser',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -150,4 +151,15 @@ LOGGING = {
             'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
         }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAUTL_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+    'PAGE_SIZE': 30,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
 }

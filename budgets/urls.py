@@ -5,7 +5,7 @@ from . import views
 
 
 router = routers.DefaultRouter()
-router.register(r'record-detail', views.RecordViewSet)
+router.register(r'budget-detail', views.BudgetViewSet)
 
 urlpatterns = [
     url(r'^', include(router.urls)),
