@@ -4,8 +4,22 @@
     const $ = function(id) { return document.getElementById(id) };
 
     class Auth {
-        constructor (spinner) {
+        static authenticate(spinner, callback) {
+            if (!this.instance) {
+                this.instance = new Auth(spinner);
+                if (this.instance.isSignedIn) {
+                    callback();
+                } else {
+                    this.instance.callback = callback;
+                }
+            }
+            return this.instance;
+        }
+
+        constructor(spinner, callback) {
+            this.callback = callback;
             this.spinner = spinner;
+
             this.dialogContainer = $('signInDialogContainer');
             this.bind();
 
@@ -48,6 +62,9 @@
                         const data = await response.json();
                         this.token = data.token;
                         localStorage.setItem(Auth.STORAGE_KEY, this.token);
+                        if ('function' == typeof this.callback) {
+                            this.callback();
+                        }
                     } else {
                         const data = await response.json();
                         console.log('failed to sign in:');
@@ -74,6 +91,11 @@
         static get STORAGE_KEY() {
             return 'AUTH_TOKEN'
         }
+
+        static fetch(url, options={ headers: {} }) {
+            options.headers.Authorization = `JWT ${this.instance.token}`;
+            return fetch(url, options);
+        }
     }
 
     class Spinner {
@@ -84,13 +106,36 @@
         hide() {
             this.container.setAttribute('hidden', true);
         }
+
+        show() {
+            this.container.setAttribute('hidden', false);
+        }
     }
 
+    class IndexPage {
+        async show() {
+            const records = await this.getData();
+        }
+
+        async getData() {
+            const url = '/api/records/record-detail/';
+            const response = await Auth.fetch(url);
+            debugger
+            return response.json();
+        }
+
+        drawCard(data) {
+
+        }
+    }
 
     /* PAGE INITIALIZATION */
     const spinner = new Spinner();
-    // spinner.hide();
-    const auth = new Auth(spinner);
+    const auth = Auth.authenticate(spinner, function() {
+        const indexPage = new IndexPage();
+        indexPage.show();
+    });
+
 })();
 
 
