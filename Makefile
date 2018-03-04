@@ -26,4 +26,7 @@ pep:
 pylint:
 	@bin/docker_exec prospector .
 
-.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell
+shell:
+	@bin/docker_exec bash
+
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell
