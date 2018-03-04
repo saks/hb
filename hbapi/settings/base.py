@@ -154,7 +154,7 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
-    'DEFAUTL_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
