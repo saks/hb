@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'records.apps.RecordsConfig',
     'budgets.apps.BudgetsConfig',
     'userprofile.apps.UserprofileConfig',
-    'bootstrap3'
+    'bootstrap3',
+    'djoser',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -153,6 +154,9 @@ LOGGING = {
 }
 
 REST_FRAMEWORK = {
+    'DEFAUTL_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAdminUser',
     ],

@@ -34,6 +34,9 @@ urlpatterns = [
     url(r'^api/user/', include('userprofile.urls')),
     url(r'^api/budgets/', include('budgets.urls')),
     url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+    url(r'^auth/', include('djoser.urls')),
+    url(r'^auth/', include('djoser.urls.jwt')),
 ]
 
 
