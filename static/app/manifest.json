@@ -1,0 +1,29 @@
+{
+  "name": "Home Budget",
+  "short_name": "Home Budget",
+  "icons": [{
+      "src": "/static/img/octo.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    }, {
+      "src": "/static/img/octo.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    }, {
+      "src": "/static/img/octo.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    }, {
+      "src": "/static/img/octo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }, {
+      "src": "/static/img/octo.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    }],
+  "start_url": "/admin/records/record/add",
+  "display": "standalone",
+  "background_color": "#3E4EB8",
+  "theme_color": "#2F3BA2"
+}
