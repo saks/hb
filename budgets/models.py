@@ -34,8 +34,8 @@ class Budget(models.Model):
     name = models.CharField(max_length=100,
                             default=_(u'Monthly budget'),
                             verbose_name=_(u'Budget name'))
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
-    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='HKD')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     start_date = models.DateField()
     tags_type = models.CharField(choices=TAGS_TYPE, max_length=4)
     tags = BitField(flags=TAGS)

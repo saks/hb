@@ -56,7 +56,7 @@ class Record(models.Model):
         Transaction type determines EXP(Expences) or INC(Income) the record is.
     '''
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tags = BitField(flags=TAGS, validators=[MinValueValidator(1, message=_(u'Select any tag.'))])
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
