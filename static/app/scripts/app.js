@@ -298,7 +298,6 @@
             this.container = $$('newRecordForm');
             this.template = document.querySelector('.tag-template');
             this.tagsContainer = $$('tagsContainer');
-            this.setup();
             this.bind();
         }
 
@@ -315,7 +314,6 @@
             $('#newRecordFormForm').on('submit', function(e) {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
-                debugger
             });
         }
 
@@ -387,6 +385,7 @@
 
         onAuthSuccess() {
             this.indexPage.show();
+            this.newRecordForm.setup();
         }
 
         run() {
