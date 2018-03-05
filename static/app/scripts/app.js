@@ -113,19 +113,33 @@
     }
 
     class IndexPage {
+        constructor() {
+            this.template = document.querySelector('.record-item.cardTemplate');
+            this.container = document.querySelector('main');
+        }
+
         async show() {
             const records = await this.getData();
+            records.results.forEach(function(record) {
+                this.drawCard(record);
+            }.bind(this));
         }
 
         async getData() {
             const url = '/api/records/record-detail/';
             const response = await Auth.fetch(url);
-            debugger
             return response.json();
         }
 
-        drawCard(data) {
-
+        drawCard(record) {
+            const card = this.template.cloneNode(true);
+            card.classList.remove('cardTemplate');
+            card.querySelector('.location').textContent = `CAD -${record.amount}`;
+            card.querySelector('.date').textContent = record.created_at;
+            card.querySelector('.description').textContent = record.tags;
+            card.removeAttribute('hidden');
+            this.container.appendChild(card);
+            // app.visibleCards[data.key] = card;
         }
     }
 
