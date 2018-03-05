@@ -140,7 +140,8 @@
             card.querySelector('.amount').textContent = amountString;
 
             // date
-            const date = new Date(record.created_at * 1000);
+            const offset = new Date().getTimezoneOffset() * 60 * 1000;
+            const date = new Date(record.created_at * 1000 - offset);
             const dateString = `${date.toTimeString().slice(0, 8)} - ${date.toDateString()}`;
             card.querySelector('.date').textContent = dateString;
 
