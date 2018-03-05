@@ -3,6 +3,16 @@
 
     const $$ = function(id) { return document.getElementById(id) };
 
+    class Widget {
+        toggle(visible) {
+            if (visible) {
+                this.container.removeAttribute('hidden');
+            } else {
+                this.container.setAttribute('hidden', true);
+            }
+        }
+    }
+
     class SignInForm {
         constructor() {
             this.callbacks = [];
@@ -199,8 +209,9 @@
         }
     }
 
-    class IndexPage {
+    class IndexPage extends Widget {
         constructor() {
+            super();
             this.initCurrentPage();
             this.template = document.querySelector('.record-item.cardTemplate');
             this.container = document.querySelector('.records-list');
@@ -291,41 +302,30 @@
         }
     }
 
+    class NewRecordForm extends Widget {
+        constructor() {
+            super();
+            this.container = $$('newRecordForm');
+        }
+    }
+
     class App {
         constructor() {
             this.indexPage = new IndexPage();
             this.auth = new Auth();
-            this.newRecordForm = $$('newRecordForm');
+            this.newRecordForm = new NewRecordForm();
             this.bind();
-        }
-
-        toggleNewRecordForm(visible) {
-            if (visible) {
-                this.newRecordForm.removeAttribute('hidden');
-            } else {
-                this.newRecordForm.setAttribute('hidden', true);
-            }
-        }
-
-        toggleRecordsList(visible) {
-            if (visible) {
-                this.indexPage.container.removeAttribute('hidden');
-            } else {
-                this.indexPage.container.setAttribute('hidden', true);
-            }
         }
 
         bind() {
             $('#butAddRecord').on('click', function(e) {
-                this.toggleRecordsList(false);
-                this.toggleNewRecordForm(true);
-                // TODO
+                this.indexPage.toggle(false);
+                this.newRecordForm.toggle(true);
             }.bind(this));
 
             this.auth.onSuccess(function() {
                 this.onAuthSuccess();
             }.bind(this));
-
         }
 
         onAuthSuccess() {
