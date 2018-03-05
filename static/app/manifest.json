@@ -1,6 +1,6 @@
 {
-  "name": "Home Budget",
-  "short_name": "Home Budget",
+  "name": "Octo Budget",
+  "short_name": "Octo Budget",
   "icons": [{
       "src": "/static/img/octo.png",
       "sizes": "128x128",
