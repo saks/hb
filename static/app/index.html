@@ -21,7 +21,7 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-              <a class="nav-link" href="/static/app/add.html">Add</a>
+              <a class="nav-link" id="butAddRecord" href="#">Add</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" id="butSignIn" data-toggle="modal" data-target="#signInModal" href="#">Sign In</a>
@@ -32,15 +32,50 @@
     </header>
 
     <main class="container">
-      <div class="row justify-content-md-center">
-        <h2>Last Records</h2>
-      </div>
-      <div class="card record-item cardTemplate" hidden>
-        <div class="card-body">
-          <div class="amount"></div>
-          <div class="date"></div>
-          <div class="description"></div>
+      <div class="records-list">
+        <div class="row justify-content-md-center">
+          <h2>Last Records</h2>
         </div>
+        <div class="card record-item bd-callout cardTemplate" hidden>
+          <div class="card-body">
+            <div>
+              <h4>
+                <span class="amount font-weight-bold"></span>
+                <span class="badge badge-light currency"></span>
+              </h4>
+              <!-- <span class="currency text&#45;muted"></span> -->
+            </div>
+            <!-- <div class="amount"></div> -->
+            <div class="date"></div>
+            <h5>
+              <span class="tags badge badge-info"></span>
+            </h5>
+            <!-- <div class="tags badge badge&#45;info"></div> -->
+          </div>
+        </div>
+      </div>
+      <div id="newRecordForm" hidden>
+        <div class="row justify-content-md-center">
+          <h2>Add New Record</h2>
+        </div>
+        <form>
+          <div class="form-group">
+            <label for="newRecordAmount" class="bmd-label-static">Amount</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="newRecordAmount">
+              <span class="input-group-btn">
+                <button id="butCalculateRecult" class="btn btn-default" type="button">
+                  calculate
+                </button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="bmd-label-static">Tags</label>
+            <div id="id_tags">
+            </div>
+          </div>
+        </form>
       </div>
     </main>
 
@@ -54,12 +89,17 @@
             </button>
           </div>
           <div class="modal-body">
+            <div id="nonFieldErrors" class="alert alert-danger" role="alert" hidden></div>
             <form>
               <div class="form-group">
-                <input id="username" type="text" placeholder="User" class="form-control">
+                <label for="username" class="bmd-label-floating">Username</label>
+                <input id="username" type="text" class="form-control" required>
+                <small id="usernameError" class="form-text text-danger"></small>
               </div>
               <div class="form-group">
-                <input id="password" type="password" placeholder="Password" class="form-control">
+                <label for="password" class="bmd-label-floating">Password</label>
+                <input id="password" type="password" class="form-control" required>
+                <small id="passwordError" class="form-text text-danger"></small>
               </div>
             </form>
           </div>

@@ -3,6 +3,106 @@
 
     const $$ = function(id) { return document.getElementById(id) };
 
+    class SignInForm {
+        constructor() {
+            this.dom = this.cacheDom();
+            this.bind();
+        }
+
+        cacheDom() {
+            const dom = {};
+
+            dom.username = $$('username');
+            dom.password = $$('password');
+
+            dom.errorMessages = {};
+            dom.errorMessages.username = $$('usernameError');
+            dom.errorMessages.password = $$('passwordError');
+            dom.errorMessages.non_field_errors = $$('nonFieldErrors');
+
+            return dom;
+        }
+
+        showErrors(response) {
+            const errorMessages = this.dom.errorMessages;
+
+            Object.keys(errorMessages).forEach(function(fieldName) {
+                const element = errorMessages[fieldName];
+                const errors = response[fieldName];
+
+                if (errors) {
+                    element.textContent = errors.join(';');
+                    element.removeAttribute('hidden');
+                } else {
+                    element.textContent = '';
+                    element.setAttribute('hidden', true);
+                }
+            })
+        }
+
+        showError(element, data) {
+            if (response.username) {
+                this.dom.usernameError.textContent = response.username.join(';');
+                this.dom.usernameError.removeAttribute('hidden');
+            } else {
+                this.dom.usernameError.textContent = '';
+                this.dom.usernameError.setAttribute('hidden', true);
+            }
+        }
+
+        bind() {
+            $('#butSubmitSignIn').on('click', async function() {
+                const tokenResponse = await fetch('/auth/jwt/create/', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        username: $$('username').value,
+                        password: $$('password').value,
+                    }),
+                    headers: {
+                        'user-agent': 'Home Budget PWA',
+                        'content-type': 'application/json',
+                    },
+                // });
+
+                // if (!tokenResponse.ok) {
+                //     const responseBody = await tokenResponse.json();
+                //     this.showErrors(responseBody);
+                // }
+                }).then(async function(response) {
+                    if (response.ok) {
+                        const data = await response.json();
+                        this.token = data.token;
+                        localStorage.setItem(Auth.STORAGE_KEY, this.token);
+                        if ('function' == typeof this.callback) {
+                            this.callback();
+                        }
+                    } else {
+                        const data = await response.json();
+                        console.log('failed to sign in:');
+                        console.log(data);
+                    }
+                // }.bind(this)).then(function() {
+
+                }.bind(this)).catch(async function(response) {
+                    const data = await response.json();
+                    console.log('failed to sign in:');
+                    console.log(data);
+                }.bind(this)).finally(function() {
+                    this.toggleDialog(false);
+                }.bind(this));
+            }.bind(this));
+
+            $('#butCancelSignIn').on('click', function() {
+                this.toggleDialog(false);
+            }.bind(this));
+
+            $('butSignIn').on('click', function() {
+                this.toggleDialog(true);
+            }.bind(this));
+
+        }
+    }
+
     class Auth {
         static authenticate(spinner, callback) {
             if (!this.instance) {
@@ -19,6 +119,7 @@
         constructor(spinner, callback) {
             this.callback = callback;
             this.spinner = spinner;
+            this.form = new SignInForm();
 
             this.dialogContainer = $$('signInDialogContainer');
             this.bind();
@@ -43,47 +144,17 @@
             }
         }
 
+        showError(text) {
+            const container = $$('signInError');
+            container.removeAttribute('hidden');
+            container.textContent = text;
+        }
+
+        hideError() {
+            $$('signInError').setAttribute('hidden', true);
+        }
+
         bind() {
-            $('#butSubmitSignIn').on('click', function() {
-                fetch('/auth/jwt/create/', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: $$('username').value,
-                        password: $$('password').value,
-                    }),
-                    headers: {
-                        'user-agent': 'Home Budget PWA',
-                        'content-type': 'application/json',
-                    },
-                }).then(async function(response) {
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.token = data.token;
-                        localStorage.setItem(Auth.STORAGE_KEY, this.token);
-                        if ('function' == typeof this.callback) {
-                            this.callback();
-                        }
-                    } else {
-                        const data = await response.json();
-                        console.log('failed to sign in:');
-                        console.log(data);
-                    }
-                }.bind(this)).catch(async function(response) {
-                    const data = await response.json();
-                    console.log('failed to sign in:');
-                    console.log(data);
-                }.bind(this)).finally(function() {
-                    this.toggleDialog(false);
-                }.bind(this));
-            }.bind(this));
-
-            $('#butCancelSignIn').on('click', function() {
-                this.toggleDialog(false);
-            }.bind(this));
-
-            $('butSignIn').on('click', function() {
-                this.toggleDialog(true);
-            }.bind(this));
         }
 
         static get STORAGE_KEY() {
@@ -113,7 +184,9 @@
     class IndexPage {
         constructor() {
             this.template = document.querySelector('.record-item.cardTemplate');
-            this.container = document.querySelector('main');
+            this.container = document.querySelector('.records-list');
+            this.newRecordForm = $$('newRecordForm');
+            this.bind();
         }
 
         async show() {
@@ -129,15 +202,45 @@
             return response.json();
         }
 
+        toggleNewRecordForm(visible) {
+            if (visible) {
+                this.newRecordForm.removeAttribute('hidden');
+            } else {
+                this.newRecordForm.setAttribute('hidden', true);
+            }
+        }
+
+        toggleRecordsList(visible) {
+            if (visible) {
+                this.container.removeAttribute('hidden');
+            } else {
+                this.container.setAttribute('hidden', true);
+            }
+        }
+
+        bind() {
+            $('#butAddRecord').on('click', function(e) {
+                this.toggleRecordsList(false);
+                this.toggleNewRecordForm(true);
+                // TODO
+            }.bind(this));
+        }
+
         drawCard(record) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
 
+            // card look
+            const suffix = record.transaction_type == 'EXP' ? 'warning' : 'success';
+            const extraClass = `bd-callout-${suffix}`;
+            card.classList.add(extraClass);
+
             // amount
-            const sign = record.transaction_type == 'EXP' ? '-' : '+';
             const amount = Number.parseFloat(record.amount.amount).toFixed(2);
-            const amountString = `${sign}${amount} ${record.amount.currency.code}`;
-            card.querySelector('.amount').textContent = amountString;
+            card.querySelector('.amount').textContent = amount;
+
+            // currency
+            card.querySelector('.currency').textContent = record.amount.currency.code;
 
             // date
             const offset = new Date().getTimezoneOffset() * 60 * 1000;
@@ -147,7 +250,7 @@
 
             // tags
             const tagsString = Object.values(record.tags).join(', ');
-            card.querySelector('.description').textContent = tagsString;
+            card.querySelector('.tags').textContent = tagsString;
 
             card.removeAttribute('hidden');
             this.container.appendChild(card);
@@ -174,7 +277,7 @@
         selectedCities: [],
         spinner: document.querySelector('.loader'),
         cardTemplate: document.querySelector('.cardTemplate'),
-        container: document.querySelector('.main'),
+        container: document.querySelector('.records-list'),
         addDialog: document.querySelector('.dialog-container'),
         daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
     };
@@ -268,7 +371,7 @@
     //     }
     //     cardLastUpdatedElem.textContent = data.created;
     //
-    //     card.querySelector('.description').textContent = current.text;
+    //     card.querySelector('.tags').textContent = current.text;
     //     card.querySelector('.date').textContent = current.date;
     //     card.querySelector('.current .icon').classList.add(app.getIconClass(current.code));
     //     card.querySelector('.current .temperature .value').textContent =

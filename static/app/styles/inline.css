@@ -95,3 +95,18 @@ body {
 .card.record-item {
   margin: 10px 0 10px 0;
 }
+
+/*-----------------------------*/
+.bd-callout {
+  border:1px solid #eee !important;
+  border-left-width:.25rem !important;
+  border-radius:.25rem !important;
+}
+
+.bd-callout-warning {
+  border-left-color: #f0ad4e !important;
+}
+
+.bd-callout-success {
+  border-left-color: #4caf50 !important;
+}
