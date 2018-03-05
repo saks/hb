@@ -118,27 +118,17 @@
     }
 
     class Auth {
-        constructor() {
+        constructor(form) {
             this.callbacks = [];
 
-            this.form = new SignInForm();
+            this.form = form;
             this.form.onSuccess(function() {
                 this.notifySuccess();
             }.bind(this));
-
-
-            this.dialogContainer = $$('signInDialogContainer');
-            this.bind();
         }
 
         get isSignedIn() {
             return Auth.token && Auth.profile && Auth.profile.tags
-        }
-
-        bind() {
-            $('butSignIn').on('click', function() {
-                this.form.toggle(true);
-            }.bind(this));
         }
 
         showError(text) {
@@ -311,21 +301,39 @@
 
     class App {
         constructor() {
+            this.signInForm = new SignInForm();
+            this.auth = new Auth(this.signInForm);
+
             this.indexPage = new IndexPage();
-            this.auth = new Auth();
             this.newRecordForm = new NewRecordForm();
             this.bind();
         }
 
         bind() {
+            $('#butSignIn').on('click', function() {
+                this.signInForm.toggle(true);
+                this.closeDropwer();
+            }.bind(this));
+
             $('#butAddRecord').on('click', function(e) {
                 this.indexPage.toggle(false);
                 this.newRecordForm.toggle(true);
+                this.closeDropwer();
+            }.bind(this));
+
+            $('#butLastRecords').on('click', function(e) {
+                this.indexPage.toggle(true);
+                this.newRecordForm.toggle(false);
+                this.closeDropwer();
             }.bind(this));
 
             this.auth.onSuccess(function() {
                 this.onAuthSuccess();
             }.bind(this));
+        }
+
+        closeDropwer() {
+            $('#dw-s2').data('bmd.drawer').toggle();
         }
 
         onAuthSuccess() {
