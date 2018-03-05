@@ -201,46 +201,62 @@
 
     class IndexPage {
         constructor() {
+            this.initCurrentPage();
             this.template = document.querySelector('.record-item.cardTemplate');
             this.container = document.querySelector('.records-list');
-            this.newRecordForm = $$('newRecordForm');
+            this.cards = $$('cards');
             this.bind();
         }
 
+        initCurrentPage() {
+            if (Number.isNaN(this.currentPage)) {
+                this.currentPage = 1;
+            }
+        }
+
+        get currentPage() {
+            return parseInt(localStorage.getItem('CURRENT_PAGE'), 10);
+        }
+
+        set currentPage(n) {
+            localStorage.setItem('CURRENT_PAGE', n);
+        }
+
         async show() {
-            const records = await this.getData();
+            const records = await this.getPage();
+
+            if (undefined === records.results) {
+                return false;
+            } else {
+                this.cards.innerHTML = '';
+            }
+
             records.results.forEach(function(record) {
                 this.drawCard(record);
             }.bind(this));
+
+            return true;
         }
 
-        async getData() {
-            const url = '/api/records/record-detail/';
+        async getPage() {
+            const url = `/api/records/record-detail/?page=${this.currentPage}`;
             const response = await Auth.fetch(url);
             return response.json();
         }
 
-        toggleNewRecordForm(visible) {
-            if (visible) {
-                this.newRecordForm.removeAttribute('hidden');
-            } else {
-                this.newRecordForm.setAttribute('hidden', true);
-            }
-        }
-
-        toggleRecordsList(visible) {
-            if (visible) {
-                this.container.removeAttribute('hidden');
-            } else {
-                this.container.setAttribute('hidden', true);
-            }
-        }
-
         bind() {
-            $('#butAddRecord').on('click', function(e) {
-                this.toggleRecordsList(false);
-                this.toggleNewRecordForm(true);
-                // TODO
+            $('#nextRecordsPageLink').on('click', async function(e) {
+                e.preventDefault();
+                this.currentPage++;
+                const success = await this.show();
+                if (!success) { this.currentPage--; }
+            }.bind(this));
+
+            $('#prevRecordsPageLink').on('click', async function(e) {
+                e.preventDefault();
+                this.currentPage--;
+                const success = await this.show();
+                if (!success) { this.currentPage++; }
             }.bind(this));
         }
 
@@ -271,18 +287,60 @@
             card.querySelector('.tags').textContent = tagsString;
 
             card.removeAttribute('hidden');
-            this.container.appendChild(card);
-            // app.visibleCards[data.key] = card;
+            this.cards.appendChild(card);
+        }
+    }
+
+    class App {
+        constructor() {
+            this.indexPage = new IndexPage();
+            this.auth = new Auth();
+            this.newRecordForm = $$('newRecordForm');
+            this.bind();
+        }
+
+        toggleNewRecordForm(visible) {
+            if (visible) {
+                this.newRecordForm.removeAttribute('hidden');
+            } else {
+                this.newRecordForm.setAttribute('hidden', true);
+            }
+        }
+
+        toggleRecordsList(visible) {
+            if (visible) {
+                this.indexPage.container.removeAttribute('hidden');
+            } else {
+                this.indexPage.container.setAttribute('hidden', true);
+            }
+        }
+
+        bind() {
+            $('#butAddRecord').on('click', function(e) {
+                this.toggleRecordsList(false);
+                this.toggleNewRecordForm(true);
+                // TODO
+            }.bind(this));
+
+            this.auth.onSuccess(function() {
+                this.onAuthSuccess();
+            }.bind(this));
+
+        }
+
+        onAuthSuccess() {
+            this.indexPage.show();
+        }
+
+        run() {
+            this.auth.run();
         }
     }
 
     /* PAGE INITIALIZATION */
-    const indexPage = new IndexPage();
-    const auth = new Auth();
-    auth.onSuccess(function() {
-        indexPage.show();
-    });
-    auth.run();
+
+    const app = new App();
+    app.run();
 
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
