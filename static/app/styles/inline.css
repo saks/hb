@@ -110,3 +110,16 @@ body {
 .bd-callout-success {
   border-left-color: #4caf50 !important;
 }
+
+#tagsContainer {
+  max-height: 140px;
+  overflow: auto;
+}
+
+#tagsContainer input {
+  display: none;
+}
+
+#tagsContainer div.btn {
+  margin: 2px;
+}

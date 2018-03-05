@@ -296,6 +296,55 @@
         constructor() {
             super();
             this.container = $$('newRecordForm');
+            this.template = document.querySelector('.tag-template');
+            this.tagsContainer = $$('tagsContainer');
+            this.setup();
+            this.bind();
+        }
+
+        bind() {
+            $(this.tagsContainer).on('click', 'div.btn', function(e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+
+                // ignore clicks on label
+                if (undefined === e.target.value) { return; }
+                $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
+            });
+
+            $('#newRecordFormForm').on('submit', function(e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+                debugger
+            });
+        }
+
+        setup() {
+            const tagsContainer = this.tagsContainer;
+            const tags = Auth.profile.tags;
+            const template = this.template;
+
+            Object.keys(tags).forEach(function(id) {
+                const name = tags[id];
+                const domId = `id_tags_${id}`;
+
+                const tag = template.cloneNode(true);
+                tag.classList.remove('tag-template');
+
+                const label = tag.querySelector('label');
+                label.setAttribute('for', domId);
+                const text = document.createTextNode(name);
+                label.appendChild(text);
+
+                const input = tag.querySelector('input');
+                input.setAttribute('id', domId);
+                input.value = id;
+
+                tag.removeAttribute('hidden');
+
+                tagsContainer.appendChild(tag);
+            });
+            // debugger
         }
     }
 

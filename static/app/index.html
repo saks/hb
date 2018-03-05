@@ -37,66 +37,88 @@
         </ul>
       </div>
       <main class="bmd-layout-content">
-      <div class="container">
-        <!-- start of records list -->
-        <div class="records-list">
-          <div class="row justify-content-center">
-            <h2>Last Records</h2>
-          </div>
-          <div class="card record-item bd-callout cardTemplate" hidden>
-            <div class="card-body">
-              <div>
-                <h4>
-                  <span class="amount font-weight-bold"></span>
-                  <span class="badge badge-light currency"></span>
-                </h4>
+        <div class="container">
+          <!-- start of records list -->
+          <div class="records-list">
+            <div class="row justify-content-center">
+              <h2>Last Records</h2>
+            </div>
+            <div class="card record-item bd-callout cardTemplate" hidden>
+              <div class="card-body">
+                <div>
+                  <h4>
+                    <span class="amount font-weight-bold"></span>
+                    <span class="badge badge-light currency"></span>
+                  </h4>
+                </div>
+                <div class="date"></div>
+                <h5><span class="tags badge badge-info"></span></h5>
               </div>
-              <div class="date"></div>
-              <h5><span class="tags badge badge-info"></span></h5>
+            </div>
+            <div id="cards"></div>
+            <div class="container">
+              <nav aria-label="pagination">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item">
+                    <a class="page-link" id="prevRecordsPageLink" href="#" tabindex="-1">Previous</a>
+                  </li>
+                  <li class="page-item">
+                    <a class="page-link" id="nextRecordsPageLink" href="#">Next</a>
+                  </li>
+                </ul>
+              </nav>
             </div>
           </div>
-          <div id="cards"></div>
-          <div class="container">
-            <nav aria-label="pagination">
-              <ul class="pagination justify-content-center">
-                <li class="page-item">
-                  <a class="page-link" id="prevRecordsPageLink" href="#" tabindex="-1">Previous</a>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" id="nextRecordsPageLink" href="#">Next</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-        </div>
-        <!-- end of records list -->
+          <!-- end of records list -->
 
-        <!-- start of new record form -->
-        <div id="newRecordForm" hidden>
-          <div class="row justify-content-md-center">
-            <h2>Add New Record</h2>
+          <!-- start of new record form -->
+          <div id="newRecordForm" hidden>
+            <div class="row justify-content-center">
+              <h2>Add New Record</h2>
+            </div>
+            <form id="newRecordFormForm">
+              <div class="form-group">
+                <label for="newRecordAmount" class="bmd-label-static">Amount</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="newRecordAmount">
+                  <span class="input-group-btn">
+                    <button id="butCalculateRecult" class="btn btn-default" type="button">
+                      calculate
+                    </button>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
+                <div class="btn btn-outline-info tag-template" hidden>
+                  <label for="">
+                    <input name="tags" value="" id="" type="checkbox">
+                  </label>
+                </div>
+
+                <label class="bmd-label-static">Tags</label>
+                <div id="tagsContainer"></div>
+              </div>
+              <div class="form-group">
+                <label for="newRecordTransactionType" class="bmd-label-static">Transaction type</label>
+                <div class="input-group">
+                  <select name="transaction_type" class="form-control" id="newRecordTransactionType">
+                    <option value="EXP">Expences</option>
+                    <option value="INC">Income</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <button type="submit" class="btn btn-success btn-default">
+                  Save
+                </button>
+                <button name="_addanother" type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-plus"></span> Save and add another
+                </button>
+              </div>
+            </form>
           </div>
-          <form>
-            <div class="form-group">
-              <label for="newRecordAmount" class="bmd-label-static">Amount</label>
-              <div class="input-group">
-                <input type="text" class="form-control" id="newRecordAmount">
-                <span class="input-group-btn">
-                  <button id="butCalculateRecult" class="btn btn-default" type="button">
-                    calculate
-                  </button>
-                </span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="bmd-label-static">Tags</label>
-              <div id="id_tags">
-              </div>
-            </div>
-          </form>
+          <!-- end of new record form -->
         </div>
-        <!-- end of new record form -->
-      </div>
       </main>
     </div>
 
