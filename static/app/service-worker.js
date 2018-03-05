@@ -1,21 +1,10 @@
-var cacheName = 'weatherPWA-step-6-1';
+var cacheName = 'home-budget-0.0.1';
 var filesToCache = [
     '/static/app/index.html',
     '/static/app/scripts/app.js',
     '/static/app/styles/inline.css',
-    '/static/app/images/clear.png',
-    '/static/app/images/cloudy-scattered-showers.png',
-    '/static/app/images/cloudy.png',
-    '/static/app/images/fog.png',
     '/static/app/images/ic_add_white_24px.svg',
     '/static/app/images/ic_refresh_white_24px.svg',
-    '/static/app/images/partly-cloudy.png',
-    '/static/app/images/rain.png',
-    '/static/app/images/scattered-showers.png',
-    '/static/app/images/sleet.png',
-    '/static/app/images/snow.png',
-    '/static/app/images/thunderstorm.png',
-    '/static/app/images/wind.png'
 ];
 
 self.addEventListener('install', function(e) {
