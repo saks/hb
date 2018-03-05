@@ -1,6 +1,8 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
+
+from djmoney.money import Money
+
 from .serializers import RecordSerializer
 from .models import Record
 
@@ -8,10 +10,21 @@ from .models import Record
 class RecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    queryset = Record.objects.all()
+    queryset = Record.objects.order_by('-created_at').all()
 
     def get_queryset(self):
-        return Record.objects.filter(user=self.request.user)
+        return Record.objects \
+                     .filter(user=self.request.user) \
+                     .order_by('-created_at')
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        '''
+        {"transaction_type": "EXP", "tags":["books"], "amount":{"amount": 15, "currency": "CAD"}}
+        '''
+        amount = self.request.data.get('amount')
+        tags = self.request.data.get('tags')
+        if 'amount' in amount.keys() and 'currency' in amount.keys():
+            amount = Money(amount['amount'], amount['currency'])
+        obj = serializer.save(user=self.request.user, amount=amount)
+        obj.set_tags(tags)
+        obj.save()

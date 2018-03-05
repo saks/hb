@@ -62,6 +62,14 @@ class Record(models.Model):
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
+    def set_tags(self, tags):
+        self.tags._value = 0
+        for tag in tags:
+            try:
+                setattr(self.tags, tag, True)
+            except AttributeError:
+                pass
+
     @property
     def redis_tags_key(self):
         '''
