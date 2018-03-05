@@ -8,37 +8,79 @@
     <title>Octo Budget</title>
     <link rel="stylesheet" type="text/css" href="styles/inline.css">
     <link rel="manifest" href="/static/app/manifest.json">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
   </head>
   <body>
 
-    <header class="header">
-      <h1 class="header__title">Octo Budget</h1>
-      <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
-      <button id="butAdd" class="headerButton" aria-label="Add"></button>
-      <button id="butSignIn" class="headerButton" aria-label="Login"></button>
+    <header>
+      <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="/static/app/index.html">Octo Budget</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="/static/app/add.html">Add</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="butSignIn" data-toggle="modal" data-target="#signInModal" href="#">Sign In</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
     </header>
 
-    <main class="main">
-    <div class="card record-item cardTemplate" hidden>
-      <div class="location"></div>
-      <div class="date"></div>
-      <div class="description"></div>
-    </div>
+    <main class="container">
+      <div class="card record-item cardTemplate" hidden>
+        <div class="card-body">
+          <div class="amount"></div>
+          <div class="date"></div>
+          <div class="description"></div>
+        </div>
+      </div>
     </main>
 
-    <div id="signInDialogContainer" class="dialog-container">
-      <div class="dialog">
-        <div class="dialog-title">Sign In</div>
-        <div class="dialog-body">
-          <p><input id="username" type="text" placeholder="User"></input></p>
-          <p><input id="password" type="password" placeholder="Password"></input></p>
-        </div>
-        <div class="dialog-buttons">
-          <button id="butSubmitSignIn" class="button">Submit</button>
-          <button id="butCancelSignIn" class="button">Cancel</button>
+    <div class="modal" id="signInModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Sign In</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form>
+              <div class="form-group">
+                <input id="username" type="text" placeholder="User" class="form-control">
+              </div>
+              <div class="form-group">
+                <input id="password" type="password" placeholder="Password" class="form-control">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="butSubmitSignIn" class="btn btn-primary">Submit</button>
+            <button type="button" id="butCancelSignIn" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- <div id="signInDialogContainer" class="dialog&#45;container"> -->
+    <!--   <div class="dialog"> -->
+    <!--     <div class="dialog&#45;title">Sign In</div> -->
+    <!--     <div class="dialog&#45;body"> -->
+    <!--       <p><input id="username" type="text" placeholder="User"></input></p> -->
+    <!--       <p><input id="password" type="password" placeholder="Password"></input></p> -->
+    <!--     </div> -->
+    <!--     <div class="dialog&#45;buttons"> -->
+    <!--       <button id="butSubmitSignIn" class="button">Submit</button> -->
+    <!--       <button id="butCancelSignIn" class="button">Cancel</button> -->
+    <!--     </div> -->
+    <!--   </div> -->
+    <!-- </div> -->
 
     <div class="loader">
       <!-- <svg viewBox="0 0 32 32" width="32" height="32"> -->
@@ -46,6 +88,9 @@
       <!-- </svg> -->
     </div>
 
-    <script src="scripts/app.js" async></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>    <script src="scripts/app.js" async></script>
   </body>
 </html>

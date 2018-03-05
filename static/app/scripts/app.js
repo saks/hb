@@ -1,7 +1,7 @@
 (function() {
     'use strict';
 
-    const $ = function(id) { return document.getElementById(id) };
+    const $$ = function(id) { return document.getElementById(id) };
 
     class Auth {
         static authenticate(spinner, callback) {
@@ -20,7 +20,7 @@
             this.callback = callback;
             this.spinner = spinner;
 
-            this.dialogContainer = $('signInDialogContainer');
+            this.dialogContainer = $$('signInDialogContainer');
             this.bind();
 
             this.token = localStorage.getItem(Auth.STORAGE_KEY);
@@ -35,23 +35,21 @@
         }
 
         toggleDialog(visible) {
-            const classList = this.dialogContainer.classList;
-
             if (visible) {
                 this.spinner.hide();
-                classList.add('dialog-container--visible');
+                $('#signInModal').modal('show');
             } else {
-                classList.remove('dialog-container--visible');
+                $('#signInModal').modal('hide');
             }
         }
 
         bind() {
-            $('butSubmitSignIn').addEventListener('click', function() {
+            $('#butSubmitSignIn').on('click', function() {
                 fetch('/auth/jwt/create/', {
                     method: 'POST',
                     body: JSON.stringify({
-                        username: $('username').value,
-                        password: $('password').value,
+                        username: $$('username').value,
+                        password: $$('password').value,
                     }),
                     headers: {
                         'user-agent': 'Home Budget PWA',
@@ -79,11 +77,11 @@
                 }.bind(this));
             }.bind(this));
 
-            $('butCancelSignIn').addEventListener('click', function() {
+            $('#butCancelSignIn').on('click', function() {
                 this.toggleDialog(false);
             }.bind(this));
 
-            $('butSignIn').addEventListener('click', function() {
+            $('butSignIn').on('click', function() {
                 this.toggleDialog(true);
             }.bind(this));
         }
@@ -134,7 +132,7 @@
         drawCard(record) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
-            card.querySelector('.location').textContent = `CAD -${record.amount}`;
+            card.querySelector('.amount').textContent = `CAD -${record.amount}`;
             card.querySelector('.date').textContent = record.created_at;
             card.querySelector('.description').textContent = record.tags;
             card.removeAttribute('hidden');
@@ -174,15 +172,15 @@
      *
      ****************************************************************************/
 
-    document.getElementById('butRefresh').addEventListener('click', function() {
-        // Refresh all of the forecasts
-        app.updateForecasts();
-    });
-
-    document.getElementById('butAdd').addEventListener('click', function() {
-        // Open/show the add new city dialog
-        app.toggleAddDialog(true);
-    });
+    // document.getElementById('butRefresh').addEventListener('click', function() {
+    //     // Refresh all of the forecasts
+    //     app.updateForecasts();
+    // });
+    //
+    // document.getElementById('butAdd').addEventListener('click', function() {
+    //     // Open/show the add new city dialog
+    //     app.toggleAddDialog(true);
+    // });
 
     // document.getElementById('butAddCity').addEventListener('click', function() {
     //     // Add the newly selected city
