@@ -1,4 +1,4 @@
-var cacheName = 'home-budget-0.0.1';
+var cacheName = 'home-budget-0.0.2';
 var filesToCache = [
     '/static/app/index.html',
     '/static/app/scripts/app.js',
