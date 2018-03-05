@@ -132,9 +132,22 @@
         drawCard(record) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
-            card.querySelector('.amount').textContent = `CAD -${record.amount}`;
-            card.querySelector('.date').textContent = record.created_at;
-            card.querySelector('.description').textContent = record.tags;
+
+            // amount
+            const sign = record.transaction_type == 'EXP' ? '-' : '+';
+            const amount = Number.parseFloat(record.amount.amount).toFixed(2);
+            const amountString = `${sign}${amount} ${record.amount.currency.code}`;
+            card.querySelector('.amount').textContent = amountString;
+
+            // date
+            const date = new Date(record.created_at * 1000);
+            const dateString = `${date.toTimeString().slice(0, 8)} - ${date.toDateString()}`;
+            card.querySelector('.date').textContent = dateString;
+
+            // tags
+            const tagsString = Object.values(record.tags).join(', ');
+            card.querySelector('.description').textContent = tagsString;
+
             card.removeAttribute('hidden');
             this.container.appendChild(card);
             // app.visibleCards[data.key] = card;
