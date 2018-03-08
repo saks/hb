@@ -21,7 +21,12 @@
           </button>
           <ul class="nav navbar-nav">
             <li class="nav-item">
-              <a class="navbar-brand" href="/static/app/index.html">Octo Budget</a>
+              <a class="btn btn-primary" id="butAddRecord" href="#">
+                <i class="material-icons">add box</i>
+              </a>
+              <a class="btn btn-primary" id="butLastRecords" href="#">
+                <i class="material-icons">view list</i>
+              </a>
             </li>
           </ul>
         </div>
@@ -32,7 +37,6 @@
         </header>
         <ul class="list-group">
           <a class="list-group-item" id="butLastRecords" href="#">Last Records</a>
-          <a class="list-group-item" id="butAddRecord" href="#">Add</a>
           <a class="list-group-item" id="butSignIn" data-toggle="modal" href="#">Sign In</a>
         </ul>
       </div>
@@ -107,15 +111,15 @@
                   </select>
                 </div>
               </div>
-              <div class="form-group">
-                <button type="submit" class="btn btn-success btn-default">
-                  Save
-                </button>
-                <button name="_addanother" type="submit" class="btn btn-default">
-                  <span class="glyphicon glyphicon-plus"></span> Save and add another
-                </button>
-              </div>
             </form>
+            <div class="form-group">
+              <button class="btn btn-success btn-default" id="newRecordSubmit">
+                Save
+              </button>
+              <button name="_addanother" class="btn btn-default">
+                <span class="glyphicon glyphicon-plus"></span> Save and add another
+              </button>
+            </div>
           </div>
           <!-- end of new record form -->
         </div>

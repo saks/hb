@@ -5,6 +5,7 @@
 
     const SIGN_IN_CHANNEL = Symbol.for('sign-in');
     const START_CHANNEL = Symbol.for('start');
+    const NEW_RECORD_CHANNEL = Symbol.for('new-record');
 
     class Bus {
         constructor() {
@@ -17,9 +18,9 @@
             this.callbacks[channelName] = callbacks;
         }
 
-        notify(channelName) {
+        notify(channelName, payload={}) {
             this.callbacks[channelName].forEach(function(callback) {
-                callback();
+                callback(payload);
             });
         }
     }
@@ -101,8 +102,8 @@
                         password: $$('password').value,
                     }),
                     headers: {
-                        'user-agent': 'Home Budget PWA',
-                        'content-type': 'application/json',
+                        'User-Agent': 'Home Budget PWA',
+                        'Content-Type': 'application/json',
                     },
                 });
 
@@ -214,8 +215,12 @@
 
         static async fetch(url, options={}) {
             const token = localStorage.getItem(Auth.TOKEN_KEY);
+
             if (!options.headers) { options.headers = {}; }
             options.headers.Authorization = `JWT ${token}`;
+            options.headers['User-Agent'] = 'Home Budget PWA';
+            options.headers['Content-Type'] = 'application/json';
+
             const result = await fetch(url, options);
 
             if (!result.ok && result.status === 401) {
@@ -295,9 +300,14 @@
             BUS.subscribe(SIGN_IN_CHANNEL, function() {
                 this.show();
             }.bind(this));
+
+            BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
+                this.drawCard(record, false);
+                this.cards.lastElementChild.remove();
+            }.bind(this));
         }
 
-        drawCard(record) {
+        drawCard(record, append=true) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
 
@@ -324,7 +334,11 @@
             card.querySelector('.tags').textContent = tagsString;
 
             card.removeAttribute('hidden');
-            this.cards.appendChild(card);
+            if (append) {
+                this.cards.appendChild(card);
+            } else {
+                this.cards.prepend(card);
+            }
         }
     }
 
@@ -347,10 +361,38 @@
                 $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
             });
 
-            $('#newRecordFormForm').on('submit', function(e) {
+            $('#newRecordSubmit').on('click', async function(e) {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
+
+                const data = {
+                    amount: {
+                        amount: $('#newRecordAmount').val(),
+                        currency: 'CAD',
+                    },
+                    tags: {},
+                    transaction_type: $('#newRecordTransactionType').val(),
+                };
+
+                $('#tagsContainer input:checked').each(function(i, input) {
+                    const description = input.labels[0].textContent.trim();
+                    data.tags[input.value] = description;
+                });
+
+                const res = await Auth.fetch('/api/records/record-detail/', {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                });
+
+                if (res.ok) {
+                    const record = await res.json();
+                    BUS.notify(NEW_RECORD_CHANNEL, record);
+                }
             });
+
+            BUS.subscribe(SIGN_IN_CHANNEL, function() {
+                this.setup();
+            }.bind(this));
         }
 
         setup() {
@@ -401,13 +443,16 @@
             $('#butAddRecord').on('click', function(e) {
                 this.indexPage.toggle(false);
                 this.newRecordForm.toggle(true);
-                this.closeDropwer();
             }.bind(this));
 
             $('#butLastRecords').on('click', function(e) {
                 this.indexPage.toggle(true);
                 this.newRecordForm.toggle(false);
-                this.closeDropwer();
+            }.bind(this));
+
+            BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
+                this.indexPage.toggle(true);
+                this.newRecordForm.toggle(false);
             }.bind(this));
         }
 
