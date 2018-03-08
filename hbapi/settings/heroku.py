@@ -21,3 +21,7 @@ REDIS_CONN = redis.Redis(connection_pool=REDIS_POOL)
 
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+}
