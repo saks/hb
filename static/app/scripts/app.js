@@ -3,6 +3,31 @@
 
     const $$ = function(id) { return document.getElementById(id) };
 
+    const SIGN_IN_CHANNEL = Symbol.for('sign-in');
+    const START_CHANNEL = Symbol.for('start');
+
+    class Bus {
+        constructor() {
+            this.callbacks = {};
+        }
+
+        subscribe(channelName, callback) {
+            const callbacks = this.callbacks[channelName] || [];
+            callbacks.push(callback);
+            this.callbacks[channelName] = callbacks;
+        }
+
+        notify(channelName) {
+            this.callbacks[channelName].forEach(function(callback) {
+                callback();
+            });
+        }
+    }
+
+    const BUS = new Bus();
+
+    window.BUS = BUS;
+
     class Widget {
         toggle(visible) {
             if (visible) {
@@ -38,6 +63,11 @@
 
         toggle(visible) {
             if (visible) {
+                // hide errors
+                $('.sign-in-error').text('');
+                $$('nonFieldErrors').setAttribute('hidden', true);
+
+                // show popup
                 this.dom.$modal.modal('show');
                 this.dom.username.focus();
             } else {
@@ -84,46 +114,37 @@
 
                 const tokenData = await tokenResponse.json();
                 Auth.token = tokenData.token;
-                const tokenPayload = Auth.parsedToken;
 
-                const profileResponse = await Auth.fetch(`/api/user/${tokenPayload.user_id}/`);
-
-                if (!profileResponse.ok) {
+                const success = await Auth.fetchProfile();
+                if (!success) {
                     this.showErrors({ non_field_errors: ['Failed to load profile.'] });
                     return;
                 }
 
-                Auth.profile = await profileResponse.json();
                 this.toggle(false);
-
-                this.notifySuccess();
+                BUS.notify(SIGN_IN_CHANNEL);
             }.bind(this));
 
             $('#butCancelSignIn').on('click', function() {
                 this.toggle(false);
             }.bind(this));
         }
-
-        onSuccess(callback) {
-            if ('function' === typeof callback) {
-                this.callbacks.push(callback);
-            }
-        }
-
-        notifySuccess() {
-            this.callbacks.forEach(function(callback) {
-                callback();
-            });
-        }
     }
 
     class Auth {
         constructor(form) {
-            this.callbacks = [];
-
             this.form = form;
-            this.form.onSuccess(function() {
-                this.notifySuccess();
+            this.bind();
+            Auth.instance = this;
+        }
+
+        bind() {
+            BUS.subscribe(START_CHANNEL, function() {
+                if (this.isSignedIn) {
+                    BUS.notify(SIGN_IN_CHANNEL);
+                } else {
+                    this.form.toggle(true);
+                }
             }.bind(this));
         }
 
@@ -131,34 +152,17 @@
             return Auth.token && Auth.profile && Auth.profile.tags
         }
 
-        showError(text) {
-            const container = $$('signInError');
-            container.removeAttribute('hidden');
-            container.textContent = text;
-        }
+        static async fetchProfile() {
+            const tokenPayload = this.parsedToken;
 
-        hideError() {
-            $$('signInError').setAttribute('hidden', true);
-        }
+            const profileResponse = await this.fetch(`/api/user/${tokenPayload.user_id}/`);
 
-        onSuccess(callback) {
-            if ('function' === typeof callback) {
-                this.callbacks.push(callback);
+            if (!profileResponse.ok) {
+                return false;
             }
-        }
 
-        notifySuccess() {
-            this.callbacks.forEach(function(callback) {
-                callback();
-            });
-        }
-
-        run() {
-            if (this.isSignedIn) {
-                this.notifySuccess();
-            } else {
-                this.form.toggle(true);
-            }
+            this.profile = await profileResponse.json();
+            return true;
         }
 
         static get parsedToken() {
@@ -192,10 +196,38 @@
             return 'PROFILE'
         }
 
-        static fetch(url, options={ headers: {} }) {
+        static async refresh() {
+            const response = await fetch('/auth/jwt/refresh/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: this.token }),
+            });
+
+            if (!response.ok && 400 === response.status) {
+                this.token = null;
+                this.profile = null;
+                this.instance.form.toggle(true);
+            } else {
+                debugger
+            }
+        }
+
+        static async fetch(url, options={}) {
             const token = localStorage.getItem(Auth.TOKEN_KEY);
+            if (!options.headers) { options.headers = {}; }
             options.headers.Authorization = `JWT ${token}`;
-            return fetch(url, options);
+            const result = await fetch(url, options);
+
+            if (!result.ok && result.status === 401) {
+                await this.refresh();
+                if (this.instance.isSignedIn) {
+                    return this.fetch(url, options);
+                } else {
+                    this.instance.form.toggle(true);
+                }
+            }
+
+            return result
         }
     }
 
@@ -258,6 +290,10 @@
                 this.currentPage--;
                 const success = await this.show();
                 if (!success) { this.currentPage++; }
+            }.bind(this));
+
+            BUS.subscribe(SIGN_IN_CHANNEL, function() {
+                this.show();
             }.bind(this));
         }
 
@@ -373,23 +409,14 @@
                 this.newRecordForm.toggle(false);
                 this.closeDropwer();
             }.bind(this));
-
-            this.auth.onSuccess(function() {
-                this.onAuthSuccess();
-            }.bind(this));
         }
 
         closeDropwer() {
             $('#dw-s2').data('bmd.drawer').toggle();
         }
 
-        onAuthSuccess() {
-            this.indexPage.show();
-            this.newRecordForm.setup();
-        }
-
         run() {
-            this.auth.run();
+            BUS.notify(START_CHANNEL);
         }
     }
 
