@@ -374,6 +374,7 @@
             this.container = $$('newRecordForm');
 
             this.dom.amountField = $$('newRecordAmount');
+            this.dom.form = $$('newRecordFormForm');
 
             this.template = document.querySelector('.tag-template');
             this.tagsContainer = $$('tagsContainer');
@@ -437,16 +438,12 @@
         }
 
         reset() {
-            this.dom.amountField.value = '';
+            this.dom.form.reset();
 
             $('#tagsContainer .btn')
                 .addClass('btn-outline-info')
                 .removeClass('btn-outline-danger')
             ;
-
-            $('#tagsContainer input').map(function(i, input) {
-                input.checked = false
-            });
         }
 
         async addNewRecord() {
