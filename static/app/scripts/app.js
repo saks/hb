@@ -405,7 +405,7 @@
                 }
 
                 input.focus();
-            });
+            }.bind(this));
 
             $('#newRecordSubmit').on('click', async function(e) {
                 e.stopImmediatePropagation();
