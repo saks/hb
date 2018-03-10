@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-    <header class="navbar navbar-expand navbar-dark bg-primary mb-3">
+    <header class="navbar navbar-expand navbar-dark bg-primary mb-3 py-0">
       <a class="navbar-brand mr-auto text-white" href="/static/app/index.html">Octo Budget</a>
       <ul class="nav justify-content-end nav-tabs">
         <li class="nav-item">
@@ -44,14 +44,11 @@
         </div>
         <div class="card record-item bd-callout cardTemplate" hidden>
           <div class="card-body">
-            <div>
-              <h4>
-                <span class="amount font-weight-bold"></span>
-                <span class="badge badge-light currency"></span>
-              </h4>
-            </div>
-            <div class="date"></div>
-            <h5><span class="tags badge badge-info"></span></h5>
+            <h4 class="text-center">
+              <span class="amount font-weight-bold float-left"></span>
+              <small class="date"></small>
+              <span class="tags badge badge-info float-right"></span>
+            </h4>
           </div>
         </div>
         <div id="cards"></div>

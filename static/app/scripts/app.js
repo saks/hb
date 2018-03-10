@@ -1,5 +1,12 @@
 (function() {
     'use strict';
+    const DATETIME_FORMAT_OPTIONS = {
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    };
 
     const $$ = function(id) { return document.getElementById(id) };
 
@@ -331,13 +338,10 @@
             const amount = Number.parseFloat(record.amount.amount).toFixed(2);
             card.querySelector('.amount').textContent = amount;
 
-            // currency
-            card.querySelector('.currency').textContent = record.amount.currency.code;
-
             // date
             const offset = new Date().getTimezoneOffset() * 60 * 1000;
             const date = new Date(record.created_at * 1000 - offset);
-            const dateString = `${date.toTimeString().slice(0, 8)} - ${date.toDateString()}`;
+            const dateString = date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
             card.querySelector('.date').textContent = dateString;
 
             // tags
