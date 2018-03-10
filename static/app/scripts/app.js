@@ -37,6 +37,10 @@
     window.BUS = BUS;
 
     class Widget {
+        constructor() {
+            this.dom = {};
+        }
+
         toggle(visible) {
             if (visible) {
                 this.container.removeAttribute('hidden');
@@ -361,6 +365,9 @@
         constructor() {
             super();
             this.container = $$('newRecordForm');
+
+            this.dom.amountField = $$('newRecordAmount');
+
             this.template = document.querySelector('.tag-template');
             this.tagsContainer = $$('tagsContainer');
             this.bind();
@@ -376,13 +383,30 @@
                 $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
             });
 
+            $('#butCalculateResult').click(function() {
+                const input = this.dom.amountField;
+                let result;
+
+                try {
+                    result = Number.parseFloat(eval(input.value));
+                } catch (e) {
+                    input.value = '';
+                }
+
+                if (Number.isFinite(result)) {
+                    input.value = result.toFixed(2);
+                }
+
+                input.focus();
+            });
+
             $('#newRecordSubmit').on('click', async function(e) {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
 
                 const data = {
                     amount: {
-                        amount: $('#newRecordAmount').val(),
+                        amount: this.dom.amountField.value,
                         currency: 'CAD',
                     },
                     tags: {},
@@ -408,6 +432,11 @@
             BUS.subscribe(SIGN_IN_CHANNEL, function() {
                 this.setup();
             }.bind(this));
+        }
+
+        toggle(visible) {
+            super.toggle(visible);
+            if (visible) { this.dom.amountField.focus(); }
         }
 
         setup() {
@@ -459,13 +488,6 @@
                 this.indexPage.toggle(true);
                 this.newRecordForm.toggle(false);
             }.bind(this));
-
-            $('#butCalculateResult').click(function() {
-                const input = $$('newRecordAmount');
-                const result = Number.parseFloat(eval(input.value)).toFixed(2)
-                input.value = result;
-                input.focus();
-            });
 
             BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
                 this.indexPage.toggle(true);
