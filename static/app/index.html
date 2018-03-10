@@ -12,114 +12,106 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-    <div id="drawer" class="bmd-layout-container bmd-drawer-f-l bmd-drawer-overlay">
-      <header class="bmd-layout-header">
-        <div class="navbar navbar-light bg-faded">
-          <button class="navbar-toggler" type="button" data-toggle="drawer" data-target="#dw-s2">
-            <span class="sr-only">Toggle drawer</span>
-            <i class="material-icons">menu</i>
-          </button>
-          <a class="float-right" id="butAddRecord" href="#">
-            <i class="material-icons">add box</i>
+    <header class="navbar navbar-expand navbar-dark bg-primary mb-3">
+      <a class="navbar-brand mr-auto text-white" href="/static/app/index.html">Octo Budget</a>
+      <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link text-white" id="butAddRecord" href="#">
+            <svg height="24" class="octicon octicon-plus" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12 9H7v5H5V9H0V7h5V2h2v5h5z"></path>
+            </svg>
           </a>
-          <a class="float-right" id="butLastRecords" href="#">
-            <i class="material-icons">view list</i>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" id="butLastRecords" href="#">
+            <svg height="24" class="octicon octicon-list-unordered" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M2 13c0 .59 0 1-.59 1H.59C0 14 0 13.59 0 13c0-.59 0-1 .59-1h.81c.59 0 .59.41.59 1H2zm2.59-9h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1H4.59C4 2 4 2.41 4 3c0 .59 0 1 .59 1zM1.41 7H.59C0 7 0 7.41 0 8c0 .59 0 1 .59 1h.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm0-5H.59C0 2 0 2.41 0 3c0 .59 0 1 .59 1h.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm10 5H4.59C4 7 4 7.41 4 8c0 .59 0 1 .59 1h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm0 5H4.59C4 12 4 12.41 4 13c0 .59 0 1 .59 1h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01z"></path>
+            </svg>
           </a>
+        </li>
+      </ul>
+    </header>
+    <div class="container">
+      <!-- start of records list -->
+      <div class="records-list">
+        <div class="row justify-content-center">
+          <h2>Last Records</h2>
         </div>
-      </header>
-      <div id="dw-s2" class="bmd-layout-drawer bg-faded">
-        <header>
-          <a class="navbar-brand">Octo Budget</a>
-        </header>
-        <ul class="list-group">
-          <a class="list-group-item" id="butLastRecords" href="#">Last Records</a>
-          <a class="list-group-item" id="butSignIn" data-toggle="modal" href="#">Sign In</a>
-        </ul>
-      </div>
-      <main class="bmd-layout-content">
+        <div class="card record-item bd-callout cardTemplate" hidden>
+          <div class="card-body">
+            <div>
+              <h4>
+                <span class="amount font-weight-bold"></span>
+                <span class="badge badge-light currency"></span>
+              </h4>
+            </div>
+            <div class="date"></div>
+            <h5><span class="tags badge badge-info"></span></h5>
+          </div>
+        </div>
+        <div id="cards"></div>
         <div class="container">
-          <!-- start of records list -->
-          <div class="records-list">
-            <div class="row justify-content-center">
-              <h2>Last Records</h2>
-            </div>
-            <div class="card record-item bd-callout cardTemplate" hidden>
-              <div class="card-body">
-                <div>
-                  <h4>
-                    <span class="amount font-weight-bold"></span>
-                    <span class="badge badge-light currency"></span>
-                  </h4>
-                </div>
-                <div class="date"></div>
-                <h5><span class="tags badge badge-info"></span></h5>
-              </div>
-            </div>
-            <div id="cards"></div>
-            <div class="container">
-              <nav aria-label="pagination">
-                <ul class="pagination justify-content-center">
-                  <li class="page-item">
-                    <a class="page-link" id="prevRecordsPageLink" href="#" tabindex="-1">Previous</a>
-                  </li>
-                  <li class="page-item">
-                    <a class="page-link" id="nextRecordsPageLink" href="#">Next</a>
-                  </li>
-                </ul>
-              </nav>
-            </div>
-          </div>
-          <!-- end of records list -->
-
-          <!-- start of new record form -->
-          <div id="newRecordForm" hidden>
-            <div class="row justify-content-center">
-              <h2>Add New Record</h2>
-            </div>
-            <form id="newRecordFormForm">
-              <div class="form-group">
-                <label for="newRecordAmount" class="bmd-label-static">Amount</label>
-                <div class="input-group">
-                  <input type="tel" class="form-control" id="newRecordAmount">
-                  <span class="input-group-btn">
-                    <button id="butCalculateRecult" class="btn btn-default" type="button">
-                      calculate
-                    </button>
-                  </span>
-                </div>
-              </div>
-              <div class="form-group">
-                <div class="btn btn-outline-info tag-template" hidden>
-                  <label for="">
-                    <input name="tags" value="" id="" type="checkbox">
-                  </label>
-                </div>
-
-                <label class="bmd-label-static">Tags</label>
-                <div id="tagsContainer"></div>
-              </div>
-              <div class="form-group">
-                <label for="newRecordTransactionType" class="bmd-label-static">Transaction type</label>
-                <div class="input-group">
-                  <select name="transaction_type" class="form-control" id="newRecordTransactionType">
-                    <option value="EXP">Expences</option>
-                    <option value="INC">Income</option>
-                  </select>
-                </div>
-              </div>
-            </form>
-            <div class="form-group">
-              <button class="btn btn-success btn-default" id="newRecordSubmit">
-                Save
-              </button>
-              <button name="_addanother" class="btn btn-default">
-                <span class="glyphicon glyphicon-plus"></span> Save and add another
-              </button>
-            </div>
-          </div>
-          <!-- end of new record form -->
+          <nav aria-label="pagination">
+            <ul class="pagination justify-content-center">
+              <li class="page-item">
+                <a class="page-link" id="prevRecordsPageLink" href="#" tabindex="-1">Previous</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" id="nextRecordsPageLink" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
         </div>
-      </main>
+      </div>
+      <!-- end of records list -->
+
+      <!-- start of new record form -->
+      <div id="newRecordForm" hidden>
+        <div class="row justify-content-center">
+          <h2>Add New Record</h2>
+        </div>
+        <form id="newRecordFormForm">
+          <div class="form-group">
+            <label for="newRecordAmount" class="bmd-label-static">Amount</label>
+            <div class="input-group">
+              <input type="tel" class="form-control" id="newRecordAmount">
+              <span class="input-group-btn">
+                <button id="butCalculateResult" class="btn btn-default" type="button">
+                  calculate
+                </button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="btn btn-outline-info tag-template" hidden>
+              <label for="">
+                <input name="tags" value="" id="" type="checkbox">
+              </label>
+            </div>
+
+            <label class="bmd-label-static">Tags</label>
+            <div id="tagsContainer"></div>
+          </div>
+          <div class="form-group">
+            <label for="newRecordTransactionType" class="bmd-label-static">Transaction type</label>
+            <div class="input-group">
+              <select name="transaction_type" class="form-control" id="newRecordTransactionType">
+                <option value="EXP">Expences</option>
+                <option value="INC">Income</option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <div class="form-group">
+          <button class="btn btn-success btn-default" id="newRecordSubmit">
+            Save
+          </button>
+          <button class="btn btn-default">
+            Save and add another
+          </button>
+        </div>
+      </div>
+      <!-- end of new record form -->
     </div>
 
     <!-- start of sign in modal -->

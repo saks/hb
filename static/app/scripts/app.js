@@ -450,6 +450,15 @@
                 this.newRecordForm.toggle(false);
             }.bind(this));
 
+            $('#butCalculateResult').click(function() {
+                const $amount = $('#newRecordAmount');
+                const val = eval($amount.val());
+                // const result = Math.round(val * 100) / 100;
+                const result = Number.parseFloat(val).toFixed(2)
+                $amount.val(result);
+                $amount.focus();
+            });
+
             BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
                 this.indexPage.toggle(true);
                 this.newRecordForm.toggle(false);
