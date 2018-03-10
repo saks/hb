@@ -239,6 +239,7 @@
     class IndexPage extends Widget {
         constructor() {
             super();
+            this.currentPageNumberLabel = $$('currentPageNumberLabel');
             this.initCurrentPage();
             this.template = document.querySelector('.record-item.cardTemplate');
             this.container = document.querySelector('.records-list');
@@ -250,6 +251,7 @@
             if (Number.isNaN(this.currentPage)) {
                 this.currentPage = 1;
             }
+            this.updateCurrentPageLabel();
         }
 
         get currentPage() {
@@ -288,13 +290,18 @@
                 this.currentPage++;
                 const success = await this.show();
                 if (!success) { this.currentPage--; }
+                this.updateCurrentPageLabel();
             }.bind(this));
 
             $('#prevRecordsPageLink').on('click', async function(e) {
                 e.preventDefault();
+
+                if (1 === this.currentPage) { return; }
+
                 this.currentPage--;
                 const success = await this.show();
                 if (!success) { this.currentPage++; }
+                this.updateCurrentPageLabel();
             }.bind(this));
 
             BUS.subscribe(SIGN_IN_CHANNEL, function() {
@@ -305,6 +312,10 @@
                 this.drawCard(record, false);
                 this.cards.lastElementChild.remove();
             }.bind(this));
+        }
+
+        updateCurrentPageLabel() {
+            this.currentPageNumberLabel.innerText = this.currentPage;
         }
 
         drawCard(record, append=true) {
@@ -435,11 +446,6 @@
         }
 
         bind() {
-            $('#butSignIn').on('click', function() {
-                this.signInForm.toggle(true);
-                this.closeDropwer();
-            }.bind(this));
-
             $('#butAddRecord').on('click', function(e) {
                 this.indexPage.toggle(false);
                 this.newRecordForm.toggle(true);
@@ -451,22 +457,16 @@
             }.bind(this));
 
             $('#butCalculateResult').click(function() {
-                const $amount = $('#newRecordAmount');
-                const val = eval($amount.val());
-                // const result = Math.round(val * 100) / 100;
-                const result = Number.parseFloat(val).toFixed(2)
-                $amount.val(result);
-                $amount.focus();
+                const input = $$('newRecordAmount');
+                const result = Number.parseFloat(eval(input.value)).toFixed(2)
+                input.value = result;
+                input.focus();
             });
 
             BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
                 this.indexPage.toggle(true);
                 this.newRecordForm.toggle(false);
             }.bind(this));
-        }
-
-        closeDropwer() {
-            $('#dw-s2').data('bmd.drawer').toggle();
         }
 
         run() {
