@@ -17,7 +17,7 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Record
-        fields = ('user', 'tags', 'amount', 'transaction_type', 'created_at')
+        fields = ('id', 'user', 'tags', 'amount', 'transaction_type', 'created_at')
 
     def get_tags(self, obj):
         tags = [i[0] for i in obj.tags.items() if i[1]]
