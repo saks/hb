@@ -105,6 +105,7 @@
 
         bind() {
             $('#butSubmitSignIn').on('click', async function() {
+                APP.showSpinner();
                 const tokenResponse = await fetch('/auth/jwt/create/', {
                     method: 'POST',
                     body: JSON.stringify({
@@ -133,6 +134,7 @@
                 }
 
                 this.toggle(false);
+                APP.hideSpinner();
                 BUS.notify(SIGN_IN_CHANNEL);
             }.bind(this));
 
@@ -222,6 +224,8 @@
         }
 
         static async fetch(url, options={}) {
+            APP.showSpinner();
+
             const token = localStorage.getItem(Auth.TOKEN_KEY);
 
             if (!options.headers) { options.headers = {}; }
@@ -239,6 +243,8 @@
                     this.instance.form.toggle(true);
                 }
             }
+
+            APP.hideSpinner();
 
             return result
         }
@@ -444,6 +450,8 @@
         }
 
         async addNewRecord() {
+            APP.showSpinner();
+
             const data = {
                 amount: {
                     amount: this.dom.amountField.value,
@@ -467,6 +475,8 @@
                 const record = await res.json();
                 BUS.notify(NEW_RECORD_CHANNEL, record);
             }
+
+            APP.hideSpinner();
         }
 
         toggle(visible) {
@@ -511,6 +521,8 @@
 
     class App {
         constructor() {
+            this.spinner = document.querySelector('.loader');
+
             // XXX: first widget added will be visible by default
             this.addFullScreenWidget(IndexPage);
             this.addFullScreenWidget(BudgetsPage);
@@ -519,7 +531,16 @@
             this.signInForm = new SignInForm();
             this.auth = new Auth(this.signInForm);
 
+
             this.bind();
+        }
+
+        showSpinner() {
+            this.spinner.removeAttribute('hidden');
+        }
+
+        hideSpinner() {
+            this.spinner.setAttribute('hidden', true);
         }
 
         addFullScreenWidget(constructor) {
