@@ -15,7 +15,7 @@ def update_tags_weight(sender, **kwargs):
     # remove weights if update
     if instance.pk:
         orig = sender.objects.get(pk=instance.pk)
-        if orig.tags.mask != instance.tags.mask:
+        if orig.tags != instance.tags:
             _tags_updated = True
             orig.remove_tags_weights()
 

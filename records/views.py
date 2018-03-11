@@ -23,8 +23,6 @@ class RecordViewSet(viewsets.ModelViewSet):
         '''
         amount = self.request.data.get('amount')
         tags = self.request.data.get('tags')
-        if 'amount' in amount.keys() and 'currency' in amount.keys():
+        if amount and 'amount' in amount.keys() and 'currency' in amount.keys():
             amount = Money(amount['amount'], amount['currency'])
-        obj = serializer.save(user=self.request.user, amount=amount)
-        obj.set_tags(tags)
-        obj.save()
+        serializer.save(tags=tags, user=self.request.user, amount=amount)
