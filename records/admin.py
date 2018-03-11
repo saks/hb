@@ -10,7 +10,7 @@ from records.widgets import TagsWidget
 class RecordAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'user', 'created_at', 'transaction_type',
-                    'comma_separated_tags_list', 'amount',)
+                    'tags', 'amount',)
     list_editable = ('amount', 'user', 'created_at')
     list_per_page = 10
     list_filter = (

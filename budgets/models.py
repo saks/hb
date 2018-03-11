@@ -1,19 +1,16 @@
 from datetime import date
 from decimal import Decimal, ROUND_DOWN
 from calendar import monthrange
-from operator import __or__ as OR
-from functools import reduce
 
 from django.db import models
-from django.db.models import Q
 from django.db.models import Sum
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.utils.translation import ugettext_lazy as _
 
-from bitfield import BitField
 from djmoney.models.fields import MoneyField
 
-from records.models import Record, TAGS
+from records.models import Record
 
 
 TAGS_TYPE = (
@@ -38,18 +35,11 @@ class Budget(models.Model):
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     start_date = models.DateField()
     tags_type = models.CharField(choices=TAGS_TYPE, max_length=4)
-    tags = BitField(flags=TAGS)
+    tags = ArrayField(models.CharField(max_length=20), null=True, blank=True)
 
     def __init__(self, *args, **kwargs):
         super(Budget, self).__init__(*args, **kwargs)
         self.__spent = None
-
-    def get_tags_list(self):
-        return [k for k, v in self.tags.items() if v]
-
-    def comma_separated_tags_list(self):
-        return ', '.join(self.get_tags_list())
-    comma_separated_tags_list.short_description = 'Comma separated tags'
 
     def __str__(self):
         return '%r: %r' % (self.user, self.amount)
@@ -71,13 +61,10 @@ class Budget(models.Model):
         spent = Record.objects.filter(user=self.user,
                                       transaction_type='EXP',
                                       created_at__gte=first_month_day)
-        tags_list = []
-        for tag in self.get_tags_list():
-            tags_list.append(Q(tags=getattr(Record.tags, tag)))
-        if self.tags_type == 'INCL':
-            spent = spent.filter(reduce(OR, tags_list))
-        if self.tags_type == 'EXCL':
-            spent = spent.exclude(reduce(OR, tags_list))
+        if self.tags_type == 'INCL' and self.tags:
+            spent = spent.filter(tags__overlap=self.tags)
+        if self.tags_type == 'EXCL' and self.tags:
+            spent = spent.exclude(tags__overlap=self.tags)
         spent = spent.aggregate(spent=Sum('amount'))
         self.__spent = spent['spent'] if spent['spent'] else 0
 

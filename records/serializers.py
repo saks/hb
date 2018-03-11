@@ -11,18 +11,12 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
         read_only=True,
         view_name='user-detail'
     )
-    tags = serializers.SerializerMethodField()
     amount = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Record
         fields = ('id', 'user', 'tags', 'amount', 'transaction_type', 'created_at')
-
-    def get_tags(self, obj):
-        tags = [i[0] for i in obj.tags.items() if i[1]]
-        tags = {t: obj.tags.get_label(t) for t in tags}
-        return tags
 
     def get_amount(self, obj):
         return {
