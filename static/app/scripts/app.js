@@ -454,14 +454,12 @@
                     amount: this.dom.amountField.value,
                     currency: 'CAD',
                 },
-                tags: {},
                 transaction_type: $('#newRecordTransactionType').val(),
             };
 
-            $('#tagsContainer input:checked').each(function(i, input) {
-                const description = input.labels[0].textContent.trim();
-                data.tags[input.value] = description;
-            });
+            data.tags = $.makeArray($('#tagsContainer input:checked').map(function(_i, input) {
+                return input.value;
+            }));
 
             const res = await Auth.fetch('/api/records/record-detail/', {
                 method: 'POST',
@@ -486,8 +484,8 @@
             const tags = Auth.profile.tags;
             const template = this.template;
 
-            Object.keys(tags).forEach(function(id) {
-                const name = tags[id];
+            tags.forEach(function(name) {
+                const id = name;
                 const domId = `id_tags_${id}`;
 
                 const tag = template.cloneNode(true);
