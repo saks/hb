@@ -26,49 +26,45 @@ class RecordsTests(TestCase):
         user.save()
         return user
 
-    def _add_record(self, user, tags_bits=[]):
-        record = Record(user=user, transaction_type='EXP', amount=10)
-        for bit in tags_bits:
-            record.tags.set_bit(bit, True)
+    def _add_record(self, user, tags=[]):
+        record = Record(user=user, transaction_type='EXP', amount=10, tags=tags)
         record.save()
         return record
 
     def test_01_add_record(self):
-        record = self._add_record(user=self.user, tags_bits=[1, 5])
+        record = self._add_record(user=self.user, tags=['cafe', 'fun'])
         record.refresh_from_db()
         self.assertEqual(Record.objects.count(), 1)
-        self.assertEqual(record.tags.mask, 34)
 
     def test_02_comma_separated_tags(self):
-        record = self._add_record(user=self.user, tags_bits=[1, 5])
-        self.assertEqual(record.comma_separated_tags_list(), 'cafe, fun')
+        record = self._add_record(user=self.user, tags=['cafe', 'fun'])
+        self.assertEqual(str(record), '10.00 CAD cafe, fun')
 
     def test_03_redis_data_on_record_add(self):
         user = self._add_user(username='addrecord')
-        self._add_record(user=self.user, tags_bits=[1, 5])
-        self._add_record(user=self.user, tags_bits=[1])
-        self.assertEqual(list(self.user.get_user_tags_order()), ['cafe', 'fun'])
+        self._add_record(user=user, tags=['cafe', 'fun'])
+        self._add_record(user=user, tags=['cafe'])
+        self.assertEqual(list(user.get_user_tags_order()), ['cafe', 'fun'])
 
     def test_04_redis_data_change_order(self):
         user = self._add_user(username='changerecord')
-        self._add_record(user=user, tags_bits=[1, 5])
-        self._add_record(user=user, tags_bits=[5])
+        self._add_record(user=user, tags=['cafe', 'fun'])
+        self._add_record(user=user, tags=['fun'])
         self.assertEqual(list(user.get_user_tags_order()), ['fun', 'cafe'])
 
     def test_05_redis_data_on_update_record(self):
         user = self._add_user(username='updaterecord')
-        record = self._add_record(user=user, tags_bits=[1, 5])
-        self._add_record(user=user, tags_bits=[5])
+        record = self._add_record(user=user, tags=['cafe', 'fun'])
+        self._add_record(user=user, tags=['fun'])
         self.assertEqual(list(user.get_user_tags_order()), ['fun', 'cafe'])
-        record.tags.set_bit(1, False)
-        record.tags.set_bit(0, True)
+        record.tags = ['fun', 'books']
         record.save()
         self.assertEqual(list(user.get_user_tags_order()), ['fun', 'books'])
 
     def test_06_redis_data_on_delete(self):
         user = self._add_user(username='deleterecord')
-        record = self._add_record(user=user, tags_bits=[1, 5])
-        self._add_record(user=user, tags_bits=[1])
+        record = self._add_record(user=user, tags=['cafe', 'fun'])
+        self._add_record(user=user, tags=['cafe'])
         self.assertEqual(list(user.get_user_tags_order()), ['cafe', 'fun'])
         record.delete()
         self.assertEqual(list(user.get_user_tags_order()), ['cafe'])
