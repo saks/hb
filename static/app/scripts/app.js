@@ -1,496 +1,608 @@
 (function() {
     'use strict';
+    const DATETIME_FORMAT_OPTIONS = {
+        month: 'short',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+    };
 
-    const $ = function(id) { return document.getElementById(id) };
+    const $$ = function(id) { return document.getElementById(id) };
 
-    class Auth {
-        static authenticate(spinner, callback) {
-            if (!this.instance) {
-                this.instance = new Auth(spinner);
-                if (this.instance.isSignedIn) {
-                    callback();
-                } else {
-                    this.instance.callback = callback;
-                }
-            }
-            return this.instance;
+    const SIGN_IN_CHANNEL = Symbol.for('sign-in');
+    const START_CHANNEL = Symbol.for('start');
+    const NEW_RECORD_CHANNEL = Symbol.for('new-record');
+    const SHOW_WIDGET_CHANNEL = Symbol.for('show-widget');
+    const HIDE_WIDGET_CHANNEL = Symbol.for('hide-widget');
+
+    class Bus {
+        constructor() {
+            this.callbacks = {};
         }
 
-        constructor(spinner, callback) {
-            this.callback = callback;
-            this.spinner = spinner;
-
-            this.dialogContainer = $('signInDialogContainer');
-            this.bind();
-
-            this.token = localStorage.getItem(Auth.STORAGE_KEY);
-            if (!this.isSignedIn) {
-                this.spinner.hide();
-                this.toggleDialog(true);
-            }
+        subscribe(channelName, callback) {
+            const callbacks = this.callbacks[channelName] || [];
+            callbacks.push(callback);
+            this.callbacks[channelName] = callbacks;
         }
 
-        get isSignedIn() {
-            return null != this.token
+        notify(channelName, payload={}) {
+            console.log('notify: ' + channelName.toString());
+            this.callbacks[channelName].forEach(function(callback) {
+                callback(payload);
+            });
+        }
+    }
+
+    class Widget {
+        constructor() {
+            this.dom = {};
         }
 
-        toggleDialog(visible) {
-            const classList = this.dialogContainer.classList;
-
+        toggle(visible) {
             if (visible) {
-                this.spinner.hide();
-                classList.add('dialog-container--visible');
+                this.container.removeAttribute('hidden');
             } else {
-                classList.remove('dialog-container--visible');
+                this.container.setAttribute('hidden', true);
             }
+        }
+    }
+
+    class SignInForm {
+        constructor() {
+            this.callbacks = [];
+            this.dom = this.cacheDom();
+            this.bind();
+        }
+
+        cacheDom() {
+            const dom = {};
+
+            dom.$modal = $('#signInModal');
+
+            dom.username = $$('username');
+            dom.password = $$('password');
+
+            dom.errorMessages = {};
+            dom.errorMessages.username = $$('usernameError');
+            dom.errorMessages.password = $$('passwordError');
+            dom.errorMessages.non_field_errors = $$('nonFieldErrors');
+
+            return dom;
+        }
+
+        toggle(visible) {
+            if (visible) {
+                // hide errors
+                $('.sign-in-error').text('');
+                $$('nonFieldErrors').setAttribute('hidden', true);
+
+                // show popup
+                this.dom.$modal.modal('show');
+                this.dom.username.focus();
+            } else {
+                this.dom.$modal.modal('hide');
+            }
+        }
+
+        showErrors(response) {
+            const errorMessages = this.dom.errorMessages;
+
+            Object.keys(errorMessages).forEach(function(fieldName) {
+                const element = errorMessages[fieldName];
+                const errors = response[fieldName];
+
+                if (errors) {
+                    element.textContent = errors.join(';');
+                    element.removeAttribute('hidden');
+                } else {
+                    element.textContent = '';
+                    element.setAttribute('hidden', true);
+                }
+            })
         }
 
         bind() {
-            $('butSubmitSignIn').addEventListener('click', function() {
-                fetch('/auth/jwt/create/', {
+            $('#butSubmitSignIn').on('click', async function() {
+                APP.showSpinner();
+                const tokenResponse = await fetch('/auth/jwt/create/', {
                     method: 'POST',
                     body: JSON.stringify({
-                        username: $('username').value,
-                        password: $('password').value,
+                        username: $$('username').value,
+                        password: $$('password').value,
                     }),
                     headers: {
-                        'user-agent': 'Home Budget PWA',
-                        'content-type': 'application/json',
+                        'User-Agent': 'Home Budget PWA',
+                        'Content-Type': 'application/json',
                     },
-                }).then(async function(response) {
-                    if (response.ok) {
-                        const data = await response.json();
-                        this.token = data.token;
-                        localStorage.setItem(Auth.STORAGE_KEY, this.token);
-                        if ('function' == typeof this.callback) {
-                            this.callback();
-                        }
-                    } else {
-                        const data = await response.json();
-                        console.log('failed to sign in:');
-                        console.log(data);
-                    }
-                }.bind(this)).catch(async function(response) {
-                    const data = await response.json();
-                    console.log('failed to sign in:');
-                    console.log(data);
-                }.bind(this)).finally(function() {
-                    this.toggleDialog(false);
-                }.bind(this));
+                });
+
+                if (!tokenResponse.ok) {
+                    const responseBody = await tokenResponse.json();
+                    this.showErrors(responseBody);
+                    return;
+                }
+
+                const tokenData = await tokenResponse.json();
+                Auth.token = tokenData.token;
+
+                const success = await Auth.fetchProfile();
+                if (!success) {
+                    this.showErrors({ non_field_errors: ['Failed to load profile.'] });
+                    return;
+                }
+
+                this.toggle(false);
+                APP.hideSpinner();
+                BUS.notify(SIGN_IN_CHANNEL);
             }.bind(this));
 
-            $('butCancelSignIn').addEventListener('click', function() {
-                this.toggleDialog(false);
+            $('#butCancelSignIn').on('click', function() {
+                this.toggle(false);
             }.bind(this));
+        }
+    }
 
-            $('butSignIn').addEventListener('click', function() {
-                this.toggleDialog(true);
+    class Auth {
+        constructor(form) {
+            this.form = form;
+            this.bind();
+            Auth.instance = this;
+        }
+
+        bind() {
+            BUS.subscribe(START_CHANNEL, function() {
+                if (!this.isSignedIn) {
+                    this.form.toggle(true);
+                }
             }.bind(this));
         }
 
-        static get STORAGE_KEY() {
+        get isSignedIn() {
+            return Auth.token && Auth.profile && Auth.profile.tags
+        }
+
+        static async fetchProfile() {
+            const tokenPayload = this.parsedToken;
+
+            const profileResponse = await this.fetch(`/api/user/${tokenPayload.user_id}/`);
+
+            if (!profileResponse.ok) {
+                return false;
+            }
+
+            this.profile = await profileResponse.json();
+            return true;
+        }
+
+        static get parsedToken() {
+            const base64Url = this.token.split('.')[1];
+            const base64 = base64Url.replace('-', '+').replace('_', '/');
+            return JSON.parse(window.atob(base64));
+        }
+
+        static set token(token) {
+            localStorage.setItem(this.TOKEN_KEY, token);
+        }
+
+        static get token() {
+            return localStorage.getItem(this.TOKEN_KEY);
+        }
+
+        static set profile(profile) {
+            localStorage.setItem(this.PROFILE_KEY, JSON.stringify(profile));
+        }
+
+        static get profile() {
+            const json = localStorage.getItem(this.PROFILE_KEY);
+            return JSON.parse(json);
+        }
+
+        static get TOKEN_KEY() {
             return 'AUTH_TOKEN'
         }
 
-        static fetch(url, options={ headers: {} }) {
-            options.headers.Authorization = `JWT ${this.instance.token}`;
-            return fetch(url, options);
+        static get PROFILE_KEY() {
+            return 'PROFILE'
+        }
+
+        static async refresh() {
+            const response = await fetch('/auth/jwt/refresh/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: this.token }),
+            });
+
+            if (!response.ok && 400 === response.status) {
+                this.token = null;
+                this.profile = null;
+                this.instance.form.toggle(true);
+            } else {
+                debugger
+            }
+        }
+
+        static async fetch(url, options={}) {
+            APP.showSpinner();
+
+            const token = localStorage.getItem(Auth.TOKEN_KEY);
+
+            if (!options.headers) { options.headers = {}; }
+            options.headers.Authorization = `JWT ${token}`;
+            options.headers['User-Agent'] = 'Home Budget PWA';
+            options.headers['Content-Type'] = 'application/json';
+
+            const result = await fetch(url, options);
+
+            if (!result.ok && result.status === 401) {
+                await this.refresh();
+                if (this.instance.isSignedIn) {
+                    return this.fetch(url, options);
+                } else {
+                    this.instance.form.toggle(true);
+                }
+            }
+
+            APP.hideSpinner();
+
+            return result
         }
     }
 
-    class Spinner {
+    class IndexPage extends Widget {
         constructor() {
-            this.container = document.querySelector('.loader');
-        }
-
-        hide() {
-            this.container.setAttribute('hidden', true);
-        }
-
-        show() {
-            this.container.setAttribute('hidden', false);
-        }
-    }
-
-    class IndexPage {
-        constructor() {
+            super();
+            this.currentPageNumberLabel = $$('currentPageNumberLabel');
+            this.initCurrentPage();
             this.template = document.querySelector('.record-item.cardTemplate');
-            this.container = document.querySelector('main');
+            this.container = document.querySelector('.records-list');
+            this.cards = $$('cards');
+            this.bind();
+        }
+
+        initCurrentPage() {
+            if (Number.isNaN(this.currentPage)) {
+                this.currentPage = 1;
+            }
+            this.updateCurrentPageLabel();
+        }
+
+        get currentPage() {
+            return parseInt(localStorage.getItem('CURRENT_PAGE'), 10);
+        }
+
+        set currentPage(n) {
+            localStorage.setItem('CURRENT_PAGE', n);
         }
 
         async show() {
-            const records = await this.getData();
+            const records = await this.getPage();
+
+            if (undefined === records.results) {
+                return false;
+            } else {
+                this.cards.innerHTML = '';
+            }
+
             records.results.forEach(function(record) {
                 this.drawCard(record);
             }.bind(this));
+
+            return true;
         }
 
-        async getData() {
-            const url = '/api/records/record-detail/';
+        async getPage() {
+            const url = `/api/records/record-detail/?page=${this.currentPage}`;
             const response = await Auth.fetch(url);
             return response.json();
         }
 
-        drawCard(record) {
+        bind() {
+            $('#nextRecordsPageLink').on('click', async function(e) {
+                e.preventDefault();
+                this.currentPage++;
+                const success = await this.show();
+                if (!success) { this.currentPage--; }
+                this.updateCurrentPageLabel();
+            }.bind(this));
+
+            $('#prevRecordsPageLink').on('click', async function(e) {
+                e.preventDefault();
+
+                if (1 === this.currentPage) { return; }
+
+                this.currentPage--;
+                const success = await this.show();
+                if (!success) { this.currentPage++; }
+                this.updateCurrentPageLabel();
+            }.bind(this));
+
+            BUS.subscribe(SIGN_IN_CHANNEL, function() {
+                this.show();
+            }.bind(this));
+
+            BUS.subscribe(START_CHANNEL, function(widget) {
+                if (Auth.instance.isSignedIn) { this.show(); }
+            }.bind(this));
+
+            BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
+                this.drawCard(record, false);
+                this.cards.lastElementChild.remove();
+            }.bind(this));
+        }
+
+        updateCurrentPageLabel() {
+            this.currentPageNumberLabel.innerText = this.currentPage;
+        }
+
+        drawCard(record, append=true) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
-            card.querySelector('.location').textContent = `CAD -${record.amount}`;
-            card.querySelector('.date').textContent = record.created_at;
-            card.querySelector('.description').textContent = record.tags;
+
+            // card look
+            const suffix = record.transaction_type == 'EXP' ? 'warning' : 'success';
+            const extraClass = `bd-callout-${suffix}`;
+            card.classList.add(extraClass);
+
+            // amount
+            const amount = Number.parseFloat(record.amount.amount).toFixed(2);
+            card.querySelector('.amount').textContent = amount;
+
+            // date
+            const offset = new Date().getTimezoneOffset() * 60 * 1000;
+            const date = new Date(record.created_at * 1000 - offset);
+            const dateString = date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
+            card.querySelector('.date').textContent = dateString;
+
+            // tags
+            const tagsString = Object.values(record.tags).join(', ');
+            card.querySelector('.tags').textContent = tagsString;
+
             card.removeAttribute('hidden');
-            this.container.appendChild(card);
-            // app.visibleCards[data.key] = card;
+            if (append) {
+                this.cards.appendChild(card);
+            } else {
+                this.cards.prepend(card);
+            }
+        }
+    }
+
+    class NewRecordForm extends Widget {
+        constructor() {
+            super();
+            this.container = $$('newRecordForm');
+
+            this.dom.amountField = $$('newRecordAmount');
+            this.dom.form = $$('newRecordFormForm');
+
+            this.template = document.querySelector('.tag-template');
+            this.tagsContainer = $$('tagsContainer');
+            this.bind();
+        }
+
+        bind() {
+            $(this.tagsContainer).on('click', 'div.btn', function(e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+
+                // ignore clicks on label
+                if (undefined === e.target.value) { return; }
+                $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
+            });
+
+            $('#butCalculateResult').click(function() {
+                const input = this.dom.amountField;
+                let result;
+
+                try {
+                    result = Number.parseFloat(eval(input.value));
+                } catch (e) {
+                    input.value = '';
+                }
+
+                if (Number.isFinite(result)) {
+                    input.value = result.toFixed(2);
+                }
+
+                input.focus();
+            }.bind(this));
+
+            $('#newRecordSubmit').on('click', async function(e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+
+                await this.addNewRecord();
+                this.reset();
+                BUS.notify(HIDE_WIDGET_CHANNEL);
+            }.bind(this));
+
+            $('#newRecordAddAnother').on('click', async function(e) {
+                e.stopImmediatePropagation();
+                e.stopPropagation();
+
+                await this.addNewRecord();
+                this.reset();
+                this.dom.amountField.focus();
+            }.bind(this));
+
+            BUS.subscribe(SIGN_IN_CHANNEL, function() {
+                this.setup();
+            }.bind(this));
+
+            BUS.subscribe(START_CHANNEL, function() {
+                if (Auth.instance.isSignedIn) {
+                    this.setup();
+                }
+            }.bind(this));
+        }
+
+        reset() {
+            this.dom.form.reset();
+
+            $('#tagsContainer .btn')
+                .addClass('btn-outline-info')
+                .removeClass('btn-outline-danger')
+            ;
+        }
+
+        async addNewRecord() {
+            APP.showSpinner();
+
+            const data = {
+                amount: {
+                    amount: this.dom.amountField.value,
+                    currency: 'CAD',
+                },
+                tags: {},
+                transaction_type: $('#newRecordTransactionType').val(),
+            };
+
+            $('#tagsContainer input:checked').each(function(i, input) {
+                const description = input.labels[0].textContent.trim();
+                data.tags[input.value] = description;
+            });
+
+            const res = await Auth.fetch('/api/records/record-detail/', {
+                method: 'POST',
+                body: JSON.stringify(data),
+            });
+
+            if (res.ok) {
+                const record = await res.json();
+                BUS.notify(NEW_RECORD_CHANNEL, record);
+            }
+
+            APP.hideSpinner();
+        }
+
+        toggle(visible) {
+            super.toggle(visible);
+            if (visible) { this.dom.amountField.focus(); }
+        }
+
+        setup() {
+            const tagsContainer = this.tagsContainer;
+            const tags = Auth.profile.tags;
+            const template = this.template;
+
+            Object.keys(tags).forEach(function(id) {
+                const name = tags[id];
+                const domId = `id_tags_${id}`;
+
+                const tag = template.cloneNode(true);
+                tag.classList.remove('tag-template');
+
+                const label = tag.querySelector('label');
+                label.setAttribute('for', domId);
+                const text = document.createTextNode(name);
+                label.appendChild(text);
+
+                const input = tag.querySelector('input');
+                input.setAttribute('id', domId);
+                input.value = id;
+
+                tag.removeAttribute('hidden');
+
+                tagsContainer.appendChild(tag);
+            });
+        }
+    }
+
+    class BudgetsPage extends Widget {
+        constructor() {
+            super();
+            this.container = $$('budgets');
+        }
+    }
+
+    class App {
+        constructor() {
+            this.spinner = document.querySelector('.loader');
+
+            // XXX: first widget added will be visible by default
+            this.addFullScreenWidget(IndexPage);
+            this.addFullScreenWidget(BudgetsPage);
+            this.addFullScreenWidget(NewRecordForm);
+
+            this.signInForm = new SignInForm();
+            this.auth = new Auth(this.signInForm);
+
+
+            this.bind();
+        }
+
+        showSpinner() {
+            this.spinner.removeAttribute('hidden');
+        }
+
+        hideSpinner() {
+            this.spinner.setAttribute('hidden', true);
+        }
+
+        addFullScreenWidget(constructor) {
+            const widget = new constructor();
+
+            if (!this.fullScreenWidgets) {
+                this.fullScreenWidgets = {};
+                this.firstWidget = widget;
+            }
+
+            this.fullScreenWidgets[constructor.name] = widget;
+        }
+
+        showWidget(widgetToShow) {
+            this.previouslyVisibleWidget = this.currentlyVisibleWidget;
+            this.currentlyVisibleWidget = widgetToShow;
+
+            Object.keys(this.fullScreenWidgets).forEach(function(constructorName) {
+                const widget = this.fullScreenWidgets[constructorName];
+                widget.toggle(widget === widgetToShow);
+            }.bind(this));
+        }
+
+        bind() {
+            $('a.nav-link').on('click', function(e) {
+                const targetName = e.currentTarget.dataset.target;
+                const widget = this.fullScreenWidgets[targetName];
+                if (widget) {
+                    BUS.notify(SHOW_WIDGET_CHANNEL, widget);
+                }
+            }.bind(this));
+
+            BUS.subscribe(START_CHANNEL, function(widget) {
+                this.showWidget(this.firstWidget);
+            }.bind(this));
+
+            BUS.subscribe(SHOW_WIDGET_CHANNEL, function(widget) {
+                this.showWidget(widget);
+            }.bind(this));
+
+            BUS.subscribe(HIDE_WIDGET_CHANNEL, function() {
+                if (!this.previouslyVisibleWidget) {
+                    this.previouslyVisibleWidget = this.firstWidget;
+                }
+
+                this.showWidget(this.previouslyVisibleWidget);
+            }.bind(this));
+        }
+
+        run() {
+            BUS.notify(START_CHANNEL);
         }
     }
 
     /* PAGE INITIALIZATION */
-    const spinner = new Spinner();
-    const auth = Auth.authenticate(spinner, function() {
-        const indexPage = new IndexPage();
-        indexPage.show();
-    });
 
-})();
+    const BUS = new Bus();
+    const APP = new App();
+    APP.run();
 
-
-(function() {
-    'use strict';
-
-    var app = {
-        isLoading: true,
-        visibleCards: {},
-        selectedCities: [],
-        spinner: document.querySelector('.loader'),
-        cardTemplate: document.querySelector('.cardTemplate'),
-        container: document.querySelector('.main'),
-        addDialog: document.querySelector('.dialog-container'),
-        daysOfWeek: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    };
-
-
-    /*****************************************************************************
-     *
-     * Event listeners for UI elements
-     *
-     ****************************************************************************/
-
-    document.getElementById('butRefresh').addEventListener('click', function() {
-        // Refresh all of the forecasts
-        app.updateForecasts();
-    });
-
-    document.getElementById('butAdd').addEventListener('click', function() {
-        // Open/show the add new city dialog
-        app.toggleAddDialog(true);
-    });
-
-    // document.getElementById('butAddCity').addEventListener('click', function() {
-    //     // Add the newly selected city
-    //     var select = document.getElementById('selectCityToAdd');
-    //     var selected = select.options[select.selectedIndex];
-    //     var key = selected.value;
-    //     var label = selected.textContent;
-    //     app.getForecast(key, label);
-    //     if (!app.selectedCities) {
-    //         app.selectedCities = [];
-    //     }
-    //     app.selectedCities.push({key: key, label: label});
-    //     app.saveSelectedCities();
-    //     app.toggleAddDialog(false);
-    // });
-
-    // document.getElementById('butAddCancel').addEventListener('click', function() {
-    //     // Close the add new city dialog
-    //     app.toggleAddDialog(false);
-    // });
-
-
-    /*****************************************************************************
-     *
-     * Methods to update/refresh the UI
-     *
-     ****************************************************************************/
-
-    // Open
-
-    // Toggles the visibility of the add new city dialog.
-    // app.toggleAddDialog = function(visible) {
-    //     if (visible) {
-    //         app.addDialog.classList.add('dialog-container--visible');
-    //     } else {
-    //         app.addDialog.classList.remove('dialog-container--visible');
-    //     }
-    // };
-    //
-    // // Updates a weather card with the latest weather forecast. If the card
-    // // doesn't already exist, it's cloned from the template.
-    // app.updateForecastCard = function(data) {
-    //     var dataLastUpdated = new Date(data.created);
-    //     var sunrise = data.channel.astronomy.sunrise;
-    //     var sunset = data.channel.astronomy.sunset;
-    //     var current = data.channel.item.condition;
-    //     var humidity = data.channel.atmosphere.humidity;
-    //     var wind = data.channel.wind;
-    //
-    //     var card = app.visibleCards[data.key];
-    //     if (!card) {
-    //         card = app.cardTemplate.cloneNode(true);
-    //         card.classList.remove('cardTemplate');
-    //         card.querySelector('.location').textContent = data.label;
-    //         card.removeAttribute('hidden');
-    //         app.container.appendChild(card);
-    //         app.visibleCards[data.key] = card;
-    //     }
-    //
-    //     // Verifies the data provide is newer than what's already visible
-    //     // on the card, if it's not bail, if it is, continue and update the
-    //     // time saved in the card
-    //     var cardLastUpdatedElem = card.querySelector('.card-last-updated');
-    //     var cardLastUpdated = cardLastUpdatedElem.textContent;
-    //     if (cardLastUpdated) {
-    //         cardLastUpdated = new Date(cardLastUpdated);
-    //         // Bail if the card has more recent data then the data
-    //         if (dataLastUpdated.getTime() < cardLastUpdated.getTime()) {
-    //             return;
-    //         }
-    //     }
-    //     cardLastUpdatedElem.textContent = data.created;
-    //
-    //     card.querySelector('.description').textContent = current.text;
-    //     card.querySelector('.date').textContent = current.date;
-    //     card.querySelector('.current .icon').classList.add(app.getIconClass(current.code));
-    //     card.querySelector('.current .temperature .value').textContent =
-    //         Math.round(current.temp);
-    //     card.querySelector('.current .sunrise').textContent = sunrise;
-    //     card.querySelector('.current .sunset').textContent = sunset;
-    //     card.querySelector('.current .humidity').textContent =
-    //         Math.round(humidity) + '%';
-    //     card.querySelector('.current .wind .value').textContent =
-    //         Math.round(wind.speed);
-    //     card.querySelector('.current .wind .direction').textContent = wind.direction;
-    //     var nextDays = card.querySelectorAll('.future .oneday');
-    //     var today = new Date();
-    //     today = today.getDay();
-    //     for (var i = 0; i < 7; i++) {
-    //         var nextDay = nextDays[i];
-    //         var daily = data.channel.item.forecast[i];
-    //         if (daily && nextDay) {
-    //             nextDay.querySelector('.date').textContent =
-    //                 app.daysOfWeek[(i + today) % 7];
-    //             nextDay.querySelector('.icon').classList.add(app.getIconClass(daily.code));
-    //             nextDay.querySelector('.temp-high .value').textContent =
-    //                 Math.round(daily.high);
-    //             nextDay.querySelector('.temp-low .value').textContent =
-    //                 Math.round(daily.low);
-    //         }
-    //     }
-    //     if (app.isLoading) {
-    //         app.spinner.setAttribute('hidden', true);
-    //         app.container.removeAttribute('hidden');
-    //         app.isLoading = false;
-    //     }
-    // };
-
-
-    /*****************************************************************************
-     *
-     * Methods for dealing with the model
-     *
-     ****************************************************************************/
-
-    /*
-     * Gets a forecast for a specific city and updates the card with the data.
-     * getForecast() first checks if the weather data is in the cache. If so,
-     * then it gets that data and populates the card with the cached data.
-     * Then, getForecast() goes to the network for fresh data. If the network
-     * request goes through, then the card gets updated a second time with the
-     * freshest data.
-     */
-    app.getForecast = function(key, label) {
-        var statement = 'select * from weather.forecast where u=\'c\' and woeid=' + key;
-        var url = 'https://query.yahooapis.com/v1/public/yql?format=json&q=' +
-            statement;
-        // TODO add cache logic here
-
-        // Fetch the latest data.
-        var request = new XMLHttpRequest();
-        request.onreadystatechange = function() {
-            if (request.readyState === XMLHttpRequest.DONE) {
-                if (request.status === 200) {
-                    var response = JSON.parse(request.response);
-                    var results = response.query.results;
-                    results.key = key;
-                    results.label = label;
-                    results.created = response.query.created;
-                    app.updateForecastCard(results);
-                }
-            } else {
-                // Return the initial weather forecast since no data is available.
-                app.updateForecastCard(initialWeatherForecast);
-            }
-        };
-        request.open('GET', url);
-        request.send();
-    };
-
-    // Iterate all of the cards and attempt to get the latest forecast data
-    app.updateForecasts = function() {
-        var keys = Object.keys(app.visibleCards);
-        keys.forEach(function(key) {
-            app.getForecast(key);
-        });
-    };
-
-    // Save list of cities to localStorage.
-    app.saveSelectedCities = function() {
-        var selectedCities = JSON.stringify(app.selectedCities);
-        localStorage.selectedCities = selectedCities;
-    };
-
-    app.getIconClass = function(weatherCode) {
-        // Weather codes: https://developer.yahoo.com/weather/documentation.html#codes
-        weatherCode = parseInt(weatherCode);
-        switch (weatherCode) {
-            case 25: // cold
-            case 32: // sunny
-            case 33: // fair (night)
-            case 34: // fair (day)
-            case 36: // hot
-            case 3200: // not available
-                return 'clear-day';
-            case 0: // tornado
-            case 1: // tropical storm
-            case 2: // hurricane
-            case 6: // mixed rain and sleet
-            case 8: // freezing drizzle
-            case 9: // drizzle
-            case 10: // freezing rain
-            case 11: // showers
-            case 12: // showers
-            case 17: // hail
-            case 35: // mixed rain and hail
-            case 40: // scattered showers
-                return 'rain';
-            case 3: // severe thunderstorms
-            case 4: // thunderstorms
-            case 37: // isolated thunderstorms
-            case 38: // scattered thunderstorms
-            case 39: // scattered thunderstorms (not a typo)
-            case 45: // thundershowers
-            case 47: // isolated thundershowers
-                return 'thunderstorms';
-            case 5: // mixed rain and snow
-            case 7: // mixed snow and sleet
-            case 13: // snow flurries
-            case 14: // light snow showers
-            case 16: // snow
-            case 18: // sleet
-            case 41: // heavy snow
-            case 42: // scattered snow showers
-            case 43: // heavy snow
-            case 46: // snow showers
-                return 'snow';
-            case 15: // blowing snow
-            case 19: // dust
-            case 20: // foggy
-            case 21: // haze
-            case 22: // smoky
-                return 'fog';
-            case 24: // windy
-            case 23: // blustery
-                return 'windy';
-            case 26: // cloudy
-            case 27: // mostly cloudy (night)
-            case 28: // mostly cloudy (day)
-            case 31: // clear (night)
-                return 'cloudy';
-            case 29: // partly cloudy (night)
-            case 30: // partly cloudy (day)
-            case 44: // partly cloudy
-                return 'partly-cloudy-day';
-        }
-    };
-
-    /*
-     * Fake weather data that is presented when the user first uses the app,
-     * or when the user has not saved any cities. See startup code for more
-     * discussion.
-     */
-    var initialWeatherForecast = {
-        key: '2459115',
-        label: 'New York, NY',
-        created: '2016-07-22T01:00:00Z',
-        channel: {
-            astronomy: {
-                sunrise: "5:43 am",
-                sunset: "8:21 pm"
-            },
-            item: {
-                condition: {
-                    text: "Windy",
-                    date: "Thu, 21 Jul 2016 09:00 PM EDT",
-                    temp: 56,
-                    code: 24
-                },
-                forecast: [
-                    {code: 44, high: 86, low: 70},
-                    {code: 44, high: 94, low: 73},
-                    {code: 4, high: 95, low: 78},
-                    {code: 24, high: 75, low: 89},
-                    {code: 24, high: 89, low: 77},
-                    {code: 44, high: 92, low: 79},
-                    {code: 44, high: 89, low: 77}
-                ]
-            },
-            atmosphere: {
-                humidity: 56
-            },
-            wind: {
-                speed: 25,
-                direction: 195
-            }
-        }
-    };
-    // TODO uncomment line below to test app with fake data
-    // app.updateForecastCard(initialWeatherForecast);
-
-    /************************************************************************
-     *
-     * Code required to start the app
-     *
-     * NOTE: To simplify this codelab, we've used localStorage.
-     *   localStorage is a synchronous API and has serious performance
-     *   implications. It should not be used in production applications!
-     *   Instead, check out IDB (https://www.npmjs.com/package/idb) or
-     *   SimpleDB (https://gist.github.com/inexorabletash/c8069c042b734519680c)
-     ************************************************************************/
-
-    // app.selectedCities = localStorage.selectedCities;
-    // if (app.selectedCities) {
-    //     app.selectedCities = JSON.parse(app.selectedCities);
-    //     app.selectedCities.forEach(function(city) {
-    //         app.getForecast(city.key, city.label);
-    //     });
-    // } else {
-    //     #<{(| The user is using the app for the first time, or the user has not
-    //      * saved any cities, so show the user some fake data. A real app in this
-    //      * scenario could guess the user's location via IP lookup and then inject
-    //      * that data into the page.
-    //      |)}>#
-    //     app.updateForecastCard(initialWeatherForecast);
-    //     app.selectedCities = [
-    //         {key: initialWeatherForecast.key, label: initialWeatherForecast.label}
-    //     ];
-    //     app.saveSelectedCities();
-    // };
-
-     if ('serviceWorker' in navigator) {
-         navigator.serviceWorker
-             .register('./service-worker.js')
-             .then(function() {
-                 console.log('Service Worker Registered');
-             });
-     }
-
-
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+            .register('./service-worker.js')
+            .then(function() {
+                console.log('Service Worker Registered');
+            });
+    }
 })();

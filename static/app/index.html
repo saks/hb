@@ -8,44 +8,164 @@
     <title>Octo Budget</title>
     <link rel="stylesheet" type="text/css" href="styles/inline.css">
     <link rel="manifest" href="/static/app/manifest.json">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   </head>
   <body>
-
-    <header class="header">
-      <h1 class="header__title">Octo Budget</h1>
-      <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
-      <button id="butAdd" class="headerButton" aria-label="Add"></button>
-      <button id="butSignIn" class="headerButton" aria-label="Login"></button>
+    <header class="navbar navbar-expand navbar-dark bg-primary mb-3 py-0">
+      <a class="navbar-brand mr-auto text-white" href="/static/app/index.html">Octo Budget</a>
+      <ul class="nav justify-content-end nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link text-white" data-target="NewRecordForm" href="#">
+            <svg height="24" class="octicon octicon-plus" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M12 9H7v5H5V9H0V7h5V2h2v5h5z"></path>
+            </svg>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" data-target="IndexPage" href="#">
+            <svg height="24" class="octicon octicon-list-unordered" viewBox="0 0 12 16" version="1.1" width="24" aria-hidden="true">
+              <path fill-rule="evenodd" d="M2 13c0 .59 0 1-.59 1H.59C0 14 0 13.59 0 13c0-.59 0-1 .59-1h.81c.59 0 .59.41.59 1H2zm2.59-9h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1H4.59C4 2 4 2.41 4 3c0 .59 0 1 .59 1zM1.41 7H.59C0 7 0 7.41 0 8c0 .59 0 1 .59 1h.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm0-5H.59C0 2 0 2.41 0 3c0 .59 0 1 .59 1h.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm10 5H4.59C4 7 4 7.41 4 8c0 .59 0 1 .59 1h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01zm0 5H4.59C4 12 4 12.41 4 13c0 .59 0 1 .59 1h6.81c.59 0 .59-.41.59-1 0-.59 0-1-.59-1h.01z"></path>
+            </svg>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" data-target="BudgetsPage" href="#">
+            <svg height="24" class="octicon octicon-graph" viewBox="0 0 16 16" version="1.1" width="24" aria-hidden="true"><path fill-rule="evenodd" d="M16 14v1H0V0h1v14h15zM5 13H3V8h2v5zm4 0H7V3h2v10zm4 0h-2V6h2v7z"></path></svg>
+          </a>
+        </li>
+      </ul>
     </header>
-
-    <main class="main">
-    <div class="card record-item cardTemplate" hidden>
-      <div class="location"></div>
-      <div class="date"></div>
-      <div class="description"></div>
-    </div>
-    </main>
-
-    <div id="signInDialogContainer" class="dialog-container">
-      <div class="dialog">
-        <div class="dialog-title">Sign In</div>
-        <div class="dialog-body">
-          <p><input id="username" type="text" placeholder="User"></input></p>
-          <p><input id="password" type="password" placeholder="Password"></input></p>
+    <div class="container">
+      <!-- start of records list -->
+      <div class="records-list" hidden>
+        <div class="row justify-content-center">
+          <h2>Last Records</h2>
         </div>
-        <div class="dialog-buttons">
-          <button id="butSubmitSignIn" class="button">Submit</button>
-          <button id="butCancelSignIn" class="button">Cancel</button>
+        <div class="card record-item bd-callout cardTemplate" hidden>
+          <div class="card-body">
+            <h5 class="text-center">
+              <span class="amount font-weight-bold float-left"></span>
+              <small class="date"></small>
+              <span class="tags badge badge-info float-right"></span>
+            </h5>
+          </div>
+        </div>
+        <div id="cards"></div>
+        <div class="container">
+          <nav aria-label="pagination">
+            <ul class="pagination justify-content-center">
+              <li class="page-item">
+                <a class="page-link" id="prevRecordsPageLink" href="#" tabindex="-1">Previous</a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" id="currentPageNumberLabel"></a>
+              </li>
+              <li class="page-item">
+                <a class="page-link" id="nextRecordsPageLink" href="#">Next</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <!-- end of records list -->
+
+      <div id="budgets" hidden>
+        <div class="row justify-content-center">
+          <h2>Budgets</h2>
+        </div>
+      </div>
+
+      <!-- start of new record form -->
+      <div id="newRecordForm" hidden>
+        <div class="row justify-content-center">
+          <h2>Add New Record</h2>
+        </div>
+        <form id="newRecordFormForm">
+          <div class="form-group">
+            <label for="newRecordAmount" class="bmd-label-static">Amount</label>
+            <div class="input-group">
+              <input type="tel" class="form-control" id="newRecordAmount" autocomplete="off" autofocus>
+              <span class="input-group-btn">
+                <button id="butCalculateResult" class="btn btn-default" type="button">
+                  calculate
+                </button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="btn btn-outline-info tag-template" hidden>
+              <label for="">
+                <input name="tags" value="" id="" type="checkbox">
+              </label>
+            </div>
+
+            <label class="bmd-label-static">Tags</label>
+            <div id="tagsContainer" class="border border-light"></div>
+          </div>
+          <div class="form-group">
+            <label for="newRecordTransactionType" class="bmd-label-static">Transaction type</label>
+            <div class="input-group">
+              <select name="transaction_type" class="form-control" id="newRecordTransactionType">
+                <option value="EXP" selected>Expences</option>
+                <option value="INC">Income</option>
+              </select>
+            </div>
+          </div>
+        </form>
+        <div class="form-group">
+          <button class="btn btn-success btn-default" id="newRecordSubmit">
+            Save
+          </button>
+          <button class="btn btn-default" id="newRecordAddAnother">
+            Save and add another
+          </button>
+        </div>
+      </div>
+      <!-- end of new record form -->
+    </div>
+
+    <!-- start of sign in modal -->
+    <div class="modal" id="signInModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Sign In</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="nonFieldErrors" class="alert alert-danger sign-in-error" role="alert" hidden></div>
+            <form>
+              <div class="form-group">
+                <label for="username" class="bmd-label-floating">Username</label>
+                <input id="username" type="text" class="form-control" required>
+                <small id="usernameError" class="form-text text-danger sign-in-error"></small>
+              </div>
+              <div class="form-group">
+                <label for="password" class="bmd-label-floating">Password</label>
+                <input id="password" type="password" class="form-control" required>
+                <small id="passwordError" class="form-text text-danger sign-in-error"></small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" id="butSubmitSignIn" class="btn btn-primary">Submit</button>
+            <button type="button" id="butCancelSignIn" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="loader">
-      <!-- <svg viewBox="0 0 32 32" width="32" height="32"> -->
-      <!--   <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle> -->
-      <!-- </svg> -->
+    <div class="loader" hidden>
+      <svg viewBox="0 0 32 32" width="32" height="32">
+        <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>
+      </svg>
     </div>
 
-    <script src="scripts/app.js" async></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-CauSuKpEqAFajSpkdjv3z9t8E7RlpJ1UP0lKM/+NdtSarroVKu069AlsRPKkFBz9" crossorigin="anonymous"></script>
+    <script>$(document).ready(function() { $('body').bootstrapMaterialDesign(); });</script>    <script src="scripts/app.js" async></script>
   </body>
 </html>
