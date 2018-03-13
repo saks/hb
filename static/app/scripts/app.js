@@ -519,7 +519,7 @@
                 this.cards.innerHTML = '';
             }
 
-            records.results.forEach(this.drawCard.bind(this));
+            records.results.reverse().forEach(this.drawCard.bind(this));
 
             return true;
         }
