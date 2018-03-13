@@ -508,6 +508,8 @@
 
     class App {
         constructor() {
+            this.widgetsRegistry = {};
+
             this.spinner = document.querySelector('.loader');
 
             // XXX: first widget added will be visible by default
@@ -531,7 +533,7 @@
         }
 
         addFullScreenWidget(constructor) {
-            const widget = new constructor();
+            const widget = this.widgetsRegistry[constructor.name] = new constructor();
 
             if (!this.fullScreenWidgets) {
                 this.fullScreenWidgets = {};
@@ -545,10 +547,21 @@
             this.previouslyVisibleWidget = this.currentlyVisibleWidget;
             this.currentlyVisibleWidget = widgetToShow;
 
+            this.currentWidget = widgetToShow;
+
             Object.keys(this.fullScreenWidgets).forEach((constructorName => {
                 const widget = this.fullScreenWidgets[constructorName];
                 widget.toggle(widget === widgetToShow);
             }).bind(this));
+        }
+
+        set currentWidget(currentWidget) {
+            localStorage.setItem('CURRENT_WIDGET', currentWidget.constructor.name);
+        }
+
+        get currentWidget() {
+            const constructorName = localStorage.getItem('CURRENT_WIDGET');
+            return this.widgetsRegistry[constructorName];
         }
 
         bind() {
@@ -560,8 +573,8 @@
                 }
             }).bind(this));
 
-            BUS.subscribe(START_CHANNEL, (widget => {
-                this.showWidget(this.firstWidget);
+            BUS.subscribe(START_CHANNEL, (() => {
+                this.showWidget(this.currentWidget || this.firstWidget);
             }).bind(this));
 
             BUS.subscribe(SHOW_WIDGET_CHANNEL, this.showWidget.bind(this));
