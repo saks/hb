@@ -8,7 +8,8 @@
         hour12: false,
     };
 
-    const $$ = (id) => { return document.getElementById(id) };
+    const $$ = (id) => document.getElementById(id);
+    const fmtNum = (input) => Number.parseFloat(input, 10).toFixed(2);
 
     const SIGN_IN_CHANNEL = Symbol.for('sign-in');
     const START_CHANNEL = Symbol.for('start');
@@ -340,7 +341,7 @@
             card.classList.add(extraClass);
 
             // amount
-            const amount = Number.parseFloat(record.amount.amount).toFixed(2);
+            const amount = fmtNum(record.amount.amount);
             card.querySelector('.amount').textContent = amount;
 
             // date
@@ -502,7 +503,53 @@
     class BudgetsPage extends Widget {
         constructor() {
             super();
+
+            this.template = document.querySelector('.budget.cardTemplate');
             this.container = $$('budgets');
+            this.cards = $$('budget-cards');
+            this.bind();
+        }
+
+        async show() {
+            const records = await this.getData();
+
+            if (undefined === records.results) {
+                return false;
+            } else {
+                this.cards.innerHTML = '';
+            }
+
+            records.results.forEach(this.drawCard.bind(this));
+
+            return true;
+        }
+
+        async getData() {
+            const response = await Auth.fetch('/api/budgets/budget-detail/');
+            return response.json();
+        }
+
+        drawCard(record) {
+            const card = this.template.cloneNode(true);
+            card.classList.remove('cardTemplate');
+
+            card.removeAttribute('hidden');
+
+            card.querySelector('.budget-name').textContent = record.name;
+            card.querySelector('.budget-left-per-day').textContent = fmtNum(record.average_per_day);
+            card.querySelector('.budget-left').textContent = fmtNum(record.left);
+            card.querySelector('.budget-total').textContent = fmtNum(record.amount);
+
+            this.cards.appendChild(card);
+        }
+
+        bind() {
+            BUS.subscribe(START_CHANNEL, (widget => {
+                if (Auth.instance.isSignedIn) { this.show(); }
+            }).bind(this));
+
+            BUS.subscribe(SIGN_IN_CHANNEL, this.show.bind(this));
+            BUS.subscribe(NEW_RECORD_CHANNEL, this.show.bind(this));
         }
     }
 
