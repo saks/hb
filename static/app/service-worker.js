@@ -1,20 +1,16 @@
-var cacheName = 'home-budget-0.0.3';
+var cacheName = 'home-budget-0.0.4';
 var filesToCache = [
     '/static/app/index.html',
     '/static/app/scripts/app.js',
     '/static/app/styles/inline.css',
-    '/static/app/images/ic_add_white_24px.svg',
-    '/static/app/images/ic_refresh_white_24px.svg',
 ];
 
-const externalsCacheName = 'home-budget-externals-0.0.2';
+const externalsCacheName = 'home-budget-externals-0.0.3';
 const externalUrls = [
     'https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js',
     'https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js',
     'https://code.jquery.com/jquery-3.2.1.slim.min.js',
     'https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css',
-    'https://fonts.gstatic.com/s/materialicons/v36/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2',
-    'https://fonts.googleapis.com/icon?family=Material+Icons',
 ];
 
 self.addEventListener('install', function(e) {
