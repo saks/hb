@@ -1,4 +1,4 @@
-(function() {
+(() => {
     'use strict';
     const DATETIME_FORMAT_OPTIONS = {
         month: 'short',
@@ -8,7 +8,7 @@
         hour12: false,
     };
 
-    const $$ = function(id) { return document.getElementById(id) };
+    const $$ = (id) => { return document.getElementById(id) };
 
     const SIGN_IN_CHANNEL = Symbol.for('sign-in');
     const START_CHANNEL = Symbol.for('start');
@@ -28,10 +28,8 @@
         }
 
         notify(channelName, payload={}) {
-            console.log('notify: ' + channelName.toString());
-            this.callbacks[channelName].forEach(function(callback) {
-                callback(payload);
-            });
+            console.log(`notify: ${channelName.toString()}`);
+            this.callbacks[channelName].forEach(callback => callback(payload));
         }
     }
 
@@ -89,7 +87,7 @@
         showErrors(response) {
             const errorMessages = this.dom.errorMessages;
 
-            Object.keys(errorMessages).forEach(function(fieldName) {
+            Object.keys(errorMessages).forEach(fieldName => {
                 const element = errorMessages[fieldName];
                 const errors = response[fieldName];
 
@@ -104,7 +102,7 @@
         }
 
         bind() {
-            $('#butSubmitSignIn').on('click', async function() {
+            $('#butSubmitSignIn').on('click', (async () => {
                 APP.showSpinner();
                 const tokenResponse = await fetch('/auth/jwt/create/', {
                     method: 'POST',
@@ -136,11 +134,11 @@
                 this.toggle(false);
                 APP.hideSpinner();
                 BUS.notify(SIGN_IN_CHANNEL);
-            }.bind(this));
+            }).bind(this));
 
-            $('#butCancelSignIn').on('click', function() {
+            $('#butCancelSignIn').on('click', (() => {
                 this.toggle(false);
-            }.bind(this));
+            }).bind(this));
         }
     }
 
@@ -152,11 +150,11 @@
         }
 
         bind() {
-            BUS.subscribe(START_CHANNEL, function() {
+            BUS.subscribe(START_CHANNEL, (() => {
                 if (!this.isSignedIn) {
                     this.form.toggle(true);
                 }
-            }.bind(this));
+            }).bind(this));
         }
 
         get isSignedIn() {
@@ -285,9 +283,7 @@
                 this.cards.innerHTML = '';
             }
 
-            records.results.forEach(function(record) {
-                this.drawCard(record);
-            }.bind(this));
+            records.results.forEach(this.drawCard.bind(this));
 
             return true;
         }
@@ -299,15 +295,15 @@
         }
 
         bind() {
-            $('#nextRecordsPageLink').on('click', async function(e) {
+            $('#nextRecordsPageLink').on('click', (async e => {
                 e.preventDefault();
                 this.currentPage++;
                 const success = await this.show();
                 if (!success) { this.currentPage--; }
                 this.updateCurrentPageLabel();
-            }.bind(this));
+            }).bind(this));
 
-            $('#prevRecordsPageLink').on('click', async function(e) {
+            $('#prevRecordsPageLink').on('click', (async e => {
                 e.preventDefault();
 
                 if (1 === this.currentPage) { return; }
@@ -316,20 +312,18 @@
                 const success = await this.show();
                 if (!success) { this.currentPage++; }
                 this.updateCurrentPageLabel();
-            }.bind(this));
+            }).bind(this));
 
-            BUS.subscribe(SIGN_IN_CHANNEL, function() {
-                this.show();
-            }.bind(this));
+            BUS.subscribe(SIGN_IN_CHANNEL, this.show.bind(this));
 
-            BUS.subscribe(START_CHANNEL, function(widget) {
+            BUS.subscribe(START_CHANNEL, (widget => {
                 if (Auth.instance.isSignedIn) { this.show(); }
-            }.bind(this));
+            }).bind(this));
 
-            BUS.subscribe(NEW_RECORD_CHANNEL, function(record) {
+            BUS.subscribe(NEW_RECORD_CHANNEL, (record => {
                 this.drawCard(record, false);
                 this.cards.lastElementChild.remove();
-            }.bind(this));
+            }).bind(this));
         }
 
         updateCurrentPageLabel() {
@@ -382,7 +376,7 @@
         }
 
         bind() {
-            $(this.tagsContainer).on('click', 'div.btn', function(e) {
+            $(this.tagsContainer).on('click', 'div.btn', e => {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
 
@@ -391,7 +385,7 @@
                 $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
             });
 
-            $('#butCalculateResult').click(function() {
+            $('#butCalculateResult').click((() => {
                 const input = this.dom.amountField;
                 let result;
 
@@ -406,35 +400,33 @@
                 }
 
                 input.focus();
-            }.bind(this));
+            }).bind(this));
 
-            $('#newRecordSubmit').on('click', async function(e) {
+            $('#newRecordSubmit').on('click', (async e => {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
 
                 await this.addNewRecord();
                 this.reset();
                 BUS.notify(HIDE_WIDGET_CHANNEL);
-            }.bind(this));
+            }).bind(this));
 
-            $('#newRecordAddAnother').on('click', async function(e) {
+            $('#newRecordAddAnother').on('click', (async e => {
                 e.stopImmediatePropagation();
                 e.stopPropagation();
 
                 await this.addNewRecord();
                 this.reset();
                 this.dom.amountField.focus();
-            }.bind(this));
+            }).bind(this));
 
-            BUS.subscribe(SIGN_IN_CHANNEL, function() {
-                this.setup();
-            }.bind(this));
+            BUS.subscribe(SIGN_IN_CHANNEL, this.setup.bind(this));
 
-            BUS.subscribe(START_CHANNEL, function() {
+            BUS.subscribe(START_CHANNEL, (() => {
                 if (Auth.instance.isSignedIn) {
                     this.setup();
                 }
-            }.bind(this));
+            }).bind(this));
         }
 
         reset() {
@@ -457,7 +449,7 @@
                 transaction_type: $('#newRecordTransactionType').val(),
             };
 
-            data.tags = $.makeArray($('#tagsContainer input:checked').map(function(_i, input) {
+            data.tags = $.makeArray($('#tagsContainer input:checked').map((_i, input) => {
                 return input.value;
             }));
 
@@ -484,7 +476,7 @@
             const tags = Auth.profile.tags;
             const template = this.template;
 
-            tags.forEach(function(name) {
+            tags.forEach(name => {
                 const id = name;
                 const domId = `id_tags_${id}`;
 
@@ -516,6 +508,8 @@
 
     class App {
         constructor() {
+            this.widgetsRegistry = {};
+
             this.spinner = document.querySelector('.loader');
 
             // XXX: first widget added will be visible by default
@@ -539,7 +533,7 @@
         }
 
         addFullScreenWidget(constructor) {
-            const widget = new constructor();
+            const widget = this.widgetsRegistry[constructor.name] = new constructor();
 
             if (!this.fullScreenWidgets) {
                 this.fullScreenWidgets = {};
@@ -553,36 +547,45 @@
             this.previouslyVisibleWidget = this.currentlyVisibleWidget;
             this.currentlyVisibleWidget = widgetToShow;
 
-            Object.keys(this.fullScreenWidgets).forEach(function(constructorName) {
+            this.currentWidget = widgetToShow;
+
+            Object.keys(this.fullScreenWidgets).forEach((constructorName => {
                 const widget = this.fullScreenWidgets[constructorName];
                 widget.toggle(widget === widgetToShow);
-            }.bind(this));
+            }).bind(this));
+        }
+
+        set currentWidget(currentWidget) {
+            localStorage.setItem('CURRENT_WIDGET', currentWidget.constructor.name);
+        }
+
+        get currentWidget() {
+            const constructorName = localStorage.getItem('CURRENT_WIDGET');
+            return this.widgetsRegistry[constructorName];
         }
 
         bind() {
-            $('a.nav-link').on('click', function(e) {
+            $('a.nav-link').on('click', (e => {
                 const targetName = e.currentTarget.dataset.target;
                 const widget = this.fullScreenWidgets[targetName];
                 if (widget) {
                     BUS.notify(SHOW_WIDGET_CHANNEL, widget);
                 }
-            }.bind(this));
+            }).bind(this));
 
-            BUS.subscribe(START_CHANNEL, function(widget) {
-                this.showWidget(this.firstWidget);
-            }.bind(this));
+            BUS.subscribe(START_CHANNEL, (() => {
+                this.showWidget(this.currentWidget || this.firstWidget);
+            }).bind(this));
 
-            BUS.subscribe(SHOW_WIDGET_CHANNEL, function(widget) {
-                this.showWidget(widget);
-            }.bind(this));
+            BUS.subscribe(SHOW_WIDGET_CHANNEL, this.showWidget.bind(this));
 
-            BUS.subscribe(HIDE_WIDGET_CHANNEL, function() {
+            BUS.subscribe(HIDE_WIDGET_CHANNEL, (() => {
                 if (!this.previouslyVisibleWidget) {
                     this.previouslyVisibleWidget = this.firstWidget;
                 }
 
                 this.showWidget(this.previouslyVisibleWidget);
-            }.bind(this));
+            }).bind(this));
         }
 
         run() {
@@ -599,7 +602,7 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker
             .register('./service-worker.js')
-            .then(function() {
+            .then(() => {
                 console.log('Service Worker Registered');
             });
     }
