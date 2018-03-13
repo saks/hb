@@ -74,6 +74,28 @@
         <div class="row justify-content-center">
           <h2>Budgets</h2>
         </div>
+        <div id="budget-cards"></div>
+        <div class="card budget cardTemplate" hidden>
+          <div class="card-body">
+            <h5>
+              <strong class="mr-auto budget-name"></strong>
+              <span class="float-right">
+                left
+                <strong class="budget-left-per-day"></strong>
+                per day
+              </span>
+            </h5>
+            <h5>
+              left
+              <strong class="budget-left"></strong>
+              of
+              <strong class="budget-total"></strong>
+            </h5>
+          </div>
+          <div class="progress position-relative">
+            <div class="progress-bar bg-info" role="progressbar" style="width: 35%" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
       </div>
 
       <!-- start of new record form -->
