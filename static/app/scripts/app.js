@@ -540,7 +540,7 @@
             card.querySelector('.budget-left').textContent = fmtNum(record.left);
             card.querySelector('.budget-total').textContent = fmtNum(record.amount);
 
-            const percentage = Math.round(record.left / record.amount * 100);
+            const percentage = Math.round(record.spent / record.amount * 100);
             card.querySelector('.progress-bar').style.width = `${percentage}%`;
 
             this.cards.appendChild(card);
