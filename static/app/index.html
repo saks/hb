@@ -76,23 +76,23 @@
         <div id="budget-cards"></div>
         <div class="card budget cardTemplate" hidden>
           <div class="card-body">
-            <h5>
-              <strong class="mr-auto budget-name"></strong>
+            <div>
+              <span class="mr-auto">
+                <h5 class="budget-name"></h5>
+              </span>
               <span class="float-right">
                 <small>left</small>
-                <strong class="budget-left-per-day"></strong>
+                <span class="budget-left-per-day"></span>
                 <small>/ day</small>
               </span>
-            </h5>
-            <h5>
-              <small>left</small>
-              <strong class="budget-left"></strong>
-              <small>of</small>
-              <strong class="budget-total"></strong>
-            </h5>
+            </div>
+            <span>left</span>
+            <big class="budget-left"></big>
+            <span>of</span>
+            <big class="budget-total"></big>
           </div>
           <div class="progress position-relative">
-            <div class="progress-bar bg-info" role="progressbar" style="width: 35%" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar bg-lime" role="progressbar" style="width: 35%" aria-valuemin="0" aria-valuemax="100"></div>
           </div>
         </div>
       </div>
