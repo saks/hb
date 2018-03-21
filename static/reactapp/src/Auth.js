@@ -1,11 +1,14 @@
 class Auth {
-    constructor(openSignInDialog) {
+    constructor(openSignInDialog, onAuthSuccess) {
         Auth.instance = this;
         this.openSignInDialog = openSignInDialog;
+        this.onAuthSuccess = onAuthSuccess;
     }
 
     start() {
-        if (!this.isSignedIn) {
+        if (this.isSignedIn) {
+            this.onAuthSuccess();
+        } else {
             this.openSignInDialog();
         }
     }

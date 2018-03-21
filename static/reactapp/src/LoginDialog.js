@@ -14,14 +14,11 @@ const NonFieldError = props => (
 class LoginDialog extends Component {
     constructor(props) {
         super(props);
-        this.props = props;
 
-        this.state = {};
-        this.submit = props.submit;
+        this.props = props;
+        this.state = { errors: {} };
 
         this.onSubmit = this.onSubmit.bind(this);
-        this.dom = {};
-        this.state = { errors: {} };
     }
 
     componentDidMount() {}
@@ -30,6 +27,7 @@ class LoginDialog extends Component {
         Object.keys(errors).forEach(fieldName => {
             errors[fieldName] = errors[fieldName].join(';');
         });
+
         this.setState({ errors: errors });
     }
 
@@ -67,6 +65,7 @@ class LoginDialog extends Component {
 
         this.props.hide();
         this.props.hideSpinner();
+        this.props.onSuccess();
     }
 
     render() {
@@ -99,7 +98,6 @@ class LoginDialog extends Component {
                                         Username
                                     </label>
                                     <input
-                                        id="username"
                                         ref={input => (this.usernameInput = input)}
                                         type="text"
                                         className="form-control"
@@ -124,14 +122,12 @@ class LoginDialog extends Component {
                         <div className="modal-footer">
                             <button
                                 type="button"
-                                id="butSubmitSignIn"
                                 onClick={this.onSubmit}
                                 className="btn btn-primary">
                                 Submit
                             </button>
                             <button
                                 type="button"
-                                id="butCancelSignIn"
                                 className="btn btn-secondary"
                                 onClick={this.props.hide}
                                 data-dismiss="modal">

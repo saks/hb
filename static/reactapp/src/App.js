@@ -3,6 +3,7 @@ import './App.css';
 import Auth from './Auth';
 import Spinner from './Spinner';
 import LoginDialog from './LoginDialog';
+import RecordsList from './RecordsList';
 import $ from 'jquery';
 import 'bootstrap';
 
@@ -11,12 +12,12 @@ class App extends Component {
         super(props);
 
         this.openSignInDialog = this.openSignInDialog.bind(this);
-        this.submitSignInDialog = this.submitSignInDialog.bind(this);
+        this.onAuthSuccess = this.onAuthSuccess.bind(this);
         this.hideSignInDialog = this.hideSignInDialog.bind(this);
         this.showSpinner = this.showSpinner.bind(this);
         this.hideSpinner = this.hideSpinner.bind(this);
 
-        this.auth = new Auth(this.openSignInDialog);
+        this.auth = new Auth(this.openSignInDialog, this.onAuthSuccess);
         this.state = { loading: false };
         this.dom = {};
     }
@@ -38,8 +39,8 @@ class App extends Component {
         $(this.dom.$modal).modal('show');
     }
 
-    submitSignInDialog(e) {
-        debugger;
+    onAuthSuccess() {
+        this.setState({ currentWidget: 'RecordsList' });
     }
 
     hideSignInDialog() {
@@ -101,8 +102,16 @@ class App extends Component {
                         </li>
                     </ul>
                 </header>
+                <div className="container">
+                    {'RecordsList' === this.state.currentWidget && (
+                        <RecordsList
+                            showSpinner={this.showSpinner}
+                            hideSpinner={this.hideSpinner}
+                        />
+                    )}
+                </div>
                 <LoginDialog
-                    submit={this.submitSignInDialog}
+                    onSuccess={this.onAuthSuccess}
                     hide={this.hideSignInDialog}
                     showSpinner={this.showSpinner}
                     hideSpinner={this.hideSpinner}
