@@ -23,7 +23,7 @@ class Record extends Component {
 
     get classNames() {
         const suffix = this.data.transaction_type === 'EXP' ? 'warning' : 'success';
-        return `card  record-item bd-callout bd-callout-${suffix}`;
+        return `card record-item bd-callout bd-callout-${suffix}`;
     }
 
     get tags() {

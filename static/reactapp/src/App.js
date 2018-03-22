@@ -13,25 +13,22 @@ class App extends Component {
 
         this.openSignInDialog = this.openSignInDialog.bind(this);
         this.onAuthSuccess = this.onAuthSuccess.bind(this);
-        this.hideSignInDialog = this.hideSignInDialog.bind(this);
-        this.showSpinner = this.showSpinner.bind(this);
-        this.hideSpinner = this.hideSpinner.bind(this);
+        this.closeSignInDialog = this.closeSignInDialog.bind(this);
 
         this.auth = new Auth(this.openSignInDialog, this.onAuthSuccess);
-        this.state = { loading: false };
+        this.state = {};
         this.dom = {};
-    }
 
-    showSpinner() {
-        this.setState({ loading: true });
-    }
-
-    hideSpinner() {
-        this.setState({ loading: false });
+        // Before we have a reference to a spinner, let's have a stub.
+        this.showSpinner = this.hideSpinner = () => {};
     }
 
     componentDidMount() {
         this.dom.$modal = $('#signInModal');
+
+        this.showSpinner = this.spinner.show;
+        this.hideSpinner = this.spinner.hide;
+
         this.auth.start();
     }
 
@@ -39,12 +36,12 @@ class App extends Component {
         $(this.dom.$modal).modal('show');
     }
 
-    onAuthSuccess() {
-        this.setState({ currentWidget: 'RecordsList' });
+    closeSignInDialog() {
+        $(this.dom.$modal).modal('hide');
     }
 
-    hideSignInDialog() {
-        $(this.dom.$modal).modal('hide');
+    onAuthSuccess() {
+        this.setState({ currentWidget: 'RecordsList' });
     }
 
     render() {
@@ -112,11 +109,11 @@ class App extends Component {
                 </div>
                 <LoginDialog
                     onSuccess={this.onAuthSuccess}
-                    hide={this.hideSignInDialog}
+                    close={this.closeSignInDialog}
                     showSpinner={this.showSpinner}
                     hideSpinner={this.hideSpinner}
                 />
-                {this.state.loading && <Spinner />}
+                <Spinner ref={spinner => (this.spinner = spinner)} />
             </React.Fragment>
         );
     }

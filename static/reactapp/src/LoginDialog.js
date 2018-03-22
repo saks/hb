@@ -63,7 +63,7 @@ class LoginDialog extends Component {
             return;
         }
 
-        this.props.hide();
+        this.props.close();
         this.props.hideSpinner();
         this.props.onSuccess();
     }
@@ -129,7 +129,7 @@ class LoginDialog extends Component {
                             <button
                                 type="button"
                                 className="btn btn-secondary"
-                                onClick={this.props.hide}
+                                onClick={this.props.close}
                                 data-dismiss="modal">
                                 Close
                             </button>

@@ -8,15 +8,15 @@ class RecordsList extends Component {
         super(props);
 
         this.props = props;
-        this.nextPage = this.nextPage.bind(this);
-        this.prevPage = this.prevPage.bind(this);
+        this.visitNextPage = this.visitNextPage.bind(this);
+        this.visitPrevPage = this.visitPrevPage.bind(this);
 
         this.state = { currentPage: this.storedCurrentPage, records: [] };
     }
 
     initCurrentPage() {
         if (Number.isNaN(this.currentPage)) {
-            this.currentPage = 1;
+            this.storeCurrentPage(1);
         }
     }
 
@@ -25,22 +25,21 @@ class RecordsList extends Component {
         return Number.isNaN(stored) ? 1 : stored;
     }
 
-    set currentPage(n) {
+    storeCurrentPage(n) {
         localStorage.setItem('CURRENT_PAGE', n);
     }
 
     async componentDidMount() {
-        await this.show(this.state.currentPage);
+        await this.showPage(this.state.currentPage);
     }
 
-    async show(pageNum) {
+    async showPage(pageNum) {
         const records = await this.getPage(pageNum);
         if (undefined === records.results) {
             return;
         }
-
         this.setState({ records: records.results, currentPage: pageNum });
-        this.currentPage = pageNum;
+        this.storeCurrentPage(pageNum);
     }
 
     async getPage(pageNum) {
@@ -50,15 +49,19 @@ class RecordsList extends Component {
         return response.json();
     }
 
-    async nextPage() {
-        this.show(this.state.currentPage + 1);
+    async visitNextPage() {
+        this.showPage(this.state.currentPage + 1);
     }
 
-    async prevPage() {
+    async visitPrevPage() {
         if (1 === this.state.currentPage) {
             return;
         }
-        this.show(this.state.currentPage - 1);
+        this.showPage(this.state.currentPage - 1);
+    }
+
+    get renderedRecords() {
+        return this.state.records.map(record => <Record data={record} key={record.id} />);
     }
 
     render() {
@@ -67,14 +70,12 @@ class RecordsList extends Component {
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>
-                <div>
-                    {this.state.records.map(record => <Record data={record} key={record.id} />)}
-                </div>
+                <div>{this.renderedRecords}</div>
                 <div className="container">
                     <nav aria-label="pagination">
                         <ul className="pagination justify-content-center">
                             <li className="page-item">
-                                <a className="page-link" tabIndex="-1" onClick={this.prevPage}>
+                                <a className="page-link" tabIndex="-1" onClick={this.visitPrevPage}>
                                     Previous
                                 </a>
                             </li>
@@ -82,7 +83,7 @@ class RecordsList extends Component {
                                 <a className="page-link">{this.state.currentPage}</a>
                             </li>
                             <li className="page-item">
-                                <a className="page-link" onClick={this.nextPage}>
+                                <a className="page-link" onClick={this.visitNextPage}>
                                     Next
                                 </a>
                             </li>
