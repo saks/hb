@@ -12,7 +12,24 @@ class RecordsList extends Component {
         this.visitPrevPage = this.visitPrevPage.bind(this);
 
         this.state = { currentPage: this.storedCurrentPage, records: [] };
+
+        // base:
+        this.registerContainer = this.registerContainer.bind(this);
     }
+
+    // start of base functionality
+    registerContainer(element) {
+        this.container = element;
+    }
+
+    show() {
+        this.container.removeAttribute('hidden');
+    }
+
+    hide() {
+        this.container.setAttribute('hidden', true);
+    }
+    // end of base functionality
 
     initCurrentPage() {
         if (Number.isNaN(this.currentPage)) {
@@ -30,6 +47,7 @@ class RecordsList extends Component {
     }
 
     async componentDidMount() {
+        console.log(`mount ${this.constructor.name}`);
         await this.showPage(this.state.currentPage);
     }
 
@@ -64,9 +82,32 @@ class RecordsList extends Component {
         return this.state.records.map(record => <Record data={record} key={record.id} />);
     }
 
+    async componentWillReceiveProps(nextProps) {
+        if (!this.props.isSignedIn && nextProps.isSignedIn) {
+            await this.showPage(this.state.currentPage);
+        }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        if (!this.props.isSignedIn) {
+            return false;
+        }
+
+        if (0 === nextState.records.length && 0 === this.state.records.length) {
+            return false;
+        }
+
+        return true;
+    }
+
     render() {
+        // console.log(`RENDER: ${this.constructor.name}`);
+        // console.log(this.state);
+        // console.log(this.props);
+        // console.log('\n');
+
         return (
-            <div className="records-list">
+            <div className="records-list" ref={this.registerContainer} hidden>
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>

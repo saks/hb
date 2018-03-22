@@ -15,7 +15,6 @@ class LoginDialog extends Component {
     constructor(props) {
         super(props);
 
-        this.props = props;
         this.state = { errors: {} };
 
         this.onSubmit = this.onSubmit.bind(this);
@@ -65,7 +64,7 @@ class LoginDialog extends Component {
 
         this.props.close();
         this.props.hideSpinner();
-        this.props.onSuccess();
+        this.props.ready();
     }
 
     render() {

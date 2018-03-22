@@ -71,7 +71,7 @@ class Auth {
         if (!response.ok && 400 === response.status) {
             this.token = null;
             this.profile = null;
-            this.instance.form.toggle(true);
+            this.instance.openSignInDialog();
         } else {
             debugger;
         }
@@ -96,7 +96,7 @@ class Auth {
             if (this.instance.isSignedIn) {
                 return this.fetch(url, options);
             } else {
-                this.instance.form.toggle(true);
+                this.instance.openSignInDialog();
             }
         }
 
