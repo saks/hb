@@ -2,6 +2,6 @@
 *.swp
 .cache
 node_modules
-app.min.js
-app.min.map
+index.min.js
+index.min.map
 Session.vim

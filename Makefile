@@ -30,8 +30,8 @@ shell:
 	@bin/docker_exec bash
 
 static:
-	parcel build static/app/scripts/app.js \
-		--out-file app.min \
+	parcel build static/app/scripts/index.js \
+		--out-file index.min \
 		--out-dir static/app/scripts \
 		--public-url="/static/app/scripts" \
 		--detailed-report
