@@ -1,15 +1,12 @@
-var cacheName = 'home-budget-0.0.4';
+var cacheName = 'home-budget-0.0.5';
 var filesToCache = [
     '/static/app/index.html',
-    '/static/app/scripts/app.js',
+    '/static/app/scripts/app.min.js',
     '/static/app/styles/inline.css',
 ];
 
 const externalsCacheName = 'home-budget-externals-0.0.3';
 const externalUrls = [
-    'https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js',
-    'https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js',
-    'https://code.jquery.com/jquery-3.2.1.slim.min.js',
     'https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css',
 ];
 
@@ -29,7 +26,7 @@ self.addEventListener('fetch', function(e) {
     if (externalUrls.includes(e.request.url)) {
         e.respondWith(
             caches.open(externalsCacheName).then(function(cache) {
-                return fetch(e.request).then(function(response){
+                return fetch(e.request).then(function(response) {
                     cache.put(e.request.url, response.clone());
                     return response;
                 });
@@ -48,7 +45,6 @@ self.addEventListener('fetch', function(e) {
         );
     }
 
-
     // console.log('[ServiceWorker] Fetch', e.request.url);
     // e.respondWith(
     //     caches.match(e.request).then(function(response) {
@@ -61,12 +57,14 @@ self.addEventListener('activate', function(e) {
     console.log('[ServiceWorker] Activate');
     e.waitUntil(
         caches.keys().then(function(keyList) {
-            return Promise.all(keyList.map(function(key) {
-                if (key !== cacheName) {
-                    console.log('[ServiceWorker] Removing old cache', key);
-                    return caches.delete(key);
-                }
-            }));
+            return Promise.all(
+                keyList.map(function(key) {
+                    if (key !== cacheName) {
+                        console.log('[ServiceWorker] Removing old cache', key);
+                        return caches.delete(key);
+                    }
+                })
+            );
         })
     );
     return self.clients.claim();

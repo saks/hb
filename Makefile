@@ -29,4 +29,12 @@ pylint:
 shell:
 	@bin/docker_exec bash
 
-.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell
+static:
+	cd static/app/scripts && \
+		parcel build app.js \
+			--out-file app.min \
+			--out-dir . \
+			--public-url="/static/app/scripts" \
+			--detailed-report
+
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell static

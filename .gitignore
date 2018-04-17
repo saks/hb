@@ -1,2 +1,7 @@
 *.pyc
 *.swp
+.cache
+node_modules
+app.min.js
+app.min.map
+Session.vim
