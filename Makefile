@@ -30,11 +30,10 @@ shell:
 	@bin/docker_exec bash
 
 static:
-	cd static/app/scripts && \
-		parcel build app.js \
-			--out-file app.min \
-			--out-dir . \
-			--public-url="/static/app/scripts" \
-			--detailed-report
+	parcel build static/app/scripts/app.js \
+		--out-file app.min \
+		--out-dir static/app/scripts \
+		--public-url="/static/app/scripts" \
+		--detailed-report
 
 .PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell static

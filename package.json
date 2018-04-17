@@ -4,7 +4,11 @@
     "description": "",
     "main": "service-worker.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "postinstall": "make static"
+    },
+    "engines": {
+        "node": "8.x"
     },
     "keywords": [],
     "author": "",
@@ -14,5 +18,10 @@
         "jquery": "^3.3.1",
         "popper.js": "^1.14.3"
     },
-    "browserslist": ["chrome 68"]
+    "browserslist": [
+        "chrome 68"
+    ],
+    "devDependencies": {
+        "parcel-bundler": "^1.7.1"
+    }
 }
