@@ -20,6 +20,10 @@ class BudgetsPage extends Widget {
         this.bind();
     }
 
+    static get className() {
+        return 'BudgetsPage';
+    }
+
     async show() {
         const records = await this.getData();
 

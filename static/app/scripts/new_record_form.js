@@ -24,6 +24,10 @@ class NewRecordForm extends Widget {
         this.bind();
     }
 
+    static get className() {
+        return 'NewRecordForm';
+    }
+
     bind() {
         $(this.tagsContainer).on('click', 'div.btn', e => {
             e.stopImmediatePropagation();

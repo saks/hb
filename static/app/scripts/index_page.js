@@ -29,6 +29,10 @@ class IndexPage extends Widget {
         this.bind();
     }
 
+    static get className() {
+        return 'IndexPage';
+    }
+
     initCurrentPage() {
         if (Number.isNaN(this.currentPage)) {
             this.currentPage = 1;

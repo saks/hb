@@ -10,6 +10,10 @@ class Widget {
             this.container.setAttribute('hidden', true);
         }
     }
+
+    static get className() {
+        throw 'Not implemented!';
+    }
 }
 
 export default Widget;

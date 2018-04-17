@@ -41,14 +41,14 @@ class App {
     }
 
     addFullScreenWidget(constructor) {
-        const widget = (this.widgetsRegistry[constructor.name] = new constructor());
+        const widget = (this.widgetsRegistry[constructor.className] = new constructor());
 
         if (!this.fullScreenWidgets) {
             this.fullScreenWidgets = {};
             this.firstWidget = widget;
         }
 
-        this.fullScreenWidgets[constructor.name] = widget;
+        this.fullScreenWidgets[constructor.className] = widget;
     }
 
     showWidget(widgetToShow) {
@@ -66,7 +66,7 @@ class App {
     }
 
     set currentWidget(currentWidget) {
-        localStorage.setItem('CURRENT_WIDGET', currentWidget.constructor.name);
+        localStorage.setItem('CURRENT_WIDGET', currentWidget.constructor.className);
     }
 
     get currentWidget() {
