@@ -24,5 +24,5 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
