@@ -46,7 +46,9 @@ class BudgetsPage extends Widget {
         card.removeAttribute('hidden');
 
         card.querySelector('.budget-name').textContent = record.name;
-        card.querySelector('.budget-left-per-day').textContent = fmtNum(record.average_per_day);
+        card.querySelector('.budget-left-per-day').textContent = fmtNum(
+            record.left_average_per_day
+        );
         card.querySelector('.budget-left').textContent = fmtNum(record.left);
         card.querySelector('.budget-total').textContent = fmtNum(record.amount);
 
