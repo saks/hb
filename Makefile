@@ -30,10 +30,17 @@ shell:
 	@bin/docker_exec bash
 
 static:
-	parcel build static/app/scripts/index.js \
-		--out-file index.min \
-		--out-dir static/app/scripts \
-		--public-url="/static/app/scripts" \
-		--detailed-report
+	./node_modules/parcel-bundler/bin/cli.js \
+		build static/app/scripts/index.js \
+			--out-file index.min \
+			--out-dir static/app/scripts \
+			--public-url="/static/app/scripts" \
+			--detailed-report
+	./node_modules/parcel-bundler/bin/cli.js \
+		build static/app/styles/index.css \
+			--out-file index.min \
+			--out-dir static/app/styles \
+			--public-url="/static/app/styles" \
+			--detailed-report
 
 .PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell static

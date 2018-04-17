@@ -3,5 +3,6 @@
 .cache
 node_modules
 index.min.js
+index.min.css
 index.min.map
 Session.vim

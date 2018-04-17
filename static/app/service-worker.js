@@ -1,14 +1,12 @@
-var cacheName = 'home-budget-0.0.5';
+var cacheName = 'home-budget-0.0.6';
 var filesToCache = [
     '/static/app/index.html',
     '/static/app/scripts/app.min.js',
-    '/static/app/styles/inline.css',
+    '/static/app/styles/index.min.css',
 ];
 
-const externalsCacheName = 'home-budget-externals-0.0.3';
-const externalUrls = [
-    'https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css',
-];
+const externalsCacheName = 'home-budget-externals-0.0.4';
+const externalUrls = [];
 
 self.addEventListener('install', function(e) {
     console.log('[ServiceWorker] Install');
