@@ -29,16 +29,11 @@ pylint:
 shell:
 	@bin/docker_exec bash
 
-static: node_packages build_static
-
-node_packages:
-	npm install
-
-build_static:
+static:
 	parcel build static/app/scripts/app.js \
 		--out-file app.min \
 		--out-dir static/app/scripts \
 		--public-url="/static/app/scripts" \
 		--detailed-report
 
-.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell static node_packages build_static
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell static
