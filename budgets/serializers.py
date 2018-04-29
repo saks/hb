@@ -13,4 +13,4 @@ class BudgetSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Budget
         fields = ('name', 'user', 'amount', 'spent', 'left',
-                  'average_per_day', )
+                  'average_per_day', 'left_average_per_day')
