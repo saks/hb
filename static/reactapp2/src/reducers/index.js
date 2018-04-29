@@ -1,7 +1,10 @@
 import { combineReducers } from 'redux';
+import { defineState } from 'redux-localstore';
+
 import { SELECT_WIDGET } from '../constants/ActionTypes';
 
-const selectedWidget = (state = 'RecordsList', action) => {
+const initialSelectedWidget = defineState('RecordsList')('selectedWidget');
+const selectedWidget = (state = initialSelectedWidget, action) => {
     switch (action.type) {
         case SELECT_WIDGET:
             return action.widgetName;

@@ -1,4 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
+import storeSynchronize from 'redux-localstore';
 
 import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
@@ -9,5 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
     middleware.push(createLogger());
 }
 const store = createStore(reducer, applyMiddleware(...middleware));
+
+storeSynchronize(store);
 
 export default store;
