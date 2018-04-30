@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
 import Auth from './Auth';
+import $ from 'jquery';
+import 'bootstrap';
 
 const FormFieldError = props => (
     <small className="form-text text-danger sign-in-error">{props.text}</small>
@@ -12,66 +16,61 @@ const NonFieldError = props => (
 );
 
 class LoginDialog extends Component {
+    static propTypes = {
+        authenticate: PropTypes.func.isRequired,
+        auth: PropTypes.object.isRequired,
+    };
+
     constructor(props) {
         super(props);
 
-        this.state = { errors: {} };
-
-        this.onSubmit = this.onSubmit.bind(this);
+        // this.state = { errors: {} };
+        this.modal = React.createRef();
+        this.usernameInput = React.createRef();
+        this.passwordInput = React.createRef();
     }
 
-    componentDidMount() {}
-
-    showErrors(errors) {
-        Object.keys(errors).forEach(fieldName => {
-            errors[fieldName] = errors[fieldName].join(';');
-        });
-
-        this.setState({ errors: errors });
+    componentDidMount() {
+        if (null === this.props.auth.token) {
+            // not authenticated
+            $(this.modal.current).modal('show');
+        }
     }
 
-    async onSubmit(e) {
-        this.props.showSpinner();
-
-        const body = JSON.stringify({
-            username: this.usernameInput.value,
-            password: this.passwordInput.value,
-        });
-
-        const tokenResponse = await fetch('/auth/jwt/create/', {
-            method: 'POST',
-            body: body,
-            headers: {
-                'User-Agent': 'Home Budget PWA',
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!tokenResponse.ok) {
-            const responseBody = await tokenResponse.json();
-            this.showErrors(responseBody);
-            return;
+    static getDerivedStateFromProps(nextProps, prevState) {
+        if (null === prevState) {
+            return nextProps;
         }
-
-        const tokenData = await tokenResponse.json();
-        Auth.token = tokenData.token;
-
-        const success = await Auth.fetchProfile();
-        if (!success) {
-            this.showErrors({ non_field_errors: ['Failed to load profile.'] });
-            return;
+        if (
+            nextProps.auth.token !== prevState.auth.token ||
+            nextProps.auth.errors !== prevState.auth.errors ||
+            nextProps.auth.isFetching !== prevState.auth.isFetching
+        ) {
+            return nextProps;
         }
+    }
 
-        this.props.close();
-        this.props.hideSpinner();
-        this.props.ready();
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.auth.isFetching === false && prevProps.auth.isFetching === true) {
+            this.close();
+        }
+    }
+
+    close() {
+        $(this.modal.current).modal('hide');
+    }
+
+    onSubmit() {
+        const username = this.usernameInput.current.value;
+        const password = this.passwordInput.current.value;
+        this.props.authenticate({ username, password });
     }
 
     render() {
-        const errors = this.state.errors;
+        const errors = this.props.auth.errors;
 
         return (
-            <div className="modal" id="signInModal" tabIndex="-1" role="dialog">
+            <div className="modal" tabIndex="-1" role="dialog" ref={this.modal}>
                 <div className="modal-dialog" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -97,7 +96,7 @@ class LoginDialog extends Component {
                                         Username
                                     </label>
                                     <input
-                                        ref={input => (this.usernameInput = input)}
+                                        ref={this.usernameInput}
                                         type="text"
                                         className="form-control"
                                         required
@@ -109,7 +108,7 @@ class LoginDialog extends Component {
                                         Password
                                     </label>
                                     <input
-                                        ref={input => (this.passwordInput = input)}
+                                        ref={this.passwordInput}
                                         type="password"
                                         className="form-control"
                                         required
@@ -128,7 +127,7 @@ class LoginDialog extends Component {
                             <button
                                 type="button"
                                 className="btn btn-secondary"
-                                onClick={this.props.close}
+                                onClick={this.close.bind(this)}
                                 data-dismiss="modal">
                                 Close
                             </button>

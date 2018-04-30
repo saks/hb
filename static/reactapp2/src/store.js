@@ -5,11 +5,11 @@ import thunk from 'redux-thunk';
 import { createLogger } from 'redux-logger';
 import reducer from './reducers';
 
-const middleware = [thunk];
+const middlewares = [thunk];
 if (process.env.NODE_ENV !== 'production') {
-    middleware.push(createLogger());
+    middlewares.push(createLogger());
 }
-const store = createStore(reducer, applyMiddleware(...middleware));
+const store = createStore(reducer, applyMiddleware(...middlewares));
 
 storeSynchronize(store);
 
