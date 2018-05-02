@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-import Auth from './Auth';
 import $ from 'jquery';
 import 'bootstrap';
 
@@ -24,7 +23,7 @@ class LoginDialog extends Component {
     constructor(props) {
         super(props);
 
-        // this.state = { errors: {} };
+        this.state = { auth: { errors: {} } };
         this.modal = React.createRef();
         this.usernameInput = React.createRef();
         this.passwordInput = React.createRef();
@@ -42,12 +41,14 @@ class LoginDialog extends Component {
             return nextProps;
         }
         if (
-            nextProps.auth.token !== prevState.auth.token ||
+            // nextProps.auth.token !== prevState.auth.token ||
             nextProps.auth.errors !== prevState.auth.errors ||
             nextProps.auth.isFetching !== prevState.auth.isFetching
         ) {
             return nextProps;
         }
+
+        return null;
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -67,6 +68,7 @@ class LoginDialog extends Component {
     }
 
     render() {
+        console.log('LoginDialog rendered');
         const errors = this.props.auth.errors;
 
         return (

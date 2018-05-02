@@ -1,3 +1,5 @@
+import { defineState } from 'redux-localstore';
+
 import {
     START_AUTH,
     FINIS_AUTH,
@@ -6,13 +8,15 @@ import {
     SET_AUTH_PROFILE,
 } from '../constants/ActionTypes';
 
-const initialState = {
+const defaultState = {
     isFetching: false,
     errors: {},
     token: null,
     profile: {},
     parsedToken: {},
 };
+
+const initialState = defineState(defaultState)('auth');
 
 export default (state = initialState, action) => {
     switch (action.type) {
