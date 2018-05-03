@@ -6,6 +6,7 @@ import {
     ERROR_AUTH,
     SET_AUTH_TOKEN,
     SET_AUTH_PROFILE,
+    SIGN_OUT,
 } from '../constants/ActionTypes';
 
 const defaultState = {
@@ -30,6 +31,8 @@ export default (state = initialState, action) => {
             return { ...state, token: action.token, parsedToken: action.parsedToken };
         case SET_AUTH_PROFILE:
             return { ...state, profile: action.profile };
+        case SIGN_OUT:
+            return { ...state, profile: {}, token: null, parsedToken: {}, isFetching: false };
         default:
             return state;
     }
