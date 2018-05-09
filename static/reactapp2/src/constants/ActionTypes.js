@@ -2,8 +2,8 @@ export const SELECT_WIDGET = 'SELECT_WIDGET';
 export const SET_TAGS = 'SET_TAGS';
 
 // Auth
-export const START_AUTH = 'START_AUTH';
-export const FINIS_AUTH = 'FINIS_AUTH';
+export const OPEN_AUTH_DIALOG = 'OPEN_AUTH_DIALOG';
+export const CLOSE_AUTH_DIALOG = 'CLOSE_AUTH_DIALOG';
 export const ERROR_AUTH = 'ERROR_AUTH';
 export const SET_AUTH_PROFILE = 'SET_AUTH_PROFILE';
 export const SET_AUTH_TOKEN = 'SET_AUTH_TOKEN';

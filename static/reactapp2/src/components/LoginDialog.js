@@ -17,42 +17,30 @@ const NonFieldError = props => (
 class LoginDialog extends Component {
     static propTypes = {
         authenticate: PropTypes.func.isRequired,
-        auth: PropTypes.object.isRequired,
+        errors: PropTypes.object.isRequired,
+        isOpen: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
         super(props);
 
-        this.state = { auth: { errors: {} } };
         this.modal = React.createRef();
         this.usernameInput = React.createRef();
         this.passwordInput = React.createRef();
     }
 
-    componentDidMount() {
-        if (null === this.props.auth.token) {
-            // not authenticated
-            $(this.modal.current).modal('show');
-        }
-    }
-
-    static getDerivedStateFromProps(nextProps, prevState) {
-        if (null === prevState) {
-            return nextProps;
-        }
-        if (
-            // nextProps.auth.token !== prevState.auth.token ||
-            nextProps.auth.errors !== prevState.auth.errors ||
-            nextProps.auth.isFetching !== prevState.auth.isFetching
-        ) {
-            return nextProps;
-        }
-
-        return null;
-    }
-
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.auth.isFetching === false && prevProps.auth.isFetching === true) {
+        this.manageDialogState();
+    }
+
+    componentDidMount() {
+        this.manageDialogState();
+    }
+
+    manageDialogState() {
+        if (this.props.isOpen) {
+            $(this.modal.current).modal('show');
+        } else {
             this.close();
         }
     }
@@ -68,8 +56,7 @@ class LoginDialog extends Component {
     }
 
     render() {
-        console.log('LoginDialog rendered');
-        const errors = this.props.auth.errors;
+        const errors = this.props.errors;
 
         return (
             <div className="modal" tabIndex="-1" role="dialog" ref={this.modal}>

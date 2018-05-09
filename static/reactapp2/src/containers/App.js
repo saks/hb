@@ -18,7 +18,15 @@ class App extends Component {
     };
 
     componentDidMount() {
-        // debugger;
+        if (this.isAuthenticated()) {
+            this.props.actions.loadDataForRecordsPage();
+        } else {
+            this.props.actions.openAuthDialog();
+        }
+    }
+
+    isAuthenticated() {
+        return null !== this.props.auth.token;
     }
 
     render() {
@@ -32,16 +40,19 @@ class App extends Component {
                 />
                 <div className="container">
                     <RecordsList
-                        isReady={null !== props.auth.token}
                         isVisible={'RecordsList' === props.selectedWidget}
                         currentPage={props.records.currentPage}
                         list={props.records.list}
-                        loadData={actions.loadDataForRecordsPage}
                         visitNextPage={actions.visitNextRecordsPage}
                         visitPrevPage={actions.visitPrevRecordsPage}
                     />
                 </div>
-                <LoginDialog authenticate={actions.authenticate} auth={props.auth} />
+                <LoginDialog
+                    authenticate={actions.authenticate}
+                    auth={props.auth}
+                    errors={props.auth.errors}
+                    isOpen={props.auth.isDialogOpen}
+                />
             </React.Fragment>
         );
     }

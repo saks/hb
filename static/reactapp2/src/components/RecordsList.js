@@ -5,24 +5,15 @@ import Record from './Record';
 
 class RecordsList extends Component {
     static propTypes = {
-        isReady: PropTypes.bool.isRequired,
         list: PropTypes.array.isRequired,
         currentPage: PropTypes.number.isRequired,
         isVisible: PropTypes.bool.isRequired,
         visitNextPage: PropTypes.func.isRequired,
         visitPrevPage: PropTypes.func.isRequired,
-        loadData: PropTypes.func.isRequired,
     };
 
     get renderedRecords() {
         return this.props.list.map(record => <Record data={record} key={record.id} />);
-    }
-
-    componentDidMount() {
-        // FIXME: make this this runs after login
-        if (this.props.isReady) {
-            this.props.loadData();
-        }
     }
 
     render() {

@@ -3,8 +3,8 @@ import {
     SET_AUTH_TOKEN,
     SET_AUTH_PROFILE,
     SET_TAGS,
-    START_AUTH,
-    FINIS_AUTH,
+    OPEN_AUTH_DIALOG,
+    CLOSE_AUTH_DIALOG,
     ERROR_AUTH,
     SIGN_OUT,
     START_LOADING_RECORDS_PAGE,
@@ -26,8 +26,8 @@ const setAuthToken = token => {
     return { type: SET_AUTH_TOKEN, token, parsedToken: parsedToken(token) };
 };
 const setAuthProfile = profile => ({ type: SET_AUTH_PROFILE, profile });
-const startAuth = () => ({ type: START_AUTH });
-const finisAuth = () => ({ type: FINIS_AUTH });
+export const openAuthDialog = () => ({ type: OPEN_AUTH_DIALOG });
+const closeAuthDialog = () => ({ type: CLOSE_AUTH_DIALOG });
 const authErrors = errors => {
     Object.keys(errors).forEach(fieldName => {
         errors[fieldName] = errors[fieldName].join(';');
@@ -56,14 +56,10 @@ export const authFetch = (options = {}) => {
 
         if (!result.ok && result.status === 401) {
             dispatch(signOut());
-            // TODO: make sure that login dialog will open
-            debugger;
-            // await this.refresh();
-            // if (this.instance.isSignedIn) {
-            //     return this.fetch(url, options);
-            // } else {
-            //     this.instance.openSignInDialog();
-            // }
+            dispatch(openAuthDialog());
+
+            return null;
+            // TODO: refresh auth token
         }
 
         return result;
@@ -72,7 +68,6 @@ export const authFetch = (options = {}) => {
 
 export const authenticate = formData => {
     return async (dispatch, getState) => {
-        dispatch(startAuth());
         const tokenResponse = await fetch('/auth/jwt/create/', {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -92,9 +87,16 @@ export const authenticate = formData => {
         const userId = getState().auth.parsedToken.user_id;
 
         const profileResponse = await dispatch(authFetch({ url: `/api/user/${userId}/` }));
+        if (null === profileResponse) {
+            return;
+        }
+
         const profile = await profileResponse.json();
         dispatch(setAuthProfile(profile));
-        dispatch(finisAuth());
+        dispatch(closeAuthDialog());
+
+        // refresh all data
+        dispatch(loadDataForRecordsPage());
     };
 };
 
@@ -116,6 +118,10 @@ export const visitNextRecordsPage = () => {
         const nextPageNum = getState().records.currentPage + 1;
         const url = `/api/records/record-detail/?page=${nextPageNum}`;
         const result = await dispatch(authFetch({ url }));
+
+        if (null === result) {
+            return;
+        }
 
         if (404 === result.status) {
             dispatch(finisLoadingRecordsList());
