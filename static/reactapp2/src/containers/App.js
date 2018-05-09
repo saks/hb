@@ -5,7 +5,10 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import LoginDialog from '../components/LoginDialog';
 import RecordsList from '../components/RecordsList';
+import NewRecordForm from '../components/NewRecordForm';
 import './../App.css';
+
+import { NEW_RECORD_FORM, RECORDS_LIST } from '../constants/WidgetNames';
 
 import NavigationHeader from '../components/NavigationHeader';
 
@@ -40,12 +43,13 @@ class App extends Component {
                 />
                 <div className="container">
                     <RecordsList
-                        isVisible={'RecordsList' === props.selectedWidget}
+                        isVisible={RECORDS_LIST === props.selectedWidget}
                         currentPage={props.records.currentPage}
                         list={props.records.list}
                         visitNextPage={actions.visitNextRecordsPage}
                         visitPrevPage={actions.visitPrevRecordsPage}
                     />
+                    <NewRecordForm isVisible={NEW_RECORD_FORM === props.selectedWidget} />
                 </div>
                 <LoginDialog
                     authenticate={actions.authenticate}

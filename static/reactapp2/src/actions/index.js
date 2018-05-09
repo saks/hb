@@ -132,7 +132,6 @@ export const visitNextRecordsPage = () => {
 
         dispatch(setCurrentPageForRecordsPage(nextPageNum));
         dispatch(setListForRecordsPage(json.results));
-
         dispatch(finisLoadingRecordsList());
     };
 };
@@ -147,14 +146,12 @@ export const visitPrevRecordsPage = () => {
 
         dispatch(startLoadingRecordsList());
 
-        // TODO: landle 400
         const url = `/api/records/record-detail/?page=${prevPageNum}`;
         const result = await dispatch(authFetch({ url }));
         const json = await result.json();
 
         dispatch(setCurrentPageForRecordsPage(prevPageNum));
         dispatch(setListForRecordsPage(json.results));
-
         dispatch(finisLoadingRecordsList());
     };
 };
@@ -165,13 +162,11 @@ export const loadDataForRecordsPage = () => {
 
         dispatch(startLoadingRecordsList());
 
-        // TODO: landle 400
         const url = `/api/records/record-detail/?page=${pageNum}`;
         const result = await dispatch(authFetch({ url }));
         const json = await result.json();
 
         dispatch(setListForRecordsPage(json.results));
-
         dispatch(finisLoadingRecordsList());
     };
 };

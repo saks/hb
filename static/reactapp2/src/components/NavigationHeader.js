@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { NEW_RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
 
 class NavigationItem extends Component {
     constructor(props) {
         super(props);
-        this.widgetName = this.constructor.name.replace('Item', '');
+        this.widgetName = this.props.widgetName;
     }
 
     get isActive() {
@@ -42,21 +43,6 @@ class NavigationHeader extends Component {
         selectedWidget: PropTypes.string.isRequired,
     };
 
-    // get storedCurrentWidget() {
-    //     return localStorage.getItem('CURRENT_WIDGET') || 'RecordsList';
-    // }
-
-    // setCurrentWidget(widgetName) {
-    //     localStorage.setItem('CURRENT_WIDGET', widgetName);
-    //     this.setState({ currentWidget: widgetName });
-    //     this.props.showWidget(widgetName);
-    // }
-
-    componentDidMount() {
-        console.log(`mount ${this.constructor.name}`);
-        // this.props.showWidget(this.state.currentWidget);
-    }
-
     render() {
         return (
             <header className="navbar navbar-expand navbar-dark bg-info mb-3 py-0">
@@ -66,7 +52,8 @@ class NavigationHeader extends Component {
                 <ul className="nav justify-content-end nav-tabs">
                     <NewRecordFormItem
                         selectWidget={this.props.selectWidget}
-                        selectedWidget={this.props.selectedWidget}>
+                        selectedWidget={this.props.selectedWidget}
+                        widgetName={NEW_RECORD_FORM}>
                         <svg
                             height="24"
                             className="octicon octicon-plus"
@@ -79,7 +66,8 @@ class NavigationHeader extends Component {
                     </NewRecordFormItem>
                     <RecordsListItem
                         selectWidget={this.props.selectWidget}
-                        selectedWidget={this.props.selectedWidget}>
+                        selectedWidget={this.props.selectedWidget}
+                        widgetName={RECORDS_LIST}>
                         <svg
                             height="24"
                             className="octicon octicon-list-unordered"
@@ -95,7 +83,8 @@ class NavigationHeader extends Component {
                     </RecordsListItem>
                     <BudgetsPageItem
                         selectWidget={this.props.selectWidget}
-                        selectedWidget={this.props.selectedWidget}>
+                        selectedWidget={this.props.selectedWidget}
+                        widgetName={BUDGETS_LIST}>
                         <svg
                             height="24"
                             className="octicon octicon-graph"

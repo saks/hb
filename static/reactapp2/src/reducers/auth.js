@@ -13,7 +13,7 @@ const defaultState = {
     isDialogOpen: false,
     errors: {},
     token: null,
-    profile: {},
+    profile: { tags: [] },
     parsedToken: {},
 };
 
