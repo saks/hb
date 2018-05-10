@@ -13,6 +13,8 @@ import {
     SET_LIST_FOR_RECORDS_PAGE,
 } from '../constants/ActionTypes';
 
+import { RECORDS_LIST } from '../constants/WidgetNames';
+
 export const selectWidget = name => ({ type: SELECT_WIDGET, name });
 export const setTags = tags => ({ type: SET_TAGS, tags });
 
@@ -168,5 +170,29 @@ export const loadDataForRecordsPage = () => {
 
         dispatch(setListForRecordsPage(json.results));
         dispatch(finisLoadingRecordsList());
+    };
+};
+
+// new record form
+export const submitNewRecord = data => {
+    return async (dispatch, getState) => {
+        const result = await dispatch(
+            authFetch({
+                url: '/api/records/record-detail/',
+                method: 'POST',
+                body: JSON.stringify(data),
+            })
+        );
+
+        if (result.ok) {
+            // const record = await result.json();
+            // refresh all data
+            dispatch(loadDataForRecordsPage());
+            dispatch(selectWidget(RECORDS_LIST));
+        } else {
+            debugger;
+        }
+
+        return result.ok;
     };
 };

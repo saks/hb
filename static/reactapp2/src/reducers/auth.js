@@ -9,18 +9,22 @@ import {
     SIGN_OUT,
 } from '../constants/ActionTypes';
 
+const defaultProfile = { tags: [] };
+const defaultErrors = {};
+const defaultToken = {};
+
 const defaultState = {
     isDialogOpen: false,
-    errors: {},
+    errors: defaultErrors,
     token: null,
-    profile: { tags: [] },
-    parsedToken: {},
+    profile: defaultProfile,
+    parsedToken: defaultToken,
 };
 
 const initialState = defineState(defaultState)('auth');
 
 // don't cache errors
-initialState.errors = {};
+initialState.errors = defaultErrors;
 initialState.isDialogOpen = false;
 
 export default (state = initialState, action) => {
@@ -32,11 +36,16 @@ export default (state = initialState, action) => {
         case ERROR_AUTH:
             return { ...state, errors: action.errors };
         case SET_AUTH_TOKEN:
-            return { ...state, token: action.token, parsedToken: action.parsedToken, errors: {} };
+            return {
+                ...state,
+                token: action.token,
+                parsedToken: action.parsedToken,
+                errors: defaultErrors,
+            };
         case SET_AUTH_PROFILE:
-            return { ...state, profile: action.profile, errors: {} };
+            return { ...state, profile: action.profile, errors: defaultErrors };
         case SIGN_OUT:
-            return { ...state, profile: {}, token: null, parsedToken: {} };
+            return { ...state, profile: defaultProfile, token: null, parsedToken: defaultToken };
         default:
             return state;
     }

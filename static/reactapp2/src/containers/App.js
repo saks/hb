@@ -49,7 +49,11 @@ class App extends Component {
                         visitNextPage={actions.visitNextRecordsPage}
                         visitPrevPage={actions.visitPrevRecordsPage}
                     />
-                    <NewRecordForm isVisible={NEW_RECORD_FORM === props.selectedWidget} />
+                    <NewRecordForm
+                        isVisible={NEW_RECORD_FORM === props.selectedWidget}
+                        tags={props.auth.profile.tags}
+                        submit={actions.submitNewRecord}
+                    />
                 </div>
                 <LoginDialog
                     authenticate={actions.authenticate}

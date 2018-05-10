@@ -1,20 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import Tag from './Tag';
+
+// TODO: implement save and add another
 
 class NewRecordForm extends Component {
     static propTypes = {
         isVisible: PropTypes.bool.isRequired,
+        tags: PropTypes.array.isRequired,
+        submit: PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
 
-        this.button = React.createRef();
-        this.input = React.createRef();
+        this.calculateButton = React.createRef();
+        this.saveButton = React.createRef();
+        this.saveAddAnotherButton = React.createRef();
+        this.amountInput = React.createRef();
+        this.transactionTypeSelect = React.createRef();
+
+        this.state = { selectedTags: {} };
     }
 
     calculate() {
-        const input = this.input.current;
+        const input = this.amountInput.current;
         let result;
 
         try {
@@ -30,6 +40,60 @@ class NewRecordForm extends Component {
         input.focus();
     }
 
+    toggleTag(name) {
+        this.setState(prevState => {
+            const isSelected = Boolean(prevState.selectedTags[name]);
+            const newState = { ...prevState };
+
+            if (true === isSelected) {
+                delete newState.selectedTags[name];
+            } else {
+                newState.selectedTags[name] = true;
+            }
+
+            return newState;
+        });
+    }
+
+    get tags() {
+        return this.props.tags.map(name => (
+            <Tag
+                name={name}
+                key={name}
+                toggle={this.toggleTag.bind(this)}
+                isSelected={Boolean(this.state.selectedTags[name])}
+            />
+        ));
+    }
+
+    async save() {
+        const data = {
+            amount: {
+                amount: this.amountInput.current.value,
+                currency: 'CAD',
+            },
+            transaction_type: this.transactionTypeSelect.current.value,
+            tags: Object.keys(this.state.selectedTags),
+        };
+
+        const success = await this.props.submit(data);
+        // TODO: show valdation errors if any
+
+        if (success) {
+            this.reset();
+        }
+    }
+
+    reset() {
+        this.amountInput.current.value = '';
+        this.transactionTypeSelect.current.value = 'EXP';
+        this.setState(prevState => {
+            const newState = { ...prevState };
+            newState.selectedTags = {};
+            return newState;
+        });
+    }
+
     render() {
         return (
             <div className="records-list" hidden={!this.props.isVisible}>
@@ -43,7 +107,7 @@ class NewRecordForm extends Component {
                         </label>
                         <div className="input-group">
                             <input
-                                ref={this.input}
+                                ref={this.amountInput}
                                 type="tel"
                                 className="form-control"
                                 autoComplete="off"
@@ -51,7 +115,7 @@ class NewRecordForm extends Component {
                             />
                             <span className="input-group-btn">
                                 <button
-                                    ref={this.button}
+                                    ref={this.calculateButton}
                                     onClick={this.calculate.bind(this)}
                                     className="btn btn-default"
                                     type="button">
@@ -62,7 +126,9 @@ class NewRecordForm extends Component {
                     </div>
                     <div className="form-group">
                         <label className="bmd-label-static">Tags</label>
-                        <div className="border border-light" />
+                        <div id="tagsContainer" className="border border-light">
+                            {this.tags}
+                        </div>
                     </div>
                     <div className="form-group">
                         <label htmlFor="newRecordTransactionType" className="bmd-label-static">
@@ -70,6 +136,7 @@ class NewRecordForm extends Component {
                         </label>
                         <div className="input-group">
                             <select
+                                ref={this.transactionTypeSelect}
                                 name="transaction_type"
                                 className="form-control"
                                 defaultValue="EXP">
@@ -80,11 +147,19 @@ class NewRecordForm extends Component {
                     </div>
                 </form>
                 <div className="form-group">
-                    <button className="btn btn-success btn-default">Save</button>
-                    <button className="btn btn-default">Save and add another</button>
+                    <button
+                        ref={this.saveButton}
+                        onClick={this.save.bind(this)}
+                        className="btn btn-success btn-default">
+                        Save
+                    </button>
+                    <button ref={this.saveAddAnotherButton} className="btn btn-default">
+                        Save and add another
+                    </button>
                 </div>
             </div>
         );
     }
 }
+
 export default NewRecordForm;
