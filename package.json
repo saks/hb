@@ -1,0 +1,12 @@
+{
+    "name": "reactapp",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {},
+    "engines": {
+        "yarn": "1.4.0"
+    },
+    "scripts": {
+        "build": "cd static/reactapp && yarn install && yarn build"
+    }
+}
