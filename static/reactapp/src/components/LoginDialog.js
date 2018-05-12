@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import $ from 'jquery';
-import 'bootstrap';
+import 'bootstrap-material-design';
 
 const FormFieldError = props => (
     <small className="form-text text-danger sign-in-error">{props.text}</small>

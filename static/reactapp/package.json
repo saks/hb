@@ -5,7 +5,7 @@
     "proxy": "http://localhost:8000/",
     "homepage": "https://home-b.herokuapp.com/static/reactapp/build/",
     "dependencies": {
-        "bootstrap": "^4.0.0",
+        "bootstrap-material-design": "^4.1.1",
         "jquery": "^3.3.1",
         "popper.js": "^1.14.1",
         "prop-types": "^15.6.1",

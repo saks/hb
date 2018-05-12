@@ -133,7 +133,7 @@ class NewRecordForm extends Component {
 
     render() {
         return (
-            <div className="records-list" hidden={!this.props.isVisible}>
+            <div id="newRecordForm" hidden={!this.props.isVisible}>
                 <div className="row justify-content-center">
                     <h2>Add New Record</h2>
                 </div>

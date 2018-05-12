@@ -1,3 +1,7 @@
+import './import-jquery.js';
+import './import-popper';
+import './import-bootstrap';
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
@@ -12,4 +16,5 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
 registerServiceWorker();

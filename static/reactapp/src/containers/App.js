@@ -56,16 +56,16 @@ class App extends Component {
                         tags={props.auth.profile.tags}
                         submit={actions.submitNewRecord}
                     />
+                    <Budgets
+                        isVisible={BUDGETS_LIST === props.selectedWidget}
+                        list={props.budgets.list}
+                    />
                 </div>
                 <LoginDialog
                     authenticate={actions.authenticate}
                     auth={props.auth}
                     errors={props.auth.errors}
                     isOpen={props.auth.isDialogOpen}
-                />
-                <Budgets
-                    isVisible={BUDGETS_LIST === props.selectedWidget}
-                    list={props.budgets.list}
                 />
             </React.Fragment>
         );

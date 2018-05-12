@@ -16,7 +16,7 @@ export default (state = defaultState, action) => {
         case FINIS_LOADING_BUDGETS_PAGE:
             return { ...state, isFetching: false };
         case SET_LIST_FOR_BUDGETS_PAGE:
-            return { ...state, list: action.list };
+            return { ...state, list: action.list.reverse() };
         default:
             return state;
     }
