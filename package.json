@@ -8,5 +8,6 @@
     },
     "scripts": {
         "postinstall": "cd static/reactapp && yarn install && yarn build"
-    }
+    },
+    "cacheDirectories": ["static/reactapp/node_modules"]
 }
