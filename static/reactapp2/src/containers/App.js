@@ -6,9 +6,10 @@ import * as Actions from '../actions';
 import LoginDialog from '../components/LoginDialog';
 import RecordsList from '../components/RecordsList';
 import NewRecordForm from '../components/NewRecordForm';
+import Budgets from '../components/Budgets';
 import './../App.css';
 
-import { NEW_RECORD_FORM, RECORDS_LIST } from '../constants/WidgetNames';
+import { NEW_RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
 
 import NavigationHeader from '../components/NavigationHeader';
 
@@ -23,6 +24,7 @@ class App extends Component {
     componentDidMount() {
         if (this.isAuthenticated()) {
             this.props.actions.loadDataForRecordsPage();
+            this.props.actions.loadDataForBudgetsPage();
         } else {
             this.props.actions.openAuthDialog();
         }
@@ -61,16 +63,23 @@ class App extends Component {
                     errors={props.auth.errors}
                     isOpen={props.auth.isDialogOpen}
                 />
+                <Budgets
+                    isVisible={BUDGETS_LIST === props.selectedWidget}
+                    list={props.budgets.list}
+                />
             </React.Fragment>
         );
     }
 }
 
-const mapStateToProps = state => ({
-    selectedWidget: state.selectedWidget,
-    auth: state.auth,
-    records: state.records,
-});
+const mapStateToProps = state => {
+    return {
+        selectedWidget: state.selectedWidget,
+        auth: state.auth,
+        records: state.records,
+        budgets: state.budgets,
+    };
+};
 
 const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),

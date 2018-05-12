@@ -11,9 +11,10 @@ import {
     FINIS_LOADING_RECORDS_PAGE,
     SET_CURRENT_PAGE_FOR_RECORDS_PAGE,
     SET_LIST_FOR_RECORDS_PAGE,
+    START_LOADING_BUDGETS_PAGE,
+    FINIS_LOADING_BUDGETS_PAGE,
+    SET_LIST_FOR_BUDGETS_PAGE,
 } from '../constants/ActionTypes';
-
-import { RECORDS_LIST } from '../constants/WidgetNames';
 
 export const selectWidget = name => ({ type: SELECT_WIDGET, name });
 export const setTags = tags => ({ type: SET_TAGS, tags });
@@ -99,6 +100,7 @@ export const authenticate = formData => {
 
         // refresh all data
         dispatch(loadDataForRecordsPage());
+        dispatch(loadDataForBudgetsPage());
     };
 };
 
@@ -194,5 +196,22 @@ export const submitNewRecord = ({ data, returnTo }) => {
         }
 
         return result.ok;
+    };
+};
+
+// budgets
+const startLoadingBudgetsList = () => ({ type: START_LOADING_BUDGETS_PAGE });
+const finisLoadingBudgetsList = () => ({ type: FINIS_LOADING_BUDGETS_PAGE });
+const setListForBudgetsPage = list => ({ type: SET_LIST_FOR_BUDGETS_PAGE, list });
+
+export const loadDataForBudgetsPage = () => {
+    return async dispatch => {
+        dispatch(startLoadingBudgetsList());
+
+        const result = await dispatch(authFetch({ url: '/api/budgets/budget-detail/' }));
+        const json = await result.json();
+
+        dispatch(setListForBudgetsPage(json.results));
+        dispatch(finisLoadingBudgetsList());
     };
 };
