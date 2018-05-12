@@ -174,7 +174,7 @@ export const loadDataForRecordsPage = () => {
 };
 
 // new record form
-export const submitNewRecord = data => {
+export const submitNewRecord = ({ data, returnTo }) => {
     return async (dispatch, getState) => {
         const result = await dispatch(
             authFetch({
@@ -188,7 +188,7 @@ export const submitNewRecord = data => {
             // const record = await result.json();
             // refresh all data
             dispatch(loadDataForRecordsPage());
-            dispatch(selectWidget(RECORDS_LIST));
+            dispatch(selectWidget(returnTo));
         } else {
             debugger;
         }

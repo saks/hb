@@ -1,8 +1,29 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Tag from './Tag';
+import { RECORDS_LIST, NEW_RECORD_FORM } from '../constants/WidgetNames';
 
-// TODO: implement save and add another
+const EXP_TYPE = 'EXP';
+const INC_TYPE = 'INC';
+const DEFAULT_CURRENCY = 'CAD';
+
+const DefaultState = () => {
+    this.selectedTags = new Set();
+    this.amount = '';
+    this.type = EXP_TYPE;
+    this.currency = DEFAULT_CURRENCY;
+
+    return this;
+};
+
+const calc = text => {
+    try {
+        const evalResult = Number.parseFloat(eval(text));
+        if (Number.isFinite(evalResult)) {
+            return evalResult.toFixed(2);
+        }
+    } catch (_err) {}
+};
 
 class NewRecordForm extends Component {
     static propTypes = {
@@ -15,40 +36,29 @@ class NewRecordForm extends Component {
         super(props);
 
         this.calculateButton = React.createRef();
-        this.saveButton = React.createRef();
-        this.saveAddAnotherButton = React.createRef();
         this.amountInput = React.createRef();
-        this.transactionTypeSelect = React.createRef();
 
-        this.state = { selectedTags: {} };
+        this.state = new DefaultState();
     }
 
     calculate() {
-        const input = this.amountInput.current;
-        let result;
+        this.setState(prevState => {
+            const amount = calc(prevState.amount) || '';
+            return { ...prevState, amount };
+        });
 
-        try {
-            result = Number.parseFloat(eval(input.value));
-        } catch (e) {
-            input.value = '';
-        }
-
-        if (Number.isFinite(result)) {
-            input.value = result.toFixed(2);
-        }
-
-        input.focus();
+        this.amountInput.current.focus();
     }
 
     toggleTag(name) {
         this.setState(prevState => {
-            const isSelected = Boolean(prevState.selectedTags[name]);
+            const isSelected = prevState.selectedTags.has(name);
             const newState = { ...prevState };
 
             if (true === isSelected) {
-                delete newState.selectedTags[name];
+                newState.selectedTags.delete(name);
             } else {
-                newState.selectedTags[name] = true;
+                newState.selectedTags.add(name);
             }
 
             return newState;
@@ -61,22 +71,22 @@ class NewRecordForm extends Component {
                 name={name}
                 key={name}
                 toggle={this.toggleTag.bind(this)}
-                isSelected={Boolean(this.state.selectedTags[name])}
+                isSelected={this.state.selectedTags.has(name)}
             />
         ));
     }
 
-    async save() {
+    async submit(returnTo) {
         const data = {
             amount: {
-                amount: this.amountInput.current.value,
-                currency: 'CAD',
+                amount: this.state.amount,
+                currency: this.state.currency,
             },
-            transaction_type: this.transactionTypeSelect.current.value,
-            tags: Object.keys(this.state.selectedTags),
+            transaction_type: this.state.type,
+            tags: Array.from(this.state.selectedTags),
         };
 
-        const success = await this.props.submit(data);
+        const success = await this.props.submit({ data, returnTo });
         // TODO: show valdation errors if any
 
         if (success) {
@@ -84,14 +94,37 @@ class NewRecordForm extends Component {
         }
     }
 
+    save() {
+        return this.submit(RECORDS_LIST);
+    }
+
+    saveAddAnother() {
+        return this.submit(NEW_RECORD_FORM);
+    }
+
     reset() {
-        this.amountInput.current.value = '';
-        this.transactionTypeSelect.current.value = 'EXP';
-        this.setState(prevState => {
-            const newState = { ...prevState };
-            newState.selectedTags = {};
-            return newState;
-        });
+        this.setState(new DefaultState());
+        this.amountInput.current.focus();
+    }
+
+    handleAmountChange(event) {
+        const amount = event.target.value;
+        this.setState(prevState => ({ ...prevState, amount }));
+    }
+
+    handleTypeChange(event) {
+        const type = event.target.value;
+        this.setState(prevState => ({ ...prevState, type }));
+    }
+
+    componentDidUpdate(prevProps) {
+        if (prevProps.isVisible === false && this.props.isVisible === true) {
+            this.amountInput.current.focus();
+        }
+    }
+
+    componentDidMount() {
+        this.amountInput.current.focus();
     }
 
     render() {
@@ -107,6 +140,8 @@ class NewRecordForm extends Component {
                         </label>
                         <div className="input-group">
                             <input
+                                value={this.state.amount}
+                                onChange={this.handleAmountChange.bind(this)}
                                 ref={this.amountInput}
                                 type="tel"
                                 className="form-control"
@@ -136,24 +171,21 @@ class NewRecordForm extends Component {
                         </label>
                         <div className="input-group">
                             <select
-                                ref={this.transactionTypeSelect}
                                 name="transaction_type"
                                 className="form-control"
-                                defaultValue="EXP">
-                                <option value="EXP">Expences</option>
-                                <option value="INC">Income</option>
+                                value={this.state.type}
+                                onChange={this.handleTypeChange.bind(this)}>
+                                <option value={EXP_TYPE}>Expences</option>
+                                <option value={INC_TYPE}>Income</option>
                             </select>
                         </div>
                     </div>
                 </form>
                 <div className="form-group">
-                    <button
-                        ref={this.saveButton}
-                        onClick={this.save.bind(this)}
-                        className="btn btn-success btn-default">
+                    <button onClick={this.save.bind(this)} className="btn btn-success btn-default">
                         Save
                     </button>
-                    <button ref={this.saveAddAnotherButton} className="btn btn-default">
+                    <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default">
                         Save and add another
                     </button>
                 </div>
