@@ -47,15 +47,14 @@ class NewRecordForm extends Component {
             return { ...prevState, amount };
         });
 
-        this.amountInput.current.focus();
+        this.focus();
     }
 
     toggleTag(name) {
         this.setState(prevState => {
-            const isSelected = prevState.selectedTags.has(name);
             const newState = { ...prevState };
 
-            if (true === isSelected) {
+            if (prevState.selectedTags.has(name)) {
                 newState.selectedTags.delete(name);
             } else {
                 newState.selectedTags.add(name);
@@ -104,7 +103,7 @@ class NewRecordForm extends Component {
 
     reset() {
         this.setState(new DefaultState());
-        this.amountInput.current.focus();
+        this.focus();
     }
 
     handleAmountChange(event) {
@@ -118,12 +117,17 @@ class NewRecordForm extends Component {
     }
 
     componentDidUpdate(prevProps) {
+        // if component just showed up:
         if (prevProps.isVisible === false && this.props.isVisible === true) {
-            this.amountInput.current.focus();
+            this.focus();
         }
     }
 
     componentDidMount() {
+        this.focus();
+    }
+
+    focus() {
         this.amountInput.current.focus();
     }
 
