@@ -7,6 +7,7 @@ import LoginDialog from '../components/LoginDialog';
 import RecordsList from '../components/RecordsList';
 import NewRecordForm from '../components/NewRecordForm';
 import Budgets from '../components/Budgets';
+import Spinner from '../components/Spinner';
 import './../App.css';
 
 import { NEW_RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
@@ -67,6 +68,7 @@ class App extends Component {
                     errors={props.auth.errors}
                     isOpen={props.auth.isDialogOpen}
                 />
+                <Spinner isVisible={props.spinner.isVisible} />
             </React.Fragment>
         );
     }
@@ -78,6 +80,7 @@ const mapStateToProps = state => {
         auth: state.auth,
         records: state.records,
         budgets: state.budgets,
+        spinner: state.spinner,
     };
 };
 

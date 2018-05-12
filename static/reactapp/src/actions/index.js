@@ -14,6 +14,8 @@ import {
     START_LOADING_BUDGETS_PAGE,
     FINIS_LOADING_BUDGETS_PAGE,
     SET_LIST_FOR_BUDGETS_PAGE,
+    SHOW_SPINNER,
+    HIDE_SPINNER,
 } from '../constants/ActionTypes';
 
 export const selectWidget = name => ({ type: SELECT_WIDGET, name });
@@ -55,7 +57,9 @@ export const authFetch = (options = {}) => {
         options.headers['User-Agent'] = 'Home Budget PWA';
         options.headers['Content-Type'] = 'application/json';
 
+        dispatch(showSpinner());
         const result = await fetch(url, options);
+        dispatch(hideSpinner());
 
         if (!result.ok && result.status === 401) {
             dispatch(signOut());
@@ -71,6 +75,7 @@ export const authFetch = (options = {}) => {
 
 export const authenticate = formData => {
     return async (dispatch, getState) => {
+        dispatch(showSpinner());
         const tokenResponse = await fetch('/auth/jwt/create/', {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -79,6 +84,7 @@ export const authenticate = formData => {
                 'Content-Type': 'application/json',
             },
         });
+        dispatch(hideSpinner());
 
         if (!tokenResponse.ok) {
             dispatch(authErrors(await tokenResponse.json()));
@@ -215,3 +221,7 @@ export const loadDataForBudgetsPage = () => {
         dispatch(finisLoadingBudgetsList());
     };
 };
+
+// spinner
+const showSpinner = () => ({ type: SHOW_SPINNER });
+const hideSpinner = () => ({ type: HIDE_SPINNER });
