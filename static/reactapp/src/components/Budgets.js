@@ -10,7 +10,7 @@ class Budgets extends Component {
     };
 
     get budgets() {
-        return this.props.list.map(attrs => <Budget attrs={attrs} key={attrs.name} />);
+        return this.props.list.reverse().map(attrs => <Budget attrs={attrs} key={attrs.name} />);
     }
 
     render() {
