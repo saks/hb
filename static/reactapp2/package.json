@@ -3,6 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "proxy": "http://localhost:8000/",
+    "homepage": "https://home-b.herokuapp.com/static/reactapp2/build/",
     "dependencies": {
         "bootstrap": "^4.0.0",
         "jquery": "^3.3.1",
