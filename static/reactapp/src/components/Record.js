@@ -26,8 +26,10 @@ class Record extends Component {
     }
 
     get date() {
-        const offset = new Date().getTimezoneOffset() * 60 * 1000;
-        const date = new Date(this.data.created_at * 1000 - offset);
+        const fixInMinutes = 60;
+        const offsetInSeconds = (new Date().getTimezoneOffset() + fixInMinutes) * 60;
+        const localTimeInSeconds = this.props.data.created_at - offsetInSeconds;
+        const date = new Date(localTimeInSeconds * 1000);
         return date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
     }
 
