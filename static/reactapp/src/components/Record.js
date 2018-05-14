@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { EXP } from '../constants/TransactionTypes';
 
 const DATETIME_FORMAT_OPTIONS = {
     month: 'short',
@@ -11,23 +12,17 @@ const DATETIME_FORMAT_OPTIONS = {
 const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
 
 class Record extends Component {
-    constructor(props) {
-        super(props);
-
-        this.data = props.data;
-    }
-
     get amount() {
-        return fmtNum(this.data.amount.amount);
+        return fmtNum(this.props.data.amount.amount);
     }
 
     get className() {
-        const suffix = this.data.transaction_type === 'EXP' ? 'warning' : 'success';
+        const suffix = this.props.data.transaction_type === EXP ? 'warning' : 'success';
         return `card record-item bd-callout bd-callout-${suffix}`;
     }
 
     get tags() {
-        return Object.values(this.data.tags).join(', ');
+        return Object.values(this.props.data.tags).join(', ');
     }
 
     get date() {

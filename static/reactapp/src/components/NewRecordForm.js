@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+
 import Tag from './Tag';
 import { RECORDS_LIST, NEW_RECORD_FORM } from '../constants/WidgetNames';
+import { EXP, INC } from '../constants/TransactionTypes';
 
-const EXP_TYPE = 'EXP';
-const INC_TYPE = 'INC';
 const DEFAULT_CURRENCY = 'CAD';
 
 const DefaultState = () => {
     this.selectedTags = new Set();
     this.amount = '';
-    this.type = EXP_TYPE;
+    this.type = EXP;
     this.currency = DEFAULT_CURRENCY;
 
     return this;
@@ -179,8 +179,8 @@ class NewRecordForm extends Component {
                                 className="form-control"
                                 value={this.state.type}
                                 onChange={this.handleTypeChange.bind(this)}>
-                                <option value={EXP_TYPE}>Expences</option>
-                                <option value={INC_TYPE}>Income</option>
+                                <option value={EXP}>Expences</option>
+                                <option value={INC}>Income</option>
                             </select>
                         </div>
                     </div>
