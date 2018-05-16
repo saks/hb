@@ -1,35 +1,19 @@
 import React, { Component } from 'react';
+import * as Actions from '../actions';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Tag from './Tag';
-import { RECORDS_LIST, NEW_RECORD_FORM } from '../constants/WidgetNames';
+import { RECORDS_LIST, RECORD_FORM } from '../constants/WidgetNames';
 import { EXP, INC } from '../constants/TransactionTypes';
 
-const DEFAULT_CURRENCY = 'CAD';
-
-const DefaultState = () => {
-    this.selectedTags = new Set();
-    this.amount = '';
-    this.type = EXP;
-    this.currency = DEFAULT_CURRENCY;
-
-    return this;
-};
-
-const calc = text => {
-    try {
-        const evalResult = Number.parseFloat(eval(text));
-        if (Number.isFinite(evalResult)) {
-            return evalResult.toFixed(2);
-        }
-    } catch (_err) {}
-};
+import RecordModel from '../models/Record';
 
 class NewRecordForm extends Component {
     static propTypes = {
         isVisible: PropTypes.bool.isRequired,
         tags: PropTypes.array.isRequired,
-        submit: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -37,31 +21,15 @@ class NewRecordForm extends Component {
 
         this.calculateButton = React.createRef();
         this.amountInput = React.createRef();
+    }
 
-        this.state = new DefaultState();
+    get record() {
+        return this.props.recordForm.record;
     }
 
     calculate() {
-        this.setState(prevState => {
-            const amount = calc(prevState.amount) || '';
-            return { ...prevState, amount };
-        });
-
+        this.props.actions.calculateRecordFormAmount();
         this.focus();
-    }
-
-    toggleTag(name) {
-        this.setState(prevState => {
-            const newState = { ...prevState };
-
-            if (prevState.selectedTags.has(name)) {
-                newState.selectedTags.delete(name);
-            } else {
-                newState.selectedTags.add(name);
-            }
-
-            return newState;
-        });
     }
 
     get tags() {
@@ -69,23 +37,14 @@ class NewRecordForm extends Component {
             <Tag
                 name={name}
                 key={name}
-                toggle={this.toggleTag.bind(this)}
-                isSelected={this.state.selectedTags.has(name)}
+                toggle={this.props.actions.toggleRecordFormTag}
+                isSelected={this.record.selectedTags.has(name)}
             />
         ));
     }
 
     async submit(returnTo) {
-        const data = {
-            amount: {
-                amount: this.state.amount,
-                currency: this.state.currency,
-            },
-            transaction_type: this.state.type,
-            tags: Array.from(this.state.selectedTags),
-        };
-
-        const success = await this.props.submit({ data, returnTo });
+        const success = await this.props.actions.submitRecordForm(returnTo);
         // TODO: show valdation errors if any
 
         if (success) {
@@ -98,27 +57,28 @@ class NewRecordForm extends Component {
     }
 
     saveAddAnother() {
-        return this.submit(NEW_RECORD_FORM);
+        return this.submit(RECORD_FORM);
     }
 
     reset() {
-        this.setState(new DefaultState());
+        this.setState(RecordModel.default());
         this.focus();
     }
 
     handleAmountChange(event) {
-        const amount = event.target.value;
-        this.setState(prevState => ({ ...prevState, amount }));
+        this.props.actions.setRecordFormAmount(event.target.value);
     }
 
     handleTypeChange(event) {
-        const type = event.target.value;
-        this.setState(prevState => ({ ...prevState, type }));
+        this.props.actions.setRecordFormTransactionType(event.target.value);
     }
 
     componentDidUpdate(prevProps) {
-        // if component just showed up:
-        if (prevProps.isVisible === false && this.props.isVisible === true) {
+        const justShowedUp = prevProps.isVisible === false && this.props.isVisible === true;
+        const amountChanged =
+            prevProps.recordForm.record.amount.amount !== this.record.amount.amount;
+
+        if (justShowedUp || amountChanged) {
             this.focus();
         }
     }
@@ -129,6 +89,14 @@ class NewRecordForm extends Component {
 
     focus() {
         this.amountInput.current.focus();
+    }
+
+    cancel() {
+        this.props.actions.selectWidget(RECORDS_LIST);
+    }
+
+    get isPersisted() {
+        return Boolean(this.record.id);
     }
 
     render() {
@@ -144,7 +112,7 @@ class NewRecordForm extends Component {
                         </label>
                         <div className="input-group">
                             <input
-                                value={this.state.amount}
+                                value={this.record.amount.amount}
                                 onChange={this.handleAmountChange.bind(this)}
                                 ref={this.amountInput}
                                 type="tel"
@@ -155,7 +123,7 @@ class NewRecordForm extends Component {
                             <span className="input-group-btn">
                                 <button
                                     ref={this.calculateButton}
-                                    onClick={this.calculate.bind(this)}
+                                    onClick={this.props.actions.calculateRecordFormAmount}
                                     className="btn btn-default"
                                     type="button">
                                     calculate
@@ -177,7 +145,7 @@ class NewRecordForm extends Component {
                             <select
                                 name="transaction_type"
                                 className="form-control"
-                                value={this.state.type}
+                                value={this.record.transaction_type}
                                 onChange={this.handleTypeChange.bind(this)}>
                                 <option value={EXP}>Expences</option>
                                 <option value={INC}>Income</option>
@@ -189,8 +157,14 @@ class NewRecordForm extends Component {
                     <button onClick={this.save.bind(this)} className="btn btn-success btn-default">
                         Save
                     </button>
-                    <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default">
-                        Save and add another
+                    <button
+                        onClick={this.saveAddAnother.bind(this)}
+                        className="btn btn-default"
+                        hidden={this.isPersisted}>
+                        Save & Add
+                    </button>
+                    <button onClick={this.cancel.bind(this)} className="btn btn-info">
+                        Cancel
                     </button>
                 </div>
             </div>
@@ -198,4 +172,10 @@ class NewRecordForm extends Component {
     }
 }
 
-export default NewRecordForm;
+const mapStateToProps = state => ({ recordForm: state.recordForm });
+
+const mapDispatchToProps = dispatch => ({
+    actions: bindActionCreators(Actions, dispatch),
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(NewRecordForm);

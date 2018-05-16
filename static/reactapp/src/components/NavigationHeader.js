@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NEW_RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
+import { RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
 
 class NavigationItem extends Component {
     constructor(props) {
@@ -33,7 +33,6 @@ class NavigationItem extends Component {
     }
 }
 
-class NewRecordFormItem extends NavigationItem {}
 class RecordsListItem extends NavigationItem {}
 class BudgetsPageItem extends NavigationItem {}
 
@@ -46,24 +45,12 @@ class NavigationHeader extends Component {
     render() {
         return (
             <header className="navbar navbar-expand navbar-dark bg-info mb-3 py-0">
-                <a className="navbar-brand mr-auto text-white" href="/static/app/index.html">
+                <a
+                    className="navbar-brand mr-auto text-white"
+                    href="/static/reactapp/build/index.html">
                     Octo Budget
                 </a>
                 <ul className="nav justify-content-end nav-tabs">
-                    <NewRecordFormItem
-                        selectWidget={this.props.selectWidget}
-                        selectedWidget={this.props.selectedWidget}
-                        widgetName={NEW_RECORD_FORM}>
-                        <svg
-                            height="24"
-                            className="octicon octicon-plus"
-                            viewBox="0 0 12 16"
-                            version="1.1"
-                            width="24"
-                            aria-hidden="true">
-                            <path fillRule="evenodd" d="M12 9H7v5H5V9H0V7h5V2h2v5h5z" />
-                        </svg>
-                    </NewRecordFormItem>
                     <RecordsListItem
                         selectWidget={this.props.selectWidget}
                         selectedWidget={this.props.selectedWidget}

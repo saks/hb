@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { EXP } from '../constants/TransactionTypes';
+import RecordModel from '../models/Record';
 
 const DATETIME_FORMAT_OPTIONS = {
     month: 'short',
@@ -12,30 +14,45 @@ const DATETIME_FORMAT_OPTIONS = {
 const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
 
 class Record extends Component {
+    static propTypes = {
+        editRecord: PropTypes.func.isRequired,
+        model: PropTypes.object.isRequired,
+    };
+
+    get model() {
+        return this.props.model;
+    }
+
     get amount() {
-        return fmtNum(this.props.data.amount.amount);
+        return fmtNum(this.model.amount.amount);
     }
 
     get className() {
-        const suffix = this.props.data.transaction_type === EXP ? 'warning' : 'success';
+        const suffix = this.props.model.transaction_type === EXP ? 'warning' : 'success';
         return `card record-item bd-callout bd-callout-${suffix}`;
     }
 
     get tags() {
-        return Object.values(this.props.data.tags).join(', ');
+        return Object.values(this.props.model.tags).join(', ');
     }
 
     get date() {
         const fixInMinutes = 60;
         const offsetInSeconds = (new Date().getTimezoneOffset() + fixInMinutes) * 60;
-        const localTimeInSeconds = this.props.data.created_at - offsetInSeconds;
+        const localTimeInSeconds = this.props.model.created_at - offsetInSeconds;
         const date = new Date(localTimeInSeconds * 1000);
         return date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
     }
 
+    startEdit() {
+        const model = new RecordModel(this.props.model);
+        this.props.editRecord(model);
+    }
+
     render() {
+        const startEdit = this.startEdit.bind(this);
         return (
-            <div className={this.className}>
+            <div className={this.className} onClick={startEdit}>
                 <div className="card-body">
                     <h5 className="text-center">
                         <span className="amount font-weight-bold float-left">{this.amount}</span>

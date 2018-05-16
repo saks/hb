@@ -212,3 +212,9 @@ body {
         transform: rotate(90deg);
     }
 }
+
+#add-button {
+    right: 1em;
+    bottom: 1em;
+    left: auto;
+}

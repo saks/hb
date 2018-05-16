@@ -5,12 +5,13 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import LoginDialog from '../components/LoginDialog';
 import RecordsList from '../components/RecordsList';
-import NewRecordForm from '../components/NewRecordForm';
+import RecordForm from '../components/RecordForm';
 import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
+import AddRecordButton from '../components/AddRecordButton';
 import './../App.css';
 
-import { NEW_RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
+import { RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
 
 import NavigationHeader from '../components/NavigationHeader';
 
@@ -51,11 +52,11 @@ class App extends Component {
                         list={props.records.list}
                         visitNextPage={actions.visitNextRecordsPage}
                         visitPrevPage={actions.visitPrevRecordsPage}
+                        editRecord={actions.editRecord}
                     />
-                    <NewRecordForm
-                        isVisible={NEW_RECORD_FORM === props.selectedWidget}
+                    <RecordForm
+                        isVisible={RECORD_FORM === props.selectedWidget}
                         tags={props.auth.profile.tags}
-                        submit={actions.submitNewRecord}
                     />
                     <Budgets
                         isVisible={BUDGETS_LIST === props.selectedWidget}
@@ -69,6 +70,10 @@ class App extends Component {
                     isOpen={props.auth.isDialogOpen}
                 />
                 <Spinner isVisible={props.spinner.isVisible} />
+                <AddRecordButton
+                    editRecord={actions.editRecord}
+                    isVisible={RECORD_FORM !== props.selectedWidget}
+                />
             </React.Fragment>
         );
     }

@@ -5,6 +5,7 @@ import auth from './auth';
 import records from './records';
 import budgets from './budgets';
 import spinner from './spinner';
+import recordForm from './recordForm';
 
 const rootReducer = combineReducers({
     selectedWidget,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
     records,
     budgets,
     spinner,
+    recordForm,
 });
 
 export default rootReducer;

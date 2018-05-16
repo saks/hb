@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
+import RecordModel from '../models/Record';
 import Record from './Record';
 
 class RecordsList extends Component {
@@ -10,10 +11,14 @@ class RecordsList extends Component {
         isVisible: PropTypes.bool.isRequired,
         visitNextPage: PropTypes.func.isRequired,
         visitPrevPage: PropTypes.func.isRequired,
+        editRecord: PropTypes.func.isRequired,
     };
 
     get renderedRecords() {
-        return this.props.list.map(record => <Record data={record} key={record.id} />);
+        return this.props.list.map(attrs => {
+            const model = new RecordModel(attrs);
+            return <Record model={model} key={model.id} editRecord={this.props.editRecord} />;
+        });
     }
 
     render() {

@@ -16,7 +16,14 @@ import {
     SET_LIST_FOR_BUDGETS_PAGE,
     SHOW_SPINNER,
     HIDE_SPINNER,
+    EDIT_RECORD,
+    RECORD_FORM_TOGGLE_TAG,
+    RECORD_FORM_SET_AMOUNT,
+    RECORD_FORM_SET_TYPE,
+    RECORD_FORM_CALCULATE_AMOUNT,
 } from '../constants/ActionTypes';
+import { RECORD_FORM } from '../constants/WidgetNames';
+import store from '../store';
 
 export const selectWidget = name => ({ type: SELECT_WIDGET, name });
 export const setTags = tags => ({ type: SET_TAGS, tags });
@@ -181,16 +188,17 @@ export const loadDataForRecordsPage = () => {
     };
 };
 
-// new record form
-export const submitNewRecord = ({ data, returnTo }) => {
+// record form
+export const submitRecordForm = returnTo => {
     return async (dispatch, getState) => {
-        const result = await dispatch(
-            authFetch({
-                url: '/api/records/record-detail/',
-                method: 'POST',
-                body: JSON.stringify(data),
-            })
-        );
+        const record = getState().recordForm.record;
+        const isPersisted = Boolean(record.id);
+
+        const method = isPersisted ? 'PUT' : 'POST';
+        const body = JSON.stringify(record.asJson());
+        const url = `/api/records/record-detail/${record.id}`;
+
+        const result = await dispatch(authFetch({ url, method, body }));
 
         if (result.ok) {
             // const record = await result.json();
@@ -204,6 +212,16 @@ export const submitNewRecord = ({ data, returnTo }) => {
         return result.ok;
     };
 };
+
+export const editRecord = record => {
+    store.dispatch({ type: EDIT_RECORD, record });
+    return selectWidget(RECORD_FORM);
+};
+export const startEditingRecord = record => ({ type: EDIT_RECORD, record });
+export const toggleRecordFormTag = tag => ({ type: RECORD_FORM_TOGGLE_TAG, tag });
+export const setRecordFormAmount = value => ({ type: RECORD_FORM_SET_AMOUNT, value });
+export const setRecordFormTransactionType = value => ({ type: RECORD_FORM_SET_TYPE, value });
+export const calculateRecordFormAmount = () => ({ type: RECORD_FORM_CALCULATE_AMOUNT });
 
 // budgets
 const startLoadingBudgetsList = () => ({ type: START_LOADING_BUDGETS_PAGE });
