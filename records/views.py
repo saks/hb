@@ -17,7 +17,7 @@ class RecordViewSet(viewsets.ModelViewSet):
                      .filter(user=self.request.user) \
                      .order_by('-created_at')
 
-    def perform_create(self, serializer):
+    def _save(self, serializer):
         '''
         {"transaction_type": "EXP", "tags":["books"], "amount":{"amount": 15, "currency": "CAD"}}
         '''
@@ -26,3 +26,9 @@ class RecordViewSet(viewsets.ModelViewSet):
         if amount and 'amount' in amount.keys() and 'currency' in amount.keys():
             amount = Money(amount['amount'], amount['currency'])
         serializer.save(tags=tags, user=self.request.user, amount=amount)
+
+    def perform_create(self, serializer):
+        self._save(serializer)
+
+    def perform_update(self, serializer):
+        self._save(serializer)
