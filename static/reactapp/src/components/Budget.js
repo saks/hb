@@ -10,11 +10,11 @@ class Budget extends Component {
     };
 
     get progress() {
-        return Math.round(this.props.attrs.spent / this.props.attrs.amount * 100);
+        return Math.round((this.props.attrs.spent / this.props.attrs.amount) * 100);
     }
 
-    get averagePerDay() {
-        return fmtNum(this.props.attrs.average_per_day);
+    get leftAveragePerDay() {
+        return fmtNum(this.props.attrs.left_average_per_day);
     }
 
     get left() {
@@ -35,7 +35,7 @@ class Budget extends Component {
                         </span>
                         <span className="float-right">
                             <small>left </small>
-                            <span>{this.averagePerDay}</span>
+                            <span>{this.leftAveragePerDay}</span>
                             <small> / day</small>
                         </span>
                     </div>
