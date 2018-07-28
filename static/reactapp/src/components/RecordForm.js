@@ -157,12 +157,9 @@ class RecordForm extends Component {
                     <button onClick={this.save.bind(this)} className="btn btn-success btn-default">
                         Save
                     </button>
-                    <button
-                        onClick={this.saveAddAnother.bind(this)}
-                        className="btn btn-default"
-                        hidden={!this.record.isPersisted}>
-                        Save & Add
-                    </button>
+                    {/* <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default"> */}
+                    {/*     Save & Add */}
+                    {/* </button> */}
                     {/* <button className="btn btn-danger" hidden={!this.isPersisted}> */}
                     {/*     Delete */}
                     {/* </button> */}
