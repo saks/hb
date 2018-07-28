@@ -10,7 +10,7 @@ import { EXP, INC } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';
 
-class NewRecordForm extends Component {
+class RecordForm extends Component {
     static propTypes = {
         isVisible: PropTypes.bool.isRequired,
         tags: PropTypes.array.isRequired,
@@ -160,8 +160,11 @@ class NewRecordForm extends Component {
                     <button
                         onClick={this.saveAddAnother.bind(this)}
                         className="btn btn-default"
-                        hidden={this.isPersisted}>
+                        hidden={!this.isPersisted}>
                         Save & Add
+                    </button>
+                    <button className="btn btn-danger" hidden={!this.isPersisted}>
+                        Delete
                     </button>
                     <button onClick={this.cancel.bind(this)} className="btn btn-info">
                         Cancel
@@ -178,4 +181,4 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(NewRecordForm);
+export default connect(mapStateToProps, mapDispatchToProps)(RecordForm);
