@@ -192,11 +192,10 @@ export const loadDataForRecordsPage = () => {
 export const submitRecordForm = returnTo => {
     return async (dispatch, getState) => {
         const record = getState().recordForm.record;
-        const isPersisted = Boolean(record.id);
 
-        const method = isPersisted ? 'PUT' : 'POST';
+        const method = record.isPersisted ? 'PUT' : 'POST';
         const body = JSON.stringify(record.asJson());
-        const url = `/api/records/record-detail${isPersisted ? '/' + record.id : ''}/`;
+        const url = `/api/records/record-detail${record.isPersisted ? '/' + record.id : ''}/`;
 
         const result = await dispatch(authFetch({ url, method, body }));
 

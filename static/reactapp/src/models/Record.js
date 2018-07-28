@@ -39,6 +39,10 @@ export default class RecordModel {
         return this;
     }
 
+    get isPersisted() {
+        return Boolean(this.id);
+    }
+
     asJson() {
         const copy = new RecordModel(this);
         delete copy.selectedTags;

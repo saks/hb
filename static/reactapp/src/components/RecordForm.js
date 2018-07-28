@@ -95,15 +95,15 @@ class RecordForm extends Component {
         this.props.actions.selectWidget(RECORDS_LIST);
     }
 
-    get isPersisted() {
-        return Boolean(this.record.id);
+    get headerText() {
+        return this.record && this.record.isPersisted ? 'Edit Record' : 'Add New Record';
     }
 
     render() {
         return (
             <div id="newRecordForm" hidden={!this.props.isVisible}>
                 <div className="row justify-content-center">
-                    <h2>Add New Record</h2>
+                    <h2>{this.headerText}</h2>
                 </div>
                 <form>
                     <div className="form-group">
@@ -160,7 +160,7 @@ class RecordForm extends Component {
                     <button
                         onClick={this.saveAddAnother.bind(this)}
                         className="btn btn-default"
-                        hidden={!this.isPersisted}>
+                        hidden={!this.record.isPersisted}>
                         Save & Add
                     </button>
                     {/* <button className="btn btn-danger" hidden={!this.isPersisted}> */}
