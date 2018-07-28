@@ -163,9 +163,9 @@ class RecordForm extends Component {
                         hidden={!this.isPersisted}>
                         Save & Add
                     </button>
-                    <button className="btn btn-danger" hidden={!this.isPersisted}>
-                        Delete
-                    </button>
+                    {/* <button className="btn btn-danger" hidden={!this.isPersisted}> */}
+                    {/*     Delete */}
+                    {/* </button> */}
                     <button onClick={this.cancel.bind(this)} className="btn btn-info">
                         Cancel
                     </button>
@@ -181,4 +181,7 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(RecordForm);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(RecordForm);
