@@ -57,6 +57,7 @@ class App extends Component {
                     <RecordForm
                         isVisible={RECORD_FORM === props.selectedWidget}
                         tags={props.auth.profile.tags}
+                        editRecord={actions.editRecord}
                     />
                     <Budgets
                         isVisible={BUDGETS_LIST === props.selectedWidget}
@@ -93,4 +94,7 @@ const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(App);

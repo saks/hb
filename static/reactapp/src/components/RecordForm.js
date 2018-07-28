@@ -14,6 +14,7 @@ class RecordForm extends Component {
     static propTypes = {
         isVisible: PropTypes.bool.isRequired,
         tags: PropTypes.array.isRequired,
+        editRecord: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -48,7 +49,7 @@ class RecordForm extends Component {
         // TODO: show valdation errors if any
 
         if (success) {
-            this.reset();
+            this.props.editRecord(RecordModel.default());
         }
     }
 
@@ -58,11 +59,6 @@ class RecordForm extends Component {
 
     saveAddAnother() {
         return this.submit(RECORD_FORM);
-    }
-
-    reset() {
-        this.setState(RecordModel.default());
-        this.focus();
     }
 
     handleAmountChange(event) {
@@ -157,9 +153,9 @@ class RecordForm extends Component {
                     <button onClick={this.save.bind(this)} className="btn btn-success btn-default">
                         Save
                     </button>
-                    {/* <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default"> */}
-                    {/*     Save & Add */}
-                    {/* </button> */}
+                    <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default">
+                        Save & Add
+                    </button>
                     {/* <button className="btn btn-danger" hidden={!this.isPersisted}> */}
                     {/*     Delete */}
                     {/* </button> */}
