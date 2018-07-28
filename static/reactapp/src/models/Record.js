@@ -6,6 +6,11 @@ export default class RecordModel {
     constructor(attrs = {}) {
         attrs = JSON.parse(JSON.stringify(attrs));
         attrs.selectedTags = new Set(attrs.tags);
+
+        if (attrs.amount && 'object' === typeof attrs.amount.currency) {
+            attrs.amount.currency = attrs.amount.currency.code;
+        }
+
         Object.assign(this, attrs);
 
         return this;

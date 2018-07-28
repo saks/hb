@@ -196,7 +196,7 @@ export const submitRecordForm = returnTo => {
 
         const method = isPersisted ? 'PUT' : 'POST';
         const body = JSON.stringify(record.asJson());
-        const url = `/api/records/record-detail/${record.id}`;
+        const url = `/api/records/record-detail${isPersisted ? '/' + record.id : ''}/`;
 
         const result = await dispatch(authFetch({ url, method, body }));
 
