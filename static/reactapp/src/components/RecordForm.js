@@ -1,3 +1,4 @@
+import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import * as Actions from '../actions';
 import { bindActionCreators } from 'redux';
@@ -12,9 +13,7 @@ import RecordModel from '../models/Record';
 
 class RecordForm extends Component {
     static propTypes = {
-        isVisible: PropTypes.bool.isRequired,
         tags: PropTypes.array.isRequired,
-        editRecord: PropTypes.func.isRequired,
     };
 
     constructor(props) {
@@ -22,6 +21,9 @@ class RecordForm extends Component {
 
         this.calculateButton = React.createRef();
         this.amountInput = React.createRef();
+
+        // FIXME: remove this hack, we need to start with a relevant record automatically
+        this.props.actions.editRecord(RecordModel.default());
     }
 
     get record() {
@@ -44,21 +46,25 @@ class RecordForm extends Component {
         ));
     }
 
-    async submit(returnTo) {
-        const success = await this.props.actions.submitRecordForm(returnTo);
+    async submit(saveAddAnother = false) {
+        const success = await this.props.actions.submitRecordForm();
         // TODO: show valdation errors if any
 
         if (success) {
-            this.props.editRecord(RecordModel.default());
+            if (saveAddAnother) {
+                this.props.actions.editRecord(RecordModel.default());
+            } else {
+                this.props.history.push('/records');
+            }
         }
     }
 
     save() {
-        return this.submit(RECORDS_LIST);
+        return this.submit();
     }
 
     saveAddAnother() {
-        return this.submit(RECORD_FORM);
+        return this.submit(true);
     }
 
     handleAmountChange(event) {
@@ -87,17 +93,13 @@ class RecordForm extends Component {
         this.amountInput.current.focus();
     }
 
-    cancel() {
-        this.props.actions.selectWidget(RECORDS_LIST);
-    }
-
     get headerText() {
         return this.record && this.record.isPersisted ? 'Edit Record' : 'Add New Record';
     }
 
     render() {
         return (
-            <div id="newRecordForm" hidden={!this.props.isVisible}>
+            <div id="newRecordForm">
                 <div className="row justify-content-center">
                     <h2>{this.headerText}</h2>
                 </div>
@@ -156,10 +158,7 @@ class RecordForm extends Component {
                     <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default">
                         Save & Add
                     </button>
-                    {/* <button className="btn btn-danger" hidden={!this.isPersisted}> */}
-                    {/*     Delete */}
-                    {/* </button> */}
-                    <button onClick={this.cancel.bind(this)} className="btn btn-info">
+                    <button onClick={this.props.history.goBack} className="btn btn-info">
                         Cancel
                     </button>
                 </div>
@@ -168,13 +167,15 @@ class RecordForm extends Component {
     }
 }
 
-const mapStateToProps = state => ({ recordForm: state.recordForm });
+const mapStateToProps = state => ({ recordForm: state.recordForm, tags: state.auth.profile.tags });
 
 const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(RecordForm);
+export default withRouter(
+    connect(
+        mapStateToProps,
+        mapDispatchToProps
+    )(RecordForm)
+);

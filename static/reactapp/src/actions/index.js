@@ -25,7 +25,6 @@ import {
 import { RECORD_FORM } from '../constants/WidgetNames';
 import store from '../store';
 
-export const selectWidget = name => ({ type: SELECT_WIDGET, name });
 export const setTags = tags => ({ type: SET_TAGS, tags });
 
 const parsedToken = token => {
@@ -189,7 +188,7 @@ export const loadDataForRecordsPage = () => {
 };
 
 // record form
-export const submitRecordForm = returnTo => {
+export const submitRecordForm = () => {
     return async (dispatch, getState) => {
         const record = getState().recordForm.record;
 
@@ -203,7 +202,6 @@ export const submitRecordForm = returnTo => {
             // const record = await result.json();
             // refresh all data
             dispatch(loadDataForRecordsPage());
-            dispatch(selectWidget(returnTo));
         } else {
             debugger;
         }
@@ -212,10 +210,7 @@ export const submitRecordForm = returnTo => {
     };
 };
 
-export const editRecord = record => {
-    store.dispatch({ type: EDIT_RECORD, record });
-    return selectWidget(RECORD_FORM);
-};
+export const editRecord = record => store.dispatch({ type: EDIT_RECORD, record });
 export const startEditingRecord = record => ({ type: EDIT_RECORD, record });
 export const toggleRecordFormTag = tag => ({ type: RECORD_FORM_TOGGLE_TAG, tag });
 export const setRecordFormAmount = value => ({ type: RECORD_FORM_SET_AMOUNT, value });

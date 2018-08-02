@@ -8,7 +8,6 @@ class RecordsList extends Component {
     static propTypes = {
         list: PropTypes.array.isRequired,
         currentPage: PropTypes.number.isRequired,
-        isVisible: PropTypes.bool.isRequired,
         visitNextPage: PropTypes.func.isRequired,
         visitPrevPage: PropTypes.func.isRequired,
         editRecord: PropTypes.func.isRequired,
@@ -23,7 +22,7 @@ class RecordsList extends Component {
 
     render() {
         return (
-            <div className="records-list" hidden={!this.props.isVisible}>
+            <div className="records-list">
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>

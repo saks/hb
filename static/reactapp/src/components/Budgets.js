@@ -5,7 +5,6 @@ import Budget from './Budget';
 
 class Budgets extends Component {
     static propTypes = {
-        isVisible: PropTypes.bool.isRequired,
         list: PropTypes.array.isRequired,
     };
 
@@ -15,7 +14,7 @@ class Budgets extends Component {
 
     render() {
         return (
-            <div id="budgets" hidden={!this.props.isVisible}>
+            <div id="budgets">
                 <div className="row justify-content-center">
                     <h2>Budgets</h2>
                 </div>

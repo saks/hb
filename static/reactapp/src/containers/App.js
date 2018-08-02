@@ -1,3 +1,4 @@
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -10,8 +11,6 @@ import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
 import AddRecordButton from '../components/AddRecordButton';
 import './../App.css';
-
-import { RECORD_FORM, RECORDS_LIST, BUDGETS_LIST } from '../constants/WidgetNames';
 
 import NavigationHeader from '../components/NavigationHeader';
 
@@ -40,42 +39,41 @@ class App extends Component {
         const props = this.props;
         const actions = props.actions;
         return (
-            <React.Fragment>
-                <NavigationHeader
-                    selectWidget={actions.selectWidget}
-                    selectedWidget={props.selectedWidget}
-                />
-                <div className="container">
-                    <RecordsList
-                        isVisible={RECORDS_LIST === props.selectedWidget}
-                        currentPage={props.records.currentPage}
-                        list={props.records.list}
-                        visitNextPage={actions.visitNextRecordsPage}
-                        visitPrevPage={actions.visitPrevRecordsPage}
-                        editRecord={actions.editRecord}
+            <Router>
+                <React.Fragment>
+                    <NavigationHeader />
+                    <div className="container">
+                        <Route
+                            path="/records"
+                            exact={true}
+                            render={({ match }) => (
+                                <RecordsList
+                                    currentPage={props.records.currentPage}
+                                    list={props.records.list}
+                                    visitNextPage={actions.visitNextRecordsPage}
+                                    visitPrevPage={actions.visitPrevRecordsPage}
+                                    editRecord={actions.editRecord}
+                                    match={match}
+                                />
+                            )}
+                        />
+                        <Route path="/records/new" component={RecordForm} />
+                        <Route
+                            path="/budgets"
+                            exact={true}
+                            render={() => <Budgets list={props.budgets.list} />}
+                        />
+                    </div>
+                    <LoginDialog
+                        authenticate={actions.authenticate}
+                        auth={props.auth}
+                        errors={props.auth.errors}
+                        isOpen={props.auth.isDialogOpen}
                     />
-                    <RecordForm
-                        isVisible={RECORD_FORM === props.selectedWidget}
-                        tags={props.auth.profile.tags}
-                        editRecord={actions.editRecord}
-                    />
-                    <Budgets
-                        isVisible={BUDGETS_LIST === props.selectedWidget}
-                        list={props.budgets.list}
-                    />
-                </div>
-                <LoginDialog
-                    authenticate={actions.authenticate}
-                    auth={props.auth}
-                    errors={props.auth.errors}
-                    isOpen={props.auth.isDialogOpen}
-                />
-                <Spinner isVisible={props.spinner.isVisible} />
-                <AddRecordButton
-                    editRecord={actions.editRecord}
-                    isVisible={RECORD_FORM !== props.selectedWidget}
-                />
-            </React.Fragment>
+                    <Spinner isVisible={props.spinner.isVisible} />
+                    <Route path="/records" exact={true} component={AddRecordButton} />
+                </React.Fragment>
+            </Router>
         );
     }
 }
