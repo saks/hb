@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
