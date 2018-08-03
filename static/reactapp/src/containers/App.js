@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -17,7 +17,6 @@ import NavigationHeader from '../components/NavigationHeader';
 class App extends Component {
     static propTypes = {
         actions: PropTypes.object.isRequired,
-        selectedWidget: PropTypes.string.isRequired,
         auth: PropTypes.object.isRequired,
         records: PropTypes.object.isRequired,
     };
@@ -42,10 +41,12 @@ class App extends Component {
             <Router>
                 <React.Fragment>
                     <NavigationHeader />
+                    {/* redirect to "/records" page by default */}
+                    <Route exact path="/" render={() => <Redirect to="/records" />} />
                     <div className="container">
                         <Route
+                            exact
                             path="/records"
-                            exact={true}
                             render={({ match }) => (
                                 <RecordsList
                                     currentPage={props.records.currentPage}
@@ -59,8 +60,8 @@ class App extends Component {
                         />
                         <Route path="/records/new" component={RecordForm} />
                         <Route
+                            exact
                             path="/budgets"
-                            exact={true}
                             render={() => <Budgets list={props.budgets.list} />}
                         />
                     </div>
@@ -71,7 +72,7 @@ class App extends Component {
                         isOpen={props.auth.isDialogOpen}
                     />
                     <Spinner isVisible={props.spinner.isVisible} />
-                    <Route path="/records" exact={true} component={AddRecordButton} />
+                    <Route path="/records" exact component={AddRecordButton} />
                 </React.Fragment>
             </Router>
         );
@@ -80,7 +81,6 @@ class App extends Component {
 
 const mapStateToProps = state => {
     return {
-        selectedWidget: state.selectedWidget,
         auth: state.auth,
         records: state.records,
         budgets: state.budgets,

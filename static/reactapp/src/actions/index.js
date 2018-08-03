@@ -1,5 +1,4 @@
 import {
-    SELECT_WIDGET,
     SET_AUTH_TOKEN,
     SET_AUTH_PROFILE,
     SET_TAGS,
@@ -22,7 +21,6 @@ import {
     RECORD_FORM_SET_TYPE,
     RECORD_FORM_CALCULATE_AMOUNT,
 } from '../constants/ActionTypes';
-import { RECORD_FORM } from '../constants/WidgetNames';
 import store from '../store';
 
 export const setTags = tags => ({ type: SET_TAGS, tags });

@@ -6,7 +6,6 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import Tag from './Tag';
-import { RECORDS_LIST, RECORD_FORM } from '../constants/WidgetNames';
 import { EXP, INC } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';
