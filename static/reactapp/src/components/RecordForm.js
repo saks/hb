@@ -10,6 +10,16 @@ import { EXP, INC } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';
 
+const calc = text => {
+    try {
+        // eslint-disable-next-line
+        const evalResult = Number.parseFloat(eval(text));
+        if (Number.isFinite(evalResult)) {
+            return evalResult.toFixed(2);
+        }
+    } catch (_err) {}
+};
+
 class RecordForm extends Component {
     static propTypes = {
         tags: PropTypes.array.isRequired,
@@ -18,20 +28,18 @@ class RecordForm extends Component {
     constructor(props) {
         super(props);
 
+        if ('/records/new' === props.match.path) {
+            this.state = { record: RecordModel.default() };
+        } else {
+            this.state = { record: new RecordModel(props.record) };
+        }
+
         this.calculateButton = React.createRef();
         this.amountInput = React.createRef();
-
-        // FIXME: remove this hack, we need to start with a relevant record automatically
-        this.props.actions.editRecord(RecordModel.default());
     }
 
     get record() {
-        return this.props.recordForm.record;
-    }
-
-    calculate() {
-        this.props.actions.calculateRecordFormAmount();
-        this.focus();
+        return this.state.record;
     }
 
     get tags() {
@@ -39,49 +47,60 @@ class RecordForm extends Component {
             <Tag
                 name={name}
                 key={name}
-                toggle={this.props.actions.toggleRecordFormTag}
+                toggle={this.handleToggleTag.bind(this)}
                 isSelected={this.record.selectedTags.has(name)}
             />
         ));
     }
 
     async submit(saveAddAnother = false) {
-        const success = await this.props.actions.submitRecordForm();
+        const success = await this.props.actions.submitRecordForm(this.record);
         // TODO: show valdation errors if any
 
         if (success) {
             if (saveAddAnother) {
-                this.props.actions.editRecord(RecordModel.default());
+                this.setState(prevState => {
+                    return { ...prevState, record: RecordModel.default() };
+                });
+                this.focus();
             } else {
                 this.props.history.push('/records');
             }
         }
     }
 
-    save() {
-        return this.submit();
-    }
-
-    saveAddAnother() {
-        return this.submit(true);
-    }
-
     handleAmountChange(event) {
-        this.props.actions.setRecordFormAmount(event.target.value);
+        const value = event.target.value;
+        this.setState(prevState => {
+            const record = new RecordModel(prevState.record);
+            record.amount.amount = value;
+            return { ...prevState, record };
+        });
     }
 
     handleTypeChange(event) {
-        this.props.actions.setRecordFormTransactionType(event.target.value);
+        const value = event.target.value;
+        this.setState(prevState => {
+            const record = new RecordModel(prevState.record);
+            record.transaction_type = value;
+            return { ...prevState, record };
+        });
     }
 
-    componentDidUpdate(prevProps) {
-        const justShowedUp = prevProps.isVisible === false && this.props.isVisible === true;
-        const amountChanged =
-            prevProps.recordForm.record.amount.amount !== this.record.amount.amount;
+    handleToggleTag(name) {
+        this.setState(prevState => {
+            const record = new RecordModel(prevState.record);
+            record.toggleTag(name);
+            return { ...prevState, record };
+        });
+    }
 
-        if (justShowedUp || amountChanged) {
-            this.focus();
-        }
+    calculateAmount() {
+        this.setState(prevState => {
+            const record = new RecordModel(prevState.record);
+            record.amount.amount = calc(prevState.record.amount.amount) || '';
+            return { ...prevState, record };
+        });
     }
 
     componentDidMount() {
@@ -120,7 +139,7 @@ class RecordForm extends Component {
                             <span className="input-group-btn">
                                 <button
                                     ref={this.calculateButton}
-                                    onClick={this.props.actions.calculateRecordFormAmount}
+                                    onClick={this.calculateAmount.bind(this)}
                                     className="btn btn-default"
                                     type="button">
                                     calculate
@@ -151,10 +170,10 @@ class RecordForm extends Component {
                     </div>
                 </form>
                 <div className="form-group">
-                    <button onClick={this.save.bind(this)} className="btn btn-success btn-default">
+                    <button onClick={() => this.submit()} className="btn btn-success btn-default">
                         Save
                     </button>
-                    <button onClick={this.saveAddAnother.bind(this)} className="btn btn-default">
+                    <button onClick={() => this.submit(true)} className="btn btn-default">
                         Save & Add
                     </button>
                     <button onClick={this.props.history.goBack} className="btn btn-info">
@@ -166,7 +185,7 @@ class RecordForm extends Component {
     }
 }
 
-const mapStateToProps = state => ({ recordForm: state.recordForm, tags: state.auth.profile.tags });
+const mapStateToProps = state => ({ tags: state.auth.profile.tags });
 
 const mapDispatchToProps = dispatch => ({
     actions: bindActionCreators(Actions, dispatch),

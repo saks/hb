@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
@@ -10,6 +10,7 @@ import RecordForm from '../components/RecordForm';
 import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
 import AddRecordButton from '../components/AddRecordButton';
+import RecordModel from '../models/Record';
 import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
@@ -47,18 +48,31 @@ class App extends Component {
                         <Route
                             exact
                             path="/records"
-                            render={({ match }) => (
+                            render={({ match, history }) => (
                                 <RecordsList
                                     currentPage={props.records.currentPage}
                                     list={props.records.list}
                                     visitNextPage={actions.visitNextRecordsPage}
                                     visitPrevPage={actions.visitPrevRecordsPage}
-                                    editRecord={actions.editRecord}
                                     match={match}
+                                    history={history}
                                 />
                             )}
                         />
-                        <Route path="/records/new" component={RecordForm} />
+                        <Switch>
+                            <Route path="/records/new" component={RecordForm} />
+                            {props.records.list.length && (
+                                <Route
+                                    path="/records/:recordId"
+                                    render={({ match }) => {
+                                        const id = parseInt(match.params.recordId, 10);
+                                        const data = props.records.list.find(r => r.id === id);
+                                        const record = new RecordModel(data);
+                                        return <RecordForm record={record} />;
+                                    }}
+                                />
+                            )}
+                        </Switch>
                         <Route
                             exact
                             path="/budgets"

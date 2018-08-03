@@ -10,13 +10,12 @@ class RecordsList extends Component {
         currentPage: PropTypes.number.isRequired,
         visitNextPage: PropTypes.func.isRequired,
         visitPrevPage: PropTypes.func.isRequired,
-        editRecord: PropTypes.func.isRequired,
     };
 
     get renderedRecords() {
         return this.props.list.map(attrs => {
             const model = new RecordModel(attrs);
-            return <Record model={model} key={model.id} editRecord={this.props.editRecord} />;
+            return <Record model={model} key={model.id} history={this.props.history} />;
         });
     }
 

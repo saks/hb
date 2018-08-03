@@ -15,13 +15,7 @@ import {
     SET_LIST_FOR_BUDGETS_PAGE,
     SHOW_SPINNER,
     HIDE_SPINNER,
-    EDIT_RECORD,
-    RECORD_FORM_TOGGLE_TAG,
-    RECORD_FORM_SET_AMOUNT,
-    RECORD_FORM_SET_TYPE,
-    RECORD_FORM_CALCULATE_AMOUNT,
 } from '../constants/ActionTypes';
-import store from '../store';
 
 export const setTags = tags => ({ type: SET_TAGS, tags });
 
@@ -186,10 +180,8 @@ export const loadDataForRecordsPage = () => {
 };
 
 // record form
-export const submitRecordForm = () => {
+export const submitRecordForm = record => {
     return async (dispatch, getState) => {
-        const record = getState().recordForm.record;
-
         const method = record.isPersisted ? 'PUT' : 'POST';
         const body = JSON.stringify(record.asJson());
         const url = `/api/records/record-detail${record.isPersisted ? '/' + record.id : ''}/`;
@@ -207,13 +199,6 @@ export const submitRecordForm = () => {
         return result.ok;
     };
 };
-
-export const editRecord = record => store.dispatch({ type: EDIT_RECORD, record });
-export const startEditingRecord = record => ({ type: EDIT_RECORD, record });
-export const toggleRecordFormTag = tag => ({ type: RECORD_FORM_TOGGLE_TAG, tag });
-export const setRecordFormAmount = value => ({ type: RECORD_FORM_SET_AMOUNT, value });
-export const setRecordFormTransactionType = value => ({ type: RECORD_FORM_SET_TYPE, value });
-export const calculateRecordFormAmount = () => ({ type: RECORD_FORM_CALCULATE_AMOUNT });
 
 // budgets
 const startLoadingBudgetsList = () => ({ type: START_LOADING_BUDGETS_PAGE });

@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EXP } from '../constants/TransactionTypes';
-import RecordModel from '../models/Record';
 
 const DATETIME_FORMAT_OPTIONS = {
     month: 'short',
@@ -15,7 +14,6 @@ const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
 
 class Record extends Component {
     static propTypes = {
-        editRecord: PropTypes.func.isRequired,
         model: PropTypes.object.isRequired,
     };
 
@@ -44,15 +42,13 @@ class Record extends Component {
         return date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
     }
 
-    startEdit() {
-        const model = new RecordModel(this.props.model);
-        this.props.editRecord(model);
+    edit() {
+        this.props.history.push(`/records/${this.props.model.id}`);
     }
 
     render() {
-        const startEdit = this.startEdit.bind(this);
         return (
-            <div className={this.className} onClick={startEdit}>
+            <div className={this.className} onClick={this.edit.bind(this)}>
                 <div className="card-body">
                     <h5 className="text-center">
                         <span className="amount font-weight-bold float-left">{this.amount}</span>
