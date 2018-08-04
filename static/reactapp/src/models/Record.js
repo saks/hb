@@ -1,9 +1,24 @@
+// @flow
+
 import { EXP } from '../constants/TransactionTypes';
 
 const DEFAULT_CURRENCY = 'CAD';
 
+export type AmountType = {
+    currency: string,
+    amount: string,
+};
+
 export default class RecordModel {
-    constructor(attrs = {}) {
+    transaction_type: string;
+    currency: string;
+    amount: AmountType;
+    selectedTags: Set<string>;
+    id: number;
+    tags: Array<string>;
+
+    // TODO: add type for attrs
+    constructor(attrs: any = {}) {
         attrs = JSON.parse(JSON.stringify(attrs));
         attrs.selectedTags = new Set(attrs.tags);
 
@@ -27,7 +42,7 @@ export default class RecordModel {
         return result;
     }
 
-    toggleTag(name) {
+    toggleTag(name: string) {
         if (this.selectedTags.has(name)) {
             this.selectedTags.delete(name);
         } else {

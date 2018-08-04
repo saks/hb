@@ -1,3 +1,6 @@
+// @flow
+
+import RecordModel from '../models/Record';
 import {
     SET_AUTH_TOKEN,
     SET_AUTH_PROFILE,
@@ -17,7 +20,10 @@ import {
     HIDE_SPINNER,
 } from '../constants/ActionTypes';
 
-export const setTags = tags => ({ type: SET_TAGS, tags });
+import type { Dispatch, GetState } from '../types/Dispatch';
+import type { ThunkAction } from '../types/Action';
+
+export const setTags = (tags: Array<string>) => ({ type: SET_TAGS, tags });
 
 const parsedToken = token => {
     const base64Url = token.split('.')[1];
@@ -25,7 +31,7 @@ const parsedToken = token => {
     return JSON.parse(window.atob(base64));
 };
 
-const setAuthToken = token => {
+const setAuthToken = (token: string) => {
     return { type: SET_AUTH_TOKEN, token, parsedToken: parsedToken(token) };
 };
 const setAuthProfile = profile => ({ type: SET_AUTH_PROFILE, profile });
@@ -41,22 +47,16 @@ const authErrors = errors => {
 
 const signOut = () => ({ type: SIGN_OUT });
 
-export const authFetch = (options = {}) => {
-    return async (dispatch, getState) => {
+export const authFetch = (request: Request) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         const token = getState().auth.token;
-        const url = options.url;
-        delete options.url;
 
-        if (!options.headers) {
-            options.headers = {};
-        }
-
-        options.headers.Authorization = `JWT ${token}`;
-        options.headers['User-Agent'] = 'Home Budget PWA';
-        options.headers['Content-Type'] = 'application/json';
+        request.headers.set('Authorization', `JWT ${token}`);
+        request.headers.set('User-Agent', 'Home Budget PWA');
+        request.headers.set('Content-Type', 'application/json');
 
         dispatch(showSpinner());
-        const result = await fetch(url, options);
+        const result = await fetch(request);
         dispatch(hideSpinner());
 
         if (!result.ok && result.status === 401) {
@@ -71,8 +71,9 @@ export const authFetch = (options = {}) => {
     };
 };
 
-export const authenticate = formData => {
-    return async (dispatch, getState) => {
+// TODO: type for formData
+export const authenticate = (formData: any) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(showSpinner());
         const tokenResponse = await fetch('/auth/jwt/create/', {
             method: 'POST',
@@ -93,7 +94,8 @@ export const authenticate = formData => {
         dispatch(setAuthToken(tokenData.token));
         const userId = getState().auth.parsedToken.user_id;
 
-        const profileResponse = await dispatch(authFetch({ url: `/api/user/${userId}/` }));
+        const request = new Request(`/api/user/${userId}/`);
+        const profileResponse = await dispatch(authFetch(request));
         if (null === profileResponse) {
             return;
         }
@@ -120,12 +122,12 @@ const setCurrentPageForRecordsPage = pageNum => ({
 const setListForRecordsPage = list => ({ type: SET_LIST_FOR_RECORDS_PAGE, list });
 
 export const visitNextRecordsPage = () => {
-    return async (dispatch, getState) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(startLoadingRecordsList());
 
         const nextPageNum = getState().records.currentPage + 1;
-        const url = `/api/records/record-detail/?page=${nextPageNum}`;
-        const result = await dispatch(authFetch({ url }));
+        const request = new Request(`/api/records/record-detail/?page=${nextPageNum}`);
+        const result = await dispatch(authFetch(request));
 
         if (null === result) {
             return;
@@ -145,7 +147,7 @@ export const visitNextRecordsPage = () => {
 };
 
 export const visitPrevRecordsPage = () => {
-    return async (dispatch, getState) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         const prevPageNum = getState().records.currentPage - 1;
 
         if (0 === prevPageNum) {
@@ -154,8 +156,8 @@ export const visitPrevRecordsPage = () => {
 
         dispatch(startLoadingRecordsList());
 
-        const url = `/api/records/record-detail/?page=${prevPageNum}`;
-        const result = await dispatch(authFetch({ url }));
+        const request = new Request(`/api/records/record-detail/?page=${prevPageNum}`);
+        const result = await dispatch(authFetch(request));
         const json = await result.json();
 
         dispatch(setCurrentPageForRecordsPage(prevPageNum));
@@ -165,13 +167,13 @@ export const visitPrevRecordsPage = () => {
 };
 
 export const loadDataForRecordsPage = () => {
-    return async (dispatch, getState) => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         const pageNum = getState().records.currentPage;
 
         dispatch(startLoadingRecordsList());
 
-        const url = `/api/records/record-detail/?page=${pageNum}`;
-        const result = await dispatch(authFetch({ url }));
+        const request = new Request(`/api/records/record-detail/?page=${pageNum}`);
+        const result = await dispatch(authFetch(request));
         const json = await result.json();
 
         dispatch(setListForRecordsPage(json.results));
@@ -180,13 +182,15 @@ export const loadDataForRecordsPage = () => {
 };
 
 // record form
-export const submitRecordForm = record => {
-    return async (dispatch, getState) => {
+
+export const submitRecordForm = (record: RecordModel): ThunkAction => {
+    return async (dispatch: Dispatch, getState: GetState) => {
         const method = record.isPersisted ? 'PUT' : 'POST';
         const body = JSON.stringify(record.asJson());
         const url = `/api/records/record-detail${record.isPersisted ? '/' + record.id : ''}/`;
 
-        const result = await dispatch(authFetch({ url, method, body }));
+        const request = new Request(url, { method, body });
+        const result = await dispatch(authFetch(request));
 
         if (result.ok) {
             // const record = await result.json();
@@ -206,10 +210,11 @@ const finisLoadingBudgetsList = () => ({ type: FINIS_LOADING_BUDGETS_PAGE });
 const setListForBudgetsPage = list => ({ type: SET_LIST_FOR_BUDGETS_PAGE, list });
 
 export const loadDataForBudgetsPage = () => {
-    return async dispatch => {
+    return async (dispatch: Dispatch) => {
         dispatch(startLoadingBudgetsList());
 
-        const result = await dispatch(authFetch({ url: '/api/budgets/budget-detail/' }));
+        const request = new Request('/api/budgets/budget-detail/');
+        const result = await dispatch(authFetch(request));
         const json = await result.json();
 
         dispatch(setListForBudgetsPage(json.results));

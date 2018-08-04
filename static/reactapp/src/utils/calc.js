@@ -1,5 +1,6 @@
 // @flow
-export default function(text: string): string | null {
+
+export default (text: string): string | null => {
     try {
         // eslint-disable-next-line
         const evalResult = Number.parseFloat(eval(text));
@@ -8,4 +9,4 @@ export default function(text: string): string | null {
         }
     } catch (_err) {}
     return null;
-}
+};

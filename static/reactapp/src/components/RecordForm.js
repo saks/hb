@@ -1,9 +1,9 @@
+// @flow
 import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import * as Actions from '../actions';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 
 import Tag from './Tag';
 import { EXP, INC } from '../constants/TransactionTypes';
@@ -11,10 +11,19 @@ import { EXP, INC } from '../constants/TransactionTypes';
 import RecordModel from '../models/Record';
 import calc from '../utils/calc';
 
-class RecordForm extends Component {
-    static propTypes = {
-        tags: PropTypes.array.isRequired,
-    };
+import { submitRecordForm } from '../actions';
+
+type Props = {
+    tags: Array<string>,
+    actions: { submitRecordForm: typeof submitRecordForm },
+    history: any, // TODO: add history type
+};
+
+type State = { record: RecordModel };
+
+class RecordForm extends Component<Props, State> {
+    amountInput: { current: any };
+    record: RecordModel;
 
     constructor(props) {
         super(props);
@@ -24,8 +33,6 @@ class RecordForm extends Component {
         } else {
             this.state = { record: new RecordModel(props.record) };
         }
-
-        this.calculateButton = React.createRef();
         this.amountInput = React.createRef();
     }
 
@@ -91,18 +98,20 @@ class RecordForm extends Component {
     }
 
     calculateAmount() {
-        this.setState(prevState => {
-            const newState = { ...prevState };
-            const amount = calc(prevState.record.amount.amount);
+        this.setState(
+            (prevState: State): State => {
+                const newState: State = { ...prevState };
+                const amount = calc(prevState.record.amount.amount);
 
-            if (null !== amount) {
-                const record = new RecordModel(prevState.record);
-                record.amount.amount = amount;
-                newState.record = record;
+                if (null !== amount) {
+                    const record = new RecordModel(prevState.record);
+                    record.amount.amount = amount;
+                    newState.record = record;
+                }
+
+                return newState;
             }
-
-            return newState;
-        });
+        );
     }
 
     componentDidMount() {
@@ -113,7 +122,7 @@ class RecordForm extends Component {
         this.amountInput.current.focus();
     }
 
-    get headerText() {
+    get headerText(): string {
         return this.record && this.record.isPersisted ? 'Edit Record' : 'Add New Record';
     }
 
@@ -140,7 +149,6 @@ class RecordForm extends Component {
                             />
                             <span className="input-group-btn">
                                 <button
-                                    ref={this.calculateButton}
                                     onClick={this.calculateAmount.bind(this)}
                                     className="btn btn-default"
                                     type="button">
