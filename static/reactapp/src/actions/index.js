@@ -16,7 +16,7 @@ import { showSpinner, hideSpinner } from './Spinner';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
-import { AuthenticateAction } from './LoginDialog';
+import AuthenticateAction from './LoginDialog';
 
 export const openAuthDialog = () => ({ type: OPEN_AUTH_DIALOG });
 

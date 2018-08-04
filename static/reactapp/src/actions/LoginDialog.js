@@ -34,10 +34,7 @@ const setAuthToken = (token: string) => {
 const setAuthProfile = profile => ({ type: SET_AUTH_PROFILE, profile });
 const closeAuthDialog = () => ({ type: CLOSE_AUTH_DIALOG });
 
-export const AuthenticateAction = (formData: {|
-    username: string,
-    password: string,
-|}): ThunkAction => {
+export default (formData: {| username: string, password: string |}): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(showSpinner());
         const tokenResponse = await fetch('/auth/jwt/create/', {

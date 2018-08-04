@@ -6,7 +6,7 @@ import $ from 'jquery';
 import 'bootstrap-material-design';
 
 import type { AuthErrors } from '../types/Data';
-import { AuthenticateAction } from '../actions/LoginDialog';
+import AuthenticateAction from '../actions/LoginDialog';
 
 const FormFieldError = (props: { text: string }) => (
     <small className="form-text text-danger sign-in-error">{props.text}</small>

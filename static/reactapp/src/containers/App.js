@@ -1,6 +1,7 @@
+// @flow
+
 import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
@@ -15,13 +16,17 @@ import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
 
-class App extends Component {
-    static propTypes = {
-        actions: PropTypes.object.isRequired,
-        auth: PropTypes.object.isRequired,
-        records: PropTypes.object.isRequired,
-    };
+import type { BudgetAttrs } from '../types/Data';
 
+type Props = {
+    actions: { [string]: Function },
+    auth: any,
+    records: { list: Array<RecordModel>, currentPage: number },
+    spinner: { isVisible: boolean },
+    budgets: { list: Array<BudgetAttrs> },
+};
+
+class App extends Component<Props> {
     componentDidMount() {
         if (this.isAuthenticated()) {
             this.props.actions.loadDataForRecordsPage();
