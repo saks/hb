@@ -9,16 +9,7 @@ import Tag from './Tag';
 import { EXP, INC } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';
-
-const calc = text => {
-    try {
-        // eslint-disable-next-line
-        const evalResult = Number.parseFloat(eval(text));
-        if (Number.isFinite(evalResult)) {
-            return evalResult.toFixed(2);
-        }
-    } catch (_err) {}
-};
+import calc from '../utils/calc';
 
 class RecordForm extends Component {
     static propTypes = {
@@ -101,9 +92,16 @@ class RecordForm extends Component {
 
     calculateAmount() {
         this.setState(prevState => {
-            const record = new RecordModel(prevState.record);
-            record.amount.amount = calc(prevState.record.amount.amount) || '';
-            return { ...prevState, record };
+            const newState = { ...prevState };
+            const amount = calc(prevState.record.amount.amount);
+
+            if (null !== amount) {
+                const record = new RecordModel(prevState.record);
+                record.amount.amount = amount;
+                newState.record = record;
+            }
+
+            return newState;
         });
     }
 
