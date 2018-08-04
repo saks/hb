@@ -16,6 +16,7 @@ export default class RecordModel {
     selectedTags: Set<string>;
     id: number;
     tags: Array<string>;
+    created_at: number;
 
     // TODO: add type for attrs
     constructor(attrs: any = {}) {

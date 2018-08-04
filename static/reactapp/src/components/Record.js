@@ -1,6 +1,11 @@
+// @flow
+
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { EXP } from '../constants/TransactionTypes';
+
+import RecordModel from '../models/Record';
+import type { RouterHistory } from 'react-router-dom';
 
 const DATETIME_FORMAT_OPTIONS = {
     month: 'short',
@@ -10,19 +15,16 @@ const DATETIME_FORMAT_OPTIONS = {
     hour12: false,
 };
 
-const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
+const fmtNum = (input: string): string => Number.parseFloat(input).toFixed(2);
 
-class Record extends Component {
-    static propTypes = {
-        model: PropTypes.object.isRequired,
-    };
+type Props = {
+    model: RecordModel,
+    history: RouterHistory,
+};
 
-    get model() {
-        return this.props.model;
-    }
-
+class Record extends Component<Props, void> {
     get amount() {
-        return fmtNum(this.model.amount.amount);
+        return fmtNum(this.props.model.amount.amount);
     }
 
     get className() {

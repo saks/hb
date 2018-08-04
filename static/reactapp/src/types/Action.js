@@ -21,7 +21,7 @@ import typeof {
 
 import type { Dispatch, GetState } from './Dispatch';
 
-type AuthToken = { email: string, exp: number, user_id: number, username: string };
+import { AuthToken } from './Data';
 
 export type SetAuthTokenAction = { type: SET_AUTH_TOKEN, token: string, parsedToken: AuthToken };
 export type SignOutAction = { type: SIGN_OUT };
