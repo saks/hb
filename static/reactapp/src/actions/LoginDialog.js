@@ -29,8 +29,7 @@ export default (formData: {| username: string, password: string |}): ThunkAction
 
         const tokenData = await tokenResponse.json();
         dispatch(setAuthToken(tokenData.token));
-        const globalState: GlobalState = getState();
-        const userId: number = globalState.auth.parsedToken.user_id;
+        const userId: number = getState().auth.parsedToken.user_id;
 
         const request = new Request(`/api/user/${userId}/`);
         const profileResponse = await dispatch(authFetch(request));

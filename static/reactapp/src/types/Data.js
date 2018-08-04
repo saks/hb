@@ -1,3 +1,5 @@
+// @flow
+
 export type AuthToken = { email: string, exp: number, user_id: number, username: string };
 
 export type RecordAttrs = {
@@ -44,7 +46,18 @@ export type RecordsState = {
     +list: Array<RecordAttrs>,
 };
 
+export type SpinnerState = {
+    +isVisible: boolean,
+};
+
+export type BudgetsState = {
+    +isFetching: boolean,
+    +list: Array<BudgetAttrs>,
+};
+
 export type GlobalState = {
     +auth: AuthState,
     +records: RecordsState,
+    +spinner: SpinnerState,
+    +budgets: BudgetsState,
 };

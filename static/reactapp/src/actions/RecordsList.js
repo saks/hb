@@ -43,8 +43,7 @@ export const VisitNextRecordsPage = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(startLoadingRecordsList());
 
-        const globalState: GlobalState = getState();
-        const nextPageNum = globalState.records.currentPage + 1;
+        const nextPageNum = getState().records.currentPage + 1;
         const request = new Request(`/api/records/record-detail/?page=${nextPageNum}`);
         const result = await dispatch(authFetch(request));
 

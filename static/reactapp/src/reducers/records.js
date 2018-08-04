@@ -13,10 +13,6 @@ const defaultState = {
 
 const initialState: RecordsState = defineState(defaultState)('records');
 
-// don't read cached records
-initialState.list = [];
-initialState.currentPage = 1;
-
 export default (state: RecordsState = initialState, action: RecordsAction) => {
     switch (action.type) {
         case 'START_LOADING_RECORDS_PAGE':

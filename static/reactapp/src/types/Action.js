@@ -2,7 +2,7 @@
 
 import type { Dispatch, GetState } from './Dispatch';
 
-import { AuthToken } from './Data';
+import type { AuthToken } from './Data';
 
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
 

@@ -15,12 +15,15 @@ import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
 import type { GlobalState } from '../types/Data';
 
+export { openAuthDialog } from './Auth';
+
 export const authFetch = (request: Request) => {
     return async (dispatch: Dispatch, getState: GetState) => {
-        const globalState: GlobalState = getState();
-        const token = globalState.auth.token;
+        const token = getState().auth.token;
 
-        request.headers.set('Authorization', `JWT ${token}`);
+        if (token) {
+            request.headers.set('Authorization', `JWT ${token}`);
+        }
         request.headers.set('User-Agent', 'Home Budget PWA');
         request.headers.set('Content-Type', 'application/json');
 

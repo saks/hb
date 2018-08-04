@@ -2,6 +2,8 @@
 
 import { EXP } from '../constants/TransactionTypes';
 
+import type { RecordAttrs } from '../types/Data';
+
 const DEFAULT_CURRENCY = 'CAD';
 
 export type AmountType = {
@@ -19,9 +21,9 @@ export default class RecordModel {
     created_at: number;
 
     // TODO: add type for attrs
-    constructor(attrs: any = {}) {
+    constructor(attrs: RecordAttrs | RecordModel = {}) {
         attrs = JSON.parse(JSON.stringify(attrs));
-        attrs.selectedTags = new Set(attrs.tags);
+        attrs.selectedTags = new Set(attrs.xtags);
 
         if (attrs.amount && 'object' === typeof attrs.amount.currency) {
             attrs.amount.currency = attrs.amount.currency.code;

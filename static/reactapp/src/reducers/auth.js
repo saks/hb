@@ -19,10 +19,6 @@ const defaultState = {
 
 const initialState: AuthState = defineState(defaultState)('auth');
 
-// don't cache errors
-initialState.errors = defaultErrors;
-initialState.isDialogOpen = false;
-
 export default (state: AuthState = initialState, action: AuthAction) => {
     switch (action.type) {
         case 'OPEN_AUTH_DIALOG':
