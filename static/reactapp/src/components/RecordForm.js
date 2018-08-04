@@ -33,7 +33,7 @@ class RecordForm extends Component<Props, State> {
         if ('/records/new' === props.match.path) {
             this.state = { record: RecordModel.default() };
         } else {
-            this.state = { record: new RecordModel(props.record) };
+            this.state = { record: props.record.clone() };
         }
         this.amountInput = React.createRef();
     }
@@ -72,7 +72,7 @@ class RecordForm extends Component<Props, State> {
     handleAmountChange(event) {
         const value = event.target.value;
         this.setState(prevState => {
-            const record = new RecordModel(prevState.record);
+            const record = prevState.record.clone();
             record.amount.amount = value;
             return { ...prevState, record };
         });
@@ -81,7 +81,7 @@ class RecordForm extends Component<Props, State> {
     handleTypeChange(event) {
         const value = event.target.value;
         this.setState(prevState => {
-            const record = new RecordModel(prevState.record);
+            const record = prevState.record.clone();
             record.transaction_type = value;
             return { ...prevState, record };
         });
@@ -89,7 +89,7 @@ class RecordForm extends Component<Props, State> {
 
     handleToggleTag(name) {
         this.setState(prevState => {
-            const record = new RecordModel(prevState.record);
+            const record = prevState.record.clone();
             record.toggleTag(name);
             return { ...prevState, record };
         });
@@ -106,7 +106,7 @@ class RecordForm extends Component<Props, State> {
                 const amount = calc(prevState.record.amount.amount);
 
                 if (null !== amount) {
-                    const record = new RecordModel(prevState.record);
+                    const record = prevState.record.clone();
                     record.amount.amount = amount;
                     newState.record = record;
                 }

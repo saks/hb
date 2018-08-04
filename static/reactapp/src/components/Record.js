@@ -14,7 +14,7 @@ const DATETIME_FORMAT_OPTIONS = {
     hour12: false,
 };
 
-const fmtNum = (input: string): string => Number.parseFloat(input).toFixed(2);
+const fmtNum = (input: number): string => Number.parseFloat(String(input)).toFixed(2);
 
 type Props = {
     model: RecordModel,

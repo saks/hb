@@ -71,9 +71,13 @@ class App extends Component<Props> {
                                     path="/records/:recordId"
                                     render={({ match }) => {
                                         const id = parseInt(match.params.recordId, 10);
-                                        const data = props.records.list.find(r => r.id === id);
-                                        const record = new RecordModel(data);
-                                        return <RecordForm record={record} />;
+                                        const attrs = props.records.list.find(r => r.id === id);
+                                        if (attrs) {
+                                            const record = new RecordModel(attrs);
+                                            return <RecordForm record={record} />;
+                                        } else {
+                                            <Redirect to="/records" />;
+                                        }
                                     }}
                                 />
                             )}

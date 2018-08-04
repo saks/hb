@@ -21,13 +21,15 @@ export default class RecordModel {
     created_at: number;
 
     // TODO: add type for attrs
-    constructor(attrs: RecordAttrs | RecordModel = {}) {
+    constructor(attrs: RecordAttrs) {
         attrs = JSON.parse(JSON.stringify(attrs));
-        attrs.selectedTags = new Set(attrs.xtags);
+        attrs.selectedTags = new Set(attrs.tags);
 
         if (attrs.amount && 'object' === typeof attrs.amount.currency) {
             attrs.amount.currency = attrs.amount.currency.code;
         }
+
+        attrs.amount.amount = parseFloat(attrs.amount.amount) || '';
 
         Object.assign(this, attrs);
 
@@ -35,14 +37,15 @@ export default class RecordModel {
     }
 
     static default() {
-        const result = new RecordModel();
-
-        result.selectedTags = new Set();
-        result.amount = { currency: DEFAULT_CURRENCY, amount: '' };
-        result.transaction_type = EXP;
-        result.currency = DEFAULT_CURRENCY;
-
-        return result;
+        const attrs: RecordAttrs = {
+            id: 1,
+            user: '',
+            tags: [],
+            amount: { amount: 0, currency: { code: DEFAULT_CURRENCY, name: DEFAULT_CURRENCY } },
+            transaction_type: EXP,
+            created_at: 0,
+        };
+        return new RecordModel(attrs);
     }
 
     toggleTag(name: string) {
@@ -62,9 +65,19 @@ export default class RecordModel {
     }
 
     asJson() {
-        const copy = new RecordModel(this);
+        const copy = this.clone();
         delete copy.selectedTags;
 
         return copy;
+    }
+
+    clone() {
+        const result = new RecordModel();
+        const attrs = JSON.parse(JSON.stringify(this));
+        attrs.selectedTags = new Set(attrs.xtags);
+
+        Object.assign(result, attrs);
+
+        return result;
     }
 }
