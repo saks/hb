@@ -1,5 +1,14 @@
 export type AuthToken = { email: string, exp: number, user_id: number, username: string };
 
+export type RecordAttrs = {
+    id: number,
+    user: string,
+    tags: Array<string>,
+    amount: { amount: number, currency: { code: string, name: string } },
+    transaction_type: string,
+    created_at: number,
+};
+
 export type BudgetAttrs = {
     user: string,
     amount: string,
@@ -29,6 +38,13 @@ export type AuthState = {
     +parsedToken: AuthToken,
 };
 
+export type RecordsState = {
+    +currentPage: number,
+    +isFetching: boolean,
+    +list: Array<RecordAttrs>,
+};
+
 export type GlobalState = {
     +auth: AuthState,
+    +records: RecordsState,
 };

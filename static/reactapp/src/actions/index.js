@@ -2,10 +2,6 @@
 
 import RecordModel from '../models/Record';
 import {
-    START_LOADING_RECORDS_PAGE,
-    FINIS_LOADING_RECORDS_PAGE,
-    SET_CURRENT_PAGE_FOR_RECORDS_PAGE,
-    SET_LIST_FOR_RECORDS_PAGE,
     START_LOADING_BUDGETS_PAGE,
     FINIS_LOADING_BUDGETS_PAGE,
     SET_LIST_FOR_BUDGETS_PAGE,
@@ -13,6 +9,7 @@ import {
 import { showSpinner, hideSpinner } from './Spinner';
 import { signOut, openAuthDialog } from './Auth';
 import AuthenticateAction from './LoginDialog';
+import { LoadDataForRecordsPage, VisitNextRecordsPage, VisitPrevRecordsPage } from './RecordsList';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
@@ -44,77 +41,11 @@ export const authFetch = (request: Request) => {
 };
 
 export const authenticate = AuthenticateAction;
+export const loadDataForRecordsPage = LoadDataForRecordsPage;
+export const visitPrevRecordsPage = VisitPrevRecordsPage;
+export const visitNextRecordsPage = VisitNextRecordsPage;
 
 // RecordsList
-const startLoadingRecordsList = () => ({ type: START_LOADING_RECORDS_PAGE });
-const finisLoadingRecordsList = () => ({ type: FINIS_LOADING_RECORDS_PAGE });
-
-const setCurrentPageForRecordsPage = pageNum => ({
-    type: SET_CURRENT_PAGE_FOR_RECORDS_PAGE,
-    pageNum,
-});
-
-const setListForRecordsPage = list => ({ type: SET_LIST_FOR_RECORDS_PAGE, list });
-
-export const visitNextRecordsPage = () => {
-    return async (dispatch: Dispatch, getState: GetState) => {
-        dispatch(startLoadingRecordsList());
-
-        const nextPageNum = getState().records.currentPage + 1;
-        const request = new Request(`/api/records/record-detail/?page=${nextPageNum}`);
-        const result = await dispatch(authFetch(request));
-
-        if (null === result) {
-            return;
-        }
-
-        if (404 === result.status) {
-            dispatch(finisLoadingRecordsList());
-            return;
-        }
-
-        const json = await result.json();
-
-        dispatch(setCurrentPageForRecordsPage(nextPageNum));
-        dispatch(setListForRecordsPage(json.results));
-        dispatch(finisLoadingRecordsList());
-    };
-};
-
-export const visitPrevRecordsPage = () => {
-    return async (dispatch: Dispatch, getState: GetState) => {
-        const prevPageNum = getState().records.currentPage - 1;
-
-        if (0 === prevPageNum) {
-            return;
-        }
-
-        dispatch(startLoadingRecordsList());
-
-        const request = new Request(`/api/records/record-detail/?page=${prevPageNum}`);
-        const result = await dispatch(authFetch(request));
-        const json = await result.json();
-
-        dispatch(setCurrentPageForRecordsPage(prevPageNum));
-        dispatch(setListForRecordsPage(json.results));
-        dispatch(finisLoadingRecordsList());
-    };
-};
-
-export const loadDataForRecordsPage = () => {
-    return async (dispatch: Dispatch, getState: GetState) => {
-        const pageNum = getState().records.currentPage;
-
-        dispatch(startLoadingRecordsList());
-
-        const request = new Request(`/api/records/record-detail/?page=${pageNum}`);
-        const result = await dispatch(authFetch(request));
-        const json = await result.json();
-
-        dispatch(setListForRecordsPage(json.results));
-        dispatch(finisLoadingRecordsList());
-    };
-};
 
 // record form
 
