@@ -1,17 +1,20 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import RecordModel from '../models/Record';
 import Record from './Record';
+import type { RouterHistory } from 'react-router-dom';
 
-class RecordsList extends Component {
-    static propTypes = {
-        list: PropTypes.array.isRequired,
-        currentPage: PropTypes.number.isRequired,
-        visitNextPage: PropTypes.func.isRequired,
-        visitPrevPage: PropTypes.func.isRequired,
-    };
+type Props = {
+    list: Array<RecordModel>,
+    currentPage: number,
+    visitNextPage: () => void,
+    visitPrevPage: () => void,
+    history: RouterHistory,
+};
 
+class RecordsList extends Component<Props, void> {
     get renderedRecords() {
         return this.props.list.map(attrs => {
             const model = new RecordModel(attrs);

@@ -2,12 +2,7 @@
 
 import RecordModel from '../models/Record';
 import {
-    SET_AUTH_TOKEN,
-    SET_AUTH_PROFILE,
-    SET_TAGS,
     OPEN_AUTH_DIALOG,
-    CLOSE_AUTH_DIALOG,
-    ERROR_AUTH,
     SIGN_OUT,
     START_LOADING_RECORDS_PAGE,
     FINIS_LOADING_RECORDS_PAGE,
@@ -16,39 +11,14 @@ import {
     START_LOADING_BUDGETS_PAGE,
     FINIS_LOADING_BUDGETS_PAGE,
     SET_LIST_FOR_BUDGETS_PAGE,
-    SHOW_SPINNER,
-    HIDE_SPINNER,
 } from '../constants/ActionTypes';
+import { showSpinner, hideSpinner } from './Spinner';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
+import { AuthenticateAction } from './LoginDialog';
 
-type SetTags = {
-    type: typeof SET_TAGS,
-    tags: Array<string>,
-};
-
-export const setTags = (tags: Array<string>): SetTags => ({ type: SET_TAGS, tags });
-
-const parsedToken = (token: string) => {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace('-', '+').replace('_', '/');
-    return JSON.parse(window.atob(base64));
-};
-
-const setAuthToken = (token: string) => {
-    return { type: SET_AUTH_TOKEN, token, parsedToken: parsedToken(token) };
-};
-const setAuthProfile = profile => ({ type: SET_AUTH_PROFILE, profile });
 export const openAuthDialog = () => ({ type: OPEN_AUTH_DIALOG });
-const closeAuthDialog = () => ({ type: CLOSE_AUTH_DIALOG });
-const authErrors = errors => {
-    Object.keys(errors).forEach(fieldName => {
-        errors[fieldName] = errors[fieldName].join(';');
-    });
-
-    return { type: ERROR_AUTH, errors };
-};
 
 const signOut = () => ({ type: SIGN_OUT });
 
@@ -76,44 +46,7 @@ export const authFetch = (request: Request) => {
     };
 };
 
-// TODO: type for formData
-export const authenticate = (formData: any) => {
-    return async (dispatch: Dispatch, getState: GetState) => {
-        dispatch(showSpinner());
-        const tokenResponse = await fetch('/auth/jwt/create/', {
-            method: 'POST',
-            body: JSON.stringify(formData),
-            headers: {
-                'User-Agent': 'Home Budget PWA',
-                'Content-Type': 'application/json',
-            },
-        });
-        dispatch(hideSpinner());
-
-        if (!tokenResponse.ok) {
-            dispatch(authErrors(await tokenResponse.json()));
-            return;
-        }
-
-        const tokenData = await tokenResponse.json();
-        dispatch(setAuthToken(tokenData.token));
-        const userId = getState().auth.parsedToken.user_id;
-
-        const request = new Request(`/api/user/${userId}/`);
-        const profileResponse = await dispatch(authFetch(request));
-        if (null === profileResponse) {
-            return;
-        }
-
-        const profile = await profileResponse.json();
-        dispatch(setAuthProfile(profile));
-        dispatch(closeAuthDialog());
-
-        // refresh all data
-        dispatch(loadDataForRecordsPage());
-        dispatch(loadDataForBudgetsPage());
-    };
-};
+export const authenticate = AuthenticateAction;
 
 // RecordsList
 const startLoadingRecordsList = () => ({ type: START_LOADING_RECORDS_PAGE });
@@ -226,7 +159,3 @@ export const loadDataForBudgetsPage = () => {
         dispatch(finisLoadingBudgetsList());
     };
 };
-
-// spinner
-const showSpinner = () => ({ type: SHOW_SPINNER });
-const hideSpinner = () => ({ type: HIDE_SPINNER });

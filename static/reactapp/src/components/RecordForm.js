@@ -1,4 +1,5 @@
 // @flow
+
 import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import * as Actions from '../actions';
