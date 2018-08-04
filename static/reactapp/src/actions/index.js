@@ -23,9 +23,14 @@ import {
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
 
-export const setTags = (tags: Array<string>) => ({ type: SET_TAGS, tags });
+type SetTags = {
+    type: typeof SET_TAGS,
+    tags: Array<string>,
+};
 
-const parsedToken = token => {
+export const setTags = (tags: Array<string>): SetTags => ({ type: SET_TAGS, tags });
+
+const parsedToken = (token: string) => {
     const base64Url = token.split('.')[1];
     const base64 = base64Url.replace('-', '+').replace('_', '/');
     return JSON.parse(window.atob(base64));

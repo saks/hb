@@ -12,17 +12,18 @@ import RecordModel from '../models/Record';
 import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
+import type { RouterHistory } from 'react-router-dom';
 
 type Props = {
     tags: Array<string>,
     actions: { submitRecordForm: typeof submitRecordForm },
-    history: any, // TODO: add history type
+    history: RouterHistory,
 };
 
 type State = { record: RecordModel };
 
 class RecordForm extends Component<Props, State> {
-    amountInput: { current: any };
+    amountInput: { current: null | HTMLInputElement };
     record: RecordModel;
 
     constructor(props) {
@@ -119,7 +120,8 @@ class RecordForm extends Component<Props, State> {
     }
 
     focus() {
-        this.amountInput.current.focus();
+        const input = this.amountInput.current;
+        if (input) input.focus();
     }
 
     get headerText(): string {
