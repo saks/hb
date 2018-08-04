@@ -2,8 +2,6 @@
 
 import RecordModel from '../models/Record';
 import {
-    OPEN_AUTH_DIALOG,
-    SIGN_OUT,
     START_LOADING_RECORDS_PAGE,
     FINIS_LOADING_RECORDS_PAGE,
     SET_CURRENT_PAGE_FOR_RECORDS_PAGE,
@@ -13,18 +11,17 @@ import {
     SET_LIST_FOR_BUDGETS_PAGE,
 } from '../constants/ActionTypes';
 import { showSpinner, hideSpinner } from './Spinner';
+import { signOut, openAuthDialog } from './Auth';
+import AuthenticateAction from './LoginDialog';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
-import AuthenticateAction from './LoginDialog';
-
-export const openAuthDialog = () => ({ type: OPEN_AUTH_DIALOG });
-
-const signOut = () => ({ type: SIGN_OUT });
+import type { GlobalState } from '../types/Data';
 
 export const authFetch = (request: Request) => {
     return async (dispatch: Dispatch, getState: GetState) => {
-        const token = getState().auth.token;
+        const globalState: GlobalState = getState();
+        const token = globalState.auth.token;
 
         request.headers.set('Authorization', `JWT ${token}`);
         request.headers.set('User-Agent', 'Home Budget PWA');

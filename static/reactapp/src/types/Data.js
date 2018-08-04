@@ -15,3 +15,20 @@ export type AuthErrors = {
     password?: string,
     non_field_errors?: string,
 };
+
+export type UserProfile = {
+    username: string,
+    email: string,
+    tags: Array<string>,
+};
+
+export type AuthState = {
+    +isDialogOpen: boolean,
+    +token: null | string,
+    +profile: UserProfile,
+    +parsedToken: AuthToken,
+};
+
+export type GlobalState = {
+    +auth: AuthState,
+};

@@ -1,38 +1,13 @@
 // @flow
 
-import {
-    ERROR_AUTH,
-    CLOSE_AUTH_DIALOG,
-    SET_AUTH_PROFILE,
-    SET_AUTH_TOKEN,
-} from '../constants/ActionTypes';
 import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index';
 
 import { showSpinner, hideSpinner } from './Spinner';
+import { authErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
 
-import type { AuthErrors, AuthToken } from '../types/Data';
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
-
-const authErrors = (errors: any): { type: typeof ERROR_AUTH, errors: AuthErrors } => {
-    Object.keys(errors).forEach(fieldName => {
-        errors[fieldName] = errors[fieldName].join(';');
-    });
-
-    return { type: ERROR_AUTH, errors };
-};
-
-const parsedToken = (token: string): AuthToken => {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace('-', '+').replace('_', '/');
-    return JSON.parse(window.atob(base64));
-};
-
-const setAuthToken = (token: string) => {
-    return { type: SET_AUTH_TOKEN, token, parsedToken: parsedToken(token) };
-};
-const setAuthProfile = profile => ({ type: SET_AUTH_PROFILE, profile });
-const closeAuthDialog = () => ({ type: CLOSE_AUTH_DIALOG });
+import type { GlobalState } from '../types/Data';
 
 export default (formData: {| username: string, password: string |}): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
@@ -54,7 +29,8 @@ export default (formData: {| username: string, password: string |}): ThunkAction
 
         const tokenData = await tokenResponse.json();
         dispatch(setAuthToken(tokenData.token));
-        const userId: number = getState().auth.parsedToken.user_id;
+        const globalState: GlobalState = getState();
+        const userId: number = globalState.auth.parsedToken.user_id;
 
         const request = new Request(`/api/user/${userId}/`);
         const profileResponse = await dispatch(authFetch(request));
