@@ -1,7 +1,6 @@
 // @flow
 
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { EXP } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';

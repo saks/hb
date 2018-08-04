@@ -1,16 +1,26 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 // TODO: DRY
-const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
+const fmtNum = (input: string | number): string => Number.parseFloat(String(input)).toFixed(2);
 
-class Budget extends Component {
-    static propTypes = {
-        attrs: PropTypes.object.isRequired,
-    };
+type Props = {
+    attrs: {
+        user: string,
+        amount: string,
+        left: number,
+        name: string,
+        left_average_per_day: number,
+        average_per_day: number,
+        spent: number,
+    },
+};
 
+class Budget extends Component<Props, void> {
     get progress() {
-        return Math.round((this.props.attrs.spent / this.props.attrs.amount) * 100);
+        const amount = parseFloat(this.props.attrs.amount);
+        return Math.round((this.props.attrs.spent / amount) * 100);
     }
 
     get leftAveragePerDay() {

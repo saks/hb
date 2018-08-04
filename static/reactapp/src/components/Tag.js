@@ -1,13 +1,14 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
-class Tag extends Component {
-    static propTypes = {
-        name: PropTypes.string.isRequired,
-        toggle: PropTypes.func.isRequired,
-        isSelected: PropTypes.bool.isRequired,
-    };
+type Props = {
+    name: string,
+    toggle: (name: string) => void,
+    isSelected: boolean,
+};
 
+class Tag extends Component<Props, void> {
     onClick() {
         this.props.toggle(this.props.name);
     }
