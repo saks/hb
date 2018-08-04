@@ -95,6 +95,10 @@ class RecordForm extends Component {
         });
     }
 
+    handleSubmit(event) {
+        event.preventDefault();
+    }
+
     calculateAmount() {
         this.setState(prevState => {
             const record = new RecordModel(prevState.record);
@@ -121,7 +125,7 @@ class RecordForm extends Component {
                 <div className="row justify-content-center">
                     <h2>{this.headerText}</h2>
                 </div>
-                <form>
+                <form onSubmit={this.handleSubmit.bind(this)}>
                     <div className="form-group">
                         <label htmlFor="newRecordAmount" className="bmd-label-static">
                             Amount
