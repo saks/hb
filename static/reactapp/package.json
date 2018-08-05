@@ -27,7 +27,10 @@
         "eject": "react-scripts eject"
     },
     "devDependencies": {
+        "enzyme": "^3.3.0",
+        "enzyme-adapter-react-16": "^1.1.1",
         "flow": "^0.2.3",
-        "flow-bin": "^0.78.0"
+        "flow-bin": "^0.78.0",
+        "sinon": "^6.1.4"
     }
 }
