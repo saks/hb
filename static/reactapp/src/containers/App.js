@@ -11,17 +11,16 @@ import RecordForm from '../components/RecordForm';
 import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
 import AddRecordButton from '../components/AddRecordButton';
-import RecordModel from '../models/Record';
 import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
 
-import type { BudgetAttrs } from '../types/Data';
+import type { BudgetAttrs, RecordAttrs } from '../types/Data';
 
 type Props = {
     actions: { [string]: Function },
     auth: any,
-    records: { list: Array<RecordModel>, currentPage: number },
+    records: { list: Array<RecordAttrs>, currentPage: number },
     spinner: { isVisible: boolean },
     budgets: { list: Array<BudgetAttrs> },
 };
@@ -72,11 +71,10 @@ class App extends Component<Props> {
                                     render={({ match }) => {
                                         const id = parseInt(match.params.recordId, 10);
                                         const attrs = props.records.list.find(r => r.id === id);
-                                        if (attrs) {
-                                            const record = new RecordModel(attrs);
-                                            return <RecordForm record={record} />;
+                                        if (undefined === attrs) {
+                                            return <Redirect to="/records" />;
                                         } else {
-                                            <Redirect to="/records" />;
+                                            return <RecordForm attrs={attrs} />;
                                         }
                                     }}
                                 />

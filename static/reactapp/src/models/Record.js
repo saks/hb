@@ -5,6 +5,7 @@ import { EXP } from '../constants/TransactionTypes';
 import type { RecordAttrs } from '../types/Data';
 
 const DEFAULT_CURRENCY = 'CAD';
+const DEFAULT_CURRENCY_NAME = 'Canadian Dollar';
 
 export type AmountType = {
     currency: string,
@@ -12,72 +13,80 @@ export type AmountType = {
 };
 
 export default class RecordModel {
-    transaction_type: string;
+    id: ?number;
+    user: string;
+    amount: number;
     currency: string;
-    amount: AmountType;
-    selectedTags: Set<string>;
-    id: number;
-    tags: Array<string>;
+    currency_name: string;
+    transaction_type: string;
+    tags: Set<string>;
     created_at: number;
 
-    // TODO: add type for attrs
-    constructor(attrs: RecordAttrs) {
-        attrs = JSON.parse(JSON.stringify(attrs));
-        attrs.selectedTags = new Set(attrs.tags);
+    static from(attrs: RecordAttrs): RecordModel {
+        const record = new RecordModel();
 
-        if (attrs.amount && 'object' === typeof attrs.amount.currency) {
-            attrs.amount.currency = attrs.amount.currency.code;
+        if (undefined !== attrs.id) {
+            record.id = attrs.id;
         }
+        record.user = attrs.user;
+        record.amount = parseFloat(attrs.amount.amount) || 0.0;
+        record.currency = attrs.amount.currency.code;
+        record.currency_name = attrs.amount.currency.name;
+        record.transaction_type = attrs.transaction_type;
+        record.tags = new Set(attrs.tags);
+        record.created_at = attrs.created_at;
 
-        attrs.amount.amount = parseFloat(attrs.amount.amount) || '';
-
-        Object.assign(this, attrs);
-
-        return this;
+        return record;
     }
 
     static default() {
         const attrs: RecordAttrs = {
-            id: 1,
+            id: 0,
             user: '',
             tags: [],
-            amount: { amount: 0, currency: { code: DEFAULT_CURRENCY, name: DEFAULT_CURRENCY } },
+            amount: {
+                amount: 0,
+                currency: { code: DEFAULT_CURRENCY, name: DEFAULT_CURRENCY_NAME },
+            },
             transaction_type: EXP,
             created_at: 0,
         };
-        return new RecordModel(attrs);
+
+        const record = RecordModel.from(attrs);
+        delete record.id;
+
+        return record;
     }
 
     toggleTag(name: string) {
-        if (this.selectedTags.has(name)) {
-            this.selectedTags.delete(name);
+        if (this.tags.has(name)) {
+            this.tags.delete(name);
         } else {
-            this.selectedTags.add(name);
+            this.tags.add(name);
         }
-
-        this.tags = Array.from(this.selectedTags);
 
         return this;
     }
 
-    get isPersisted() {
-        return Boolean(this.id);
+    get isPersisted(): boolean {
+        return 'number' === typeof this.id;
     }
 
-    asJson() {
-        const copy = this.clone();
-        delete copy.selectedTags;
+    get asJson() {
+        const attrs = JSON.parse(JSON.stringify(this));
+        attrs.amount = {
+            amount: this.amount,
+            currency: { code: this.currency, name: this.currency_name },
+        };
+        attrs.tags = Array.from(this.tags);
 
-        return copy;
+        delete attrs.currency;
+        delete attrs.currency_name;
+
+        return attrs;
     }
 
     clone() {
-        const result = new RecordModel();
-        const attrs = JSON.parse(JSON.stringify(this));
-        attrs.selectedTags = new Set(attrs.xtags);
-
-        Object.assign(result, attrs);
-
-        return result;
+        return RecordModel.from(this.asJson);
     }
 }

@@ -7,7 +7,6 @@ import { authErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Aut
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
-import type { GlobalState } from '../types/Data';
 
 export default (formData: {| username: string, password: string |}): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {

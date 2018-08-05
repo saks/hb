@@ -1,11 +1,12 @@
 // @flow
 
-export default (text: string): string | null => {
+export default (text: string): number | null => {
     try {
         // eslint-disable-next-line
         const evalResult = Number.parseFloat(eval(text));
         if (Number.isFinite(evalResult)) {
-            return evalResult.toFixed(2);
+            const floatStr = evalResult.toFixed(2);
+            return parseFloat(floatStr);
         }
     } catch (_err) {}
     return null;

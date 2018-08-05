@@ -1,9 +1,10 @@
 // @flow
 
 import React, { Component } from 'react';
-import { EXP } from '../constants/TransactionTypes';
 
+import { EXP } from '../constants/TransactionTypes';
 import RecordModel from '../models/Record';
+
 import type { RouterHistory } from 'react-router-dom';
 
 const DATETIME_FORMAT_OPTIONS = {
@@ -17,13 +18,13 @@ const DATETIME_FORMAT_OPTIONS = {
 const fmtNum = (input: number): string => Number.parseFloat(String(input)).toFixed(2);
 
 type Props = {
-    model: RecordModel,
-    history: RouterHistory,
+    +model: RecordModel,
+    +history: RouterHistory,
 };
 
-class Record extends Component<Props, void> {
+export default class Record extends Component<Props, void> {
     get amount() {
-        return fmtNum(this.props.model.amount.amount);
+        return fmtNum(this.props.model.amount);
     }
 
     get className() {
@@ -31,11 +32,11 @@ class Record extends Component<Props, void> {
         return `card record-item bd-callout bd-callout-${suffix}`;
     }
 
-    get tags() {
-        return Object.values(this.props.model.tags).join(', ');
+    get tags(): string {
+        return Array.from(this.props.model.tags).join(', ');
     }
 
-    get date() {
+    get date(): string {
         const fixInMinutes = 60;
         const offsetInSeconds = (new Date().getTimezoneOffset() + fixInMinutes) * 60;
         const localTimeInSeconds = this.props.model.created_at - offsetInSeconds;
@@ -44,7 +45,9 @@ class Record extends Component<Props, void> {
     }
 
     edit() {
-        this.props.history.push(`/records/${this.props.model.id}`);
+        if (this.props.model.id) {
+            this.props.history.push(`/records/${this.props.model.id}`);
+        }
     }
 
     render() {
@@ -61,5 +64,3 @@ class Record extends Component<Props, void> {
         );
     }
 }
-
-export default Record;

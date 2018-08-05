@@ -13,7 +13,6 @@ import { LoadDataForRecordsPage, VisitNextRecordsPage, VisitPrevRecordsPage } fr
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
-import type { GlobalState } from '../types/Data';
 
 export { openAuthDialog } from './Auth';
 
@@ -55,8 +54,10 @@ export const visitNextRecordsPage = VisitNextRecordsPage;
 export const submitRecordForm = (record: RecordModel): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const method = record.isPersisted ? 'PUT' : 'POST';
-        const body = JSON.stringify(record.asJson());
-        const url = `/api/records/record-detail${record.isPersisted ? '/' + record.id : ''}/`;
+        const body = JSON.stringify(record.asJson);
+        const url = `/api/records/record-detail${
+            record.isPersisted ? '/' + String(record.id) : ''
+        }/`;
 
         const request = new Request(url, { method, body });
         const result = await dispatch(authFetch(request));

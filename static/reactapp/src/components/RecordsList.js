@@ -4,10 +4,12 @@ import React, { Component } from 'react';
 
 import RecordModel from '../models/Record';
 import Record from './Record';
+
 import type { RouterHistory } from 'react-router-dom';
+import type { RecordAttrs } from '../types/Data';
 
 type Props = {
-    list: Array<RecordModel>,
+    list: Array<RecordAttrs>,
     currentPage: number,
     visitNextPage: () => void,
     visitPrevPage: () => void,
@@ -17,7 +19,7 @@ type Props = {
 class RecordsList extends Component<Props, void> {
     get renderedRecords() {
         return this.props.list.map(attrs => {
-            const model = new RecordModel(attrs);
+            const model = RecordModel.from(attrs);
             return <Record model={model} key={model.id} history={this.props.history} />;
         });
     }

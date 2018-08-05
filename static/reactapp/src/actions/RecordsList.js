@@ -3,7 +3,7 @@
 import { authFetch } from './index';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
-import type { RecordAttrs, GlobalState } from '../types/Data';
+import type { RecordAttrs } from '../types/Data';
 
 type StartLoadingRecordsListAction = { type: 'START_LOADING_RECORDS_PAGE' };
 type FinisLoadingRecordsListAction = { type: 'FINIS_LOADING_RECORDS_PAGE' };

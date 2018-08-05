@@ -13,32 +13,43 @@ import RecordModel from '../models/Record';
 import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
-import type { RouterHistory } from 'react-router-dom';
+
+import type { RouterHistory, Match } from 'react-router-dom';
+import type { RecordAttrs } from '../types/Data';
 
 type Props = {
     tags: Array<string>,
     actions: { submitRecordForm: typeof submitRecordForm },
     history: RouterHistory,
+    match: Match,
+    attrs: RecordAttrs,
 };
 
 type State = { record: RecordModel };
 
+const initState = (props: Props): State => {
+    let record;
+
+    if ('/records/new' === props.match.path) {
+        record = RecordModel.default();
+    } else {
+        record = RecordModel.from(props.attrs);
+    }
+
+    return { record };
+};
+
 class RecordForm extends Component<Props, State> {
     amountInput: { current: null | HTMLInputElement };
-    record: RecordModel;
 
     constructor(props) {
         super(props);
 
-        if ('/records/new' === props.match.path) {
-            this.state = { record: RecordModel.default() };
-        } else {
-            this.state = { record: props.record.clone() };
-        }
+        this.state = initState(this.props);
         this.amountInput = React.createRef();
     }
 
-    get record() {
+    get record(): RecordModel {
         return this.state.record;
     }
 
@@ -48,7 +59,7 @@ class RecordForm extends Component<Props, State> {
                 name={name}
                 key={name}
                 toggle={this.handleToggleTag.bind(this)}
-                isSelected={this.record.selectedTags.has(name)}
+                isSelected={this.record.tags.has(name)}
             />
         ));
     }
@@ -73,7 +84,7 @@ class RecordForm extends Component<Props, State> {
         const value = event.target.value;
         this.setState(prevState => {
             const record = prevState.record.clone();
-            record.amount.amount = value;
+            record.amount = value;
             return { ...prevState, record };
         });
     }
@@ -103,11 +114,11 @@ class RecordForm extends Component<Props, State> {
         this.setState(
             (prevState: State): State => {
                 const newState: State = { ...prevState };
-                const amount = calc(prevState.record.amount.amount);
+                const amount = calc(String(prevState.record.amount));
 
                 if (null !== amount) {
                     const record = prevState.record.clone();
-                    record.amount.amount = amount;
+                    record.amount = amount;
                     newState.record = record;
                 }
 
@@ -129,6 +140,10 @@ class RecordForm extends Component<Props, State> {
         return this.record && this.record.isPersisted ? 'Edit Record' : 'Add New Record';
     }
 
+    get amount(): string {
+        return 0 === this.record.amount ? '' : String(this.record.amount);
+    }
+
     render() {
         return (
             <div id="newRecordForm">
@@ -142,7 +157,7 @@ class RecordForm extends Component<Props, State> {
                         </label>
                         <div className="input-group">
                             <input
-                                value={this.record.amount.amount}
+                                value={this.amount}
                                 onChange={this.handleAmountChange.bind(this)}
                                 ref={this.amountInput}
                                 type="tel"
