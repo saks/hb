@@ -23,7 +23,7 @@ const setList = (list: Array<Attrs>): SetListAction => ({
     list,
 });
 
-export const loadDataForBudgetsPage = (): ThunkAction => {
+export const loadData = (): ThunkAction => {
     return async (dispatch: Dispatch) => {
         dispatch(startLoading());
 

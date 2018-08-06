@@ -64,4 +64,4 @@ export const submitRecordForm = (record: RecordModel): ThunkAction => {
     };
 };
 
-export { loadDataForBudgetsPage } from './Budgets';
+export { loadData as loadDataForBudgetsPage } from './Budget';
