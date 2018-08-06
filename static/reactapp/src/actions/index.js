@@ -2,7 +2,7 @@
 
 import RecordModel from '../models/Record';
 import { show as showSpinner, hide as hideSpinner } from './Spinner';
-import { signOut, openAuthDialog } from './Auth';
+import { signOut } from './Auth';
 import { loadData as loadDataForRecordsPage } from './Record';
 import authenticate from './LoginDialog';
 
@@ -15,9 +15,12 @@ export const authFetch = (request: Request) => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const token = getState().auth.token;
 
-        if (token) {
-            request.headers.set('Authorization', `JWT ${token}`);
+        if (!token) {
+            dispatch(signOut());
+            return;
         }
+
+        request.headers.set('Authorization', `JWT ${token}`);
         request.headers.set('User-Agent', 'Home Budget PWA');
         request.headers.set('Content-Type', 'application/json');
 
@@ -27,7 +30,6 @@ export const authFetch = (request: Request) => {
 
         if (!result.ok && result.status === 401) {
             dispatch(signOut());
-            dispatch(openAuthDialog());
 
             return null;
             // TODO: refresh auth token

@@ -2,7 +2,7 @@
 
 import { defineState } from 'redux-localstore';
 
-import type { State, Action, UserProfile, Errors, Token } from '../types/Auth';
+import type { State, Action, Errors } from '../types/Auth';
 
 const defaultErrors: Errors = {};
 
@@ -34,7 +34,7 @@ export default (state: State = initialState, action: Action) => {
         case 'SET_AUTH_PROFILE':
             return { ...state, profile: action.profile, errors: defaultErrors };
         case 'SIGN_OUT':
-            return { ...state, profile: null, token: null, parsedToken: null };
+            return { ...state, profile: null, token: null, parsedToken: null, isDialogOpen: true };
         default:
             return state;
     }
