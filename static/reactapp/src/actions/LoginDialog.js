@@ -2,8 +2,8 @@
 
 import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index';
 
-import { showSpinner, hideSpinner } from './Spinner';
-import { authErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
+import { show as showSpinner, show as hideSpinner } from './Spinner';
+import { setAuthErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
@@ -22,7 +22,7 @@ export default (formData: {| username: string, password: string |}): ThunkAction
         dispatch(hideSpinner());
 
         if (!tokenResponse.ok) {
-            dispatch(authErrors(await tokenResponse.json()));
+            dispatch(setAuthErrors(await tokenResponse.json()));
             return;
         }
 

@@ -2,14 +2,13 @@
 
 import { defineState } from 'redux-localstore';
 
-import type { AuthState } from '../types/Data';
-import type { AuthAction } from '../actions/Auth';
+import type { State, Action, UserProfile, Errors, Token } from '../types/Auth';
 
-const defaultProfile = { tags: [] };
-const defaultErrors = {};
-const defaultToken = {};
+const defaultProfile: UserProfile = { tags: [], email: '', username: '' };
+const defaultErrors: Errors = {};
+const defaultToken: Token = {};
 
-const defaultState = {
+const defaultState: State = {
     isDialogOpen: false,
     errors: defaultErrors,
     token: null,
@@ -17,15 +16,15 @@ const defaultState = {
     parsedToken: defaultToken,
 };
 
-const initialState: AuthState = defineState(defaultState)('auth');
+const initialState: State = defineState(defaultState)('auth');
 
-export default (state: AuthState = initialState, action: AuthAction) => {
+export default (state: State = initialState, action: Action) => {
     switch (action.type) {
         case 'OPEN_AUTH_DIALOG':
             return { ...state, isDialogOpen: true };
         case 'CLOSE_AUTH_DIALOG':
             return { ...state, isDialogOpen: false };
-        case 'ERROR_AUTH':
+        case 'SET_ERROR_AUTH':
             return { ...state, errors: action.errors };
         case 'SET_AUTH_TOKEN':
             return {

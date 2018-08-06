@@ -1,7 +1,7 @@
 // @flow
 
 import RecordModel from '../models/Record';
-import { showSpinner, hideSpinner } from './Spinner';
+import { show as showSpinner, hide as hideSpinner } from './Spinner';
 import { signOut, openAuthDialog } from './Auth';
 import { loadData as loadDataForRecordsPage } from './Record';
 import authenticate from './LoginDialog';

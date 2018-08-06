@@ -1,9 +1,6 @@
 // @flow
 
-type ShowSpinnerAction = { type: 'SHOW_SPINNER' };
-type HideSpinnerAction = { type: 'HIDE_SPINNER' };
+import type { ShowAction, HideAction } from '../types/Spinner';
 
-export type Action = ShowSpinnerAction | HideSpinnerAction;
-
-export const showSpinner = (): ShowSpinnerAction => ({ type: 'SHOW_SPINNER' });
-export const hideSpinner = (): HideSpinnerAction => ({ type: 'HIDE_SPINNER' });
+export const show = (): ShowAction => ({ type: 'SHOW_SPINNER' });
+export const hide = (): HideAction => ({ type: 'HIDE_SPINNER' });

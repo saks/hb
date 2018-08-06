@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import $ from 'jquery';
 import 'bootstrap-material-design';
 
-import type { AuthErrors } from '../types/Data';
+import type { Errors } from '../types/Auth';
 import AuthenticateAction from '../actions/LoginDialog';
 
 const FormFieldError = (props: { text: string }) => (
@@ -20,7 +20,7 @@ const NonFieldError = (props: { text: string }) => (
 
 type Props = {
     authenticate: typeof AuthenticateAction,
-    errors: AuthErrors,
+    errors: Errors,
     isOpen: boolean,
 };
 
@@ -68,7 +68,7 @@ class LoginDialog extends Component<Props, void> {
     }
 
     render() {
-        const errors: AuthErrors = this.props.errors;
+        const errors: Errors = this.props.errors;
 
         return (
             <div className="modal" tabIndex="-1" role="dialog" ref={this.modal}>

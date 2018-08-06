@@ -1,7 +1,6 @@
 // @flow
 
-import type { SpinnerState as State } from '../types/Data';
-import type { Action } from '../actions/Spinner';
+import type { Action, State } from '../types/Spinner';
 
 const defaultState: State = {
     isVisible: false,
