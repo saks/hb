@@ -34,9 +34,11 @@ export const setAuthProfile = (profile: UserProfile): SetUserProfileAction => ({
 
 export const closeAuthDialog = (): CloseDialogAction => ({ type: 'CLOSE_AUTH_DIALOG' });
 
-export const setAuthErrors = (errors: any): SetErrorsAction => {
-    Object.keys(errors).forEach(fieldName => {
-        errors[fieldName] = errors[fieldName].join(';');
+export const setAuthErrors = (authErrors: { [string]: Array<string> }): SetErrorsAction => {
+    const errors = {};
+
+    Object.keys(authErrors).forEach(fieldName => {
+        errors[fieldName] = authErrors[fieldName].join(';');
     });
 
     return { type: 'SET_ERROR_AUTH', errors };
