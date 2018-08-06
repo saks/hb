@@ -16,7 +16,7 @@ import './../App.css';
 import NavigationHeader from '../components/NavigationHeader';
 
 import type { Attrs as BudgetAttrs } from '../types/Budget';
-import type { RecordAttrs } from '../types/Data';
+import type { Attrs as RecordAttrs } from '../types/Record';
 
 type Props = {
     actions: { [string]: Function },

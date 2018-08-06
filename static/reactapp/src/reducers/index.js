@@ -2,7 +2,7 @@
 import { combineReducers } from 'redux';
 
 import auth from './auth';
-import records from './records';
+import records from './Record';
 import budgets from './budgets';
 import spinner from './spinner';
 

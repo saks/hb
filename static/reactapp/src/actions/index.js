@@ -3,7 +3,7 @@
 import RecordModel from '../models/Record';
 import { showSpinner, hideSpinner } from './Spinner';
 import { signOut, openAuthDialog } from './Auth';
-import { loadDataForRecordsPage } from './RecordsList';
+import { loadData as loadDataForRecordsPage } from './Record';
 import authenticate from './LoginDialog';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
@@ -37,7 +37,10 @@ export const authFetch = (request: Request) => {
     };
 };
 
-export { visitPrevRecordsPage, visitNextRecordsPage } from './RecordsList';
+export {
+    visitPrevPage as visitPrevRecordsPage,
+    visitNextPage as visitNextRecordsPage,
+} from './Record';
 export { loadDataForRecordsPage, authenticate };
 
 // record form

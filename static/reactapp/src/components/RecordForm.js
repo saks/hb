@@ -15,14 +15,14 @@ import calc from '../utils/calc';
 import { submitRecordForm } from '../actions';
 
 import type { RouterHistory, Match } from 'react-router-dom';
-import type { RecordAttrs } from '../types/Data';
+import type { Attrs } from '../types/Record';
 
 type Props = {
     tags: Array<string>,
     actions: { submitRecordForm: typeof submitRecordForm },
     history: RouterHistory,
     match: Match,
-    attrs: RecordAttrs,
+    attrs: Attrs,
 };
 
 type State = { record: RecordModel };

@@ -2,7 +2,7 @@
 
 import { EXP } from '../constants/TransactionTypes';
 
-import type { RecordAttrs } from '../types/Data';
+import type { Attrs } from '../types/Record';
 
 const DEFAULT_CURRENCY = 'CAD';
 const DEFAULT_CURRENCY_NAME = 'Canadian Dollar';
@@ -22,7 +22,7 @@ export default class RecordModel {
     tags: Set<string>;
     created_at: number;
 
-    static from(attrs: RecordAttrs): RecordModel {
+    static from(attrs: Attrs): RecordModel {
         const record = new RecordModel();
 
         if (undefined !== attrs.id) {
@@ -40,7 +40,7 @@ export default class RecordModel {
     }
 
     static default() {
-        const attrs: RecordAttrs = {
+        const attrs: Attrs = {
             id: 0,
             user: '',
             tags: [],

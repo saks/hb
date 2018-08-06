@@ -6,10 +6,10 @@ import RecordModel from '../models/Record';
 import Record from './Record';
 
 import type { RouterHistory } from 'react-router-dom';
-import type { RecordAttrs } from '../types/Data';
+import type { Attrs } from '../types/Record';
 
 type Props = {
-    list: Array<RecordAttrs>,
+    list: Array<Attrs>,
     currentPage: number,
     visitNextPage: () => void,
     visitPrevPage: () => void,

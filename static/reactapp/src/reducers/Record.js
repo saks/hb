@@ -2,18 +2,17 @@
 
 import { defineState } from 'redux-localstore';
 
-import type { RecordsState } from '../types/Data';
-import type { RecordsAction } from '../actions/RecordsList';
+import type { State, Action } from '../types/Record';
 
-const defaultState = {
+const defaultState: State = {
     currentPage: 1,
     list: [],
     isFetching: false,
 };
 
-const initialState: RecordsState = defineState(defaultState)('records');
+const initialState: State = defineState(defaultState)('records');
 
-export default (state: RecordsState = initialState, action: RecordsAction) => {
+export default (state: State = initialState, action: Action) => {
     switch (action.type) {
         case 'START_LOADING_RECORDS_PAGE':
             return { ...state, isFetching: true };
