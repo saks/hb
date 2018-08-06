@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 
 import Budget from './Budget';
-import type { BudgetAttrs } from '../types/Data';
+import type { Attrs } from '../types/Budget';
 
-class Budgets extends Component<{| list: Array<BudgetAttrs> |}> {
+export default class Budgets extends Component<{| list: Array<Attrs> |}> {
     get budgets() {
         return this.props.list.map(attrs => <Budget attrs={attrs} key={attrs.name} />);
     }
@@ -21,5 +21,3 @@ class Budgets extends Component<{| list: Array<BudgetAttrs> |}> {
         );
     }
 }
-
-export default Budgets;

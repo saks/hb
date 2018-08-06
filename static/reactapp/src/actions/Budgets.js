@@ -3,38 +3,35 @@
 import { authFetch } from './index';
 
 import type { Dispatch } from '../types/Dispatch';
-import type { BudgetAttrs } from '../types/Data';
+import type { Attrs } from '../types/Budget';
 import type { ThunkAction } from '../types/Action';
 
-type StartLoadingBudgetsListAction = { type: 'START_LOADING_BUDGETS_PAGE' };
-type FinisLoadingBudgetsListAction = { type: 'FINIS_LOADING_BUDGETS_PAGE' };
-type SetListForBudgetsPageAction = { type: 'SET_LIST_FOR_BUDGETS_PAGE', list: Array<BudgetAttrs> };
+type StartLoadingAction = { type: 'START_LOADING_BUDGETS_PAGE' };
+type FinisLoadingAction = { type: 'FINIS_LOADING_BUDGETS_PAGE' };
+type SetListAction = { type: 'SET_LIST_FOR_BUDGETS_PAGE', list: Array<Attrs> };
 
-export type BudgetsAction =
-    | StartLoadingBudgetsListAction
-    | FinisLoadingBudgetsListAction
-    | SetListForBudgetsPageAction;
+export type Action = StartLoadingAction | FinisLoadingAction | SetListAction;
 
-const startLoadingBudgetsList = (): StartLoadingBudgetsListAction => ({
+const startLoading = (): StartLoadingAction => ({
     type: 'START_LOADING_BUDGETS_PAGE',
 });
-const finisLoadingBudgetsList = (): FinisLoadingBudgetsListAction => ({
+const finisLoading = (): FinisLoadingAction => ({
     type: 'FINIS_LOADING_BUDGETS_PAGE',
 });
-const setListForBudgetsPage = (list: Array<BudgetAttrs>): SetListForBudgetsPageAction => ({
+const setList = (list: Array<Attrs>): SetListAction => ({
     type: 'SET_LIST_FOR_BUDGETS_PAGE',
     list,
 });
 
 export const loadDataForBudgetsPage = (): ThunkAction => {
     return async (dispatch: Dispatch) => {
-        dispatch(startLoadingBudgetsList());
+        dispatch(startLoading());
 
         const request = new Request('/api/budgets/budget-detail/');
         const result = await dispatch(authFetch(request));
         const json = await result.json();
 
-        dispatch(setListForBudgetsPage(json.results));
-        dispatch(finisLoadingBudgetsList());
+        dispatch(setList(json.results));
+        dispatch(finisLoading());
     };
 };

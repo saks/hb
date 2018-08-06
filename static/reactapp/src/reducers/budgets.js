@@ -1,14 +1,13 @@
 // @flow
 
-import type { BudgetsState } from '../types/Data';
-import type { BudgetsAction } from '../actions/Budgets';
+import type { State, Action } from '../types/Budget';
 
-const defaultState: BudgetsState = {
+const defaultState: State = {
     list: [],
     isFetching: false,
 };
 
-export default (state: BudgetsState = defaultState, action: BudgetsAction) => {
+export default (state: State = defaultState, action: Action) => {
     switch (action.type) {
         case 'START_LOADING_BUDGETS_PAGE':
             return { ...state, isFetching: true };

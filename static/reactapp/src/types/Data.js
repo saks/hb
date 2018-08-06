@@ -1,5 +1,6 @@
 // @flow
 
+import type { State as BudgetsState } from './Budget';
 export type AuthToken = { email: string, exp: number, user_id: number, username: string };
 
 export type RecordAttrs = {
@@ -9,16 +10,6 @@ export type RecordAttrs = {
     amount: { amount: number, currency: { code: string, name: string } },
     transaction_type: string,
     created_at: number,
-};
-
-export type BudgetAttrs = {
-    user: string,
-    amount: string,
-    left: number,
-    name: string,
-    left_average_per_day: number,
-    average_per_day: number,
-    spent: number,
 };
 
 export type AuthErrors = {
@@ -48,11 +39,6 @@ export type RecordsState = {
 
 export type SpinnerState = {
     +isVisible: boolean,
-};
-
-export type BudgetsState = {
-    +isFetching: boolean,
-    +list: Array<BudgetAttrs>,
 };
 
 export type GlobalState = {

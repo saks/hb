@@ -1,12 +1,12 @@
 // @flow
 
 import React, { Component } from 'react';
-import type { BudgetAttrs } from '../types/Data';
+import type { Attrs } from '../types/Budget';
 
 // TODO: DRY
 const fmtNum = (input: string | number): string => Number.parseFloat(String(input)).toFixed(2);
 
-class Budget extends Component<{| attrs: BudgetAttrs |}, void> {
+export default class Budget extends Component<{| attrs: Attrs |}, void> {
     get progress() {
         const amount = parseFloat(this.props.attrs.amount);
         return Math.round((this.props.attrs.spent / amount) * 100);
@@ -56,5 +56,3 @@ class Budget extends Component<{| attrs: BudgetAttrs |}, void> {
         );
     }
 }
-
-export default Budget;
