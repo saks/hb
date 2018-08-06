@@ -16,7 +16,7 @@ type Props = {
     history: RouterHistory,
 };
 
-class RecordsList extends Component<Props, void> {
+export default class RecordsList extends Component<Props, void> {
     get renderedRecords() {
         return this.props.list.map(attrs => {
             const model = RecordModel.from(attrs);
@@ -57,5 +57,3 @@ class RecordsList extends Component<Props, void> {
         );
     }
 }
-
-export default RecordsList;

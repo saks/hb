@@ -39,7 +39,7 @@ const setListForRecordsPage = (list: Array<RecordAttrs>): SetListForRecordsPageA
     list,
 });
 
-export const VisitNextRecordsPage = () => {
+export const visitNextRecordsPage = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(startLoadingRecordsList());
 
@@ -64,7 +64,7 @@ export const VisitNextRecordsPage = () => {
     };
 };
 
-export const VisitPrevRecordsPage = () => {
+export const visitPrevRecordsPage = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const prevPageNum = getState().records.currentPage - 1;
 
@@ -84,7 +84,7 @@ export const VisitPrevRecordsPage = () => {
     };
 };
 
-export const LoadDataForRecordsPage = () => {
+export const loadDataForRecordsPage = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const pageNum = getState().records.currentPage;
 

@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 
 import { EXP } from '../constants/TransactionTypes';
 import RecordModel from '../models/Record';
+import { fmtNum } from '../utils';
 
 import type { RouterHistory } from 'react-router-dom';
 
@@ -15,19 +16,17 @@ const DATETIME_FORMAT_OPTIONS = {
     hour12: false,
 };
 
-const fmtNum = (input: number): string => Number.parseFloat(String(input)).toFixed(2);
-
 type Props = {
     +model: RecordModel,
     +history: RouterHistory,
 };
 
 export default class Record extends Component<Props, void> {
-    get amount() {
+    get amount(): string {
         return fmtNum(this.props.model.amount);
     }
 
-    get className() {
+    get className(): string {
         const suffix = this.props.model.transaction_type === EXP ? 'warning' : 'success';
         return `card record-item bd-callout bd-callout-${suffix}`;
     }
@@ -44,7 +43,7 @@ export default class Record extends Component<Props, void> {
         return date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
     }
 
-    edit() {
+    edit(): void {
         if (this.props.model.id) {
             this.props.history.push(`/records/${this.props.model.id}`);
         }

@@ -1,15 +1,10 @@
 // @flow
 
 import RecordModel from '../models/Record';
-import {
-    START_LOADING_BUDGETS_PAGE,
-    FINIS_LOADING_BUDGETS_PAGE,
-    SET_LIST_FOR_BUDGETS_PAGE,
-} from '../constants/ActionTypes';
 import { showSpinner, hideSpinner } from './Spinner';
 import { signOut, openAuthDialog } from './Auth';
-import AuthenticateAction from './LoginDialog';
-import { LoadDataForRecordsPage, VisitNextRecordsPage, VisitPrevRecordsPage } from './RecordsList';
+import { loadDataForRecordsPage } from './RecordsList';
+import authenticate from './LoginDialog';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
@@ -42,15 +37,10 @@ export const authFetch = (request: Request) => {
     };
 };
 
-export const authenticate = AuthenticateAction;
-export const loadDataForRecordsPage = LoadDataForRecordsPage;
-export const visitPrevRecordsPage = VisitPrevRecordsPage;
-export const visitNextRecordsPage = VisitNextRecordsPage;
-
-// RecordsList
+export { visitPrevRecordsPage, visitNextRecordsPage } from './RecordsList';
+export { loadDataForRecordsPage, authenticate };
 
 // record form
-
 export const submitRecordForm = (record: RecordModel): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
         const method = record.isPersisted ? 'PUT' : 'POST';
@@ -74,20 +64,4 @@ export const submitRecordForm = (record: RecordModel): ThunkAction => {
     };
 };
 
-// budgets
-const startLoadingBudgetsList = () => ({ type: START_LOADING_BUDGETS_PAGE });
-const finisLoadingBudgetsList = () => ({ type: FINIS_LOADING_BUDGETS_PAGE });
-const setListForBudgetsPage = list => ({ type: SET_LIST_FOR_BUDGETS_PAGE, list });
-
-export const loadDataForBudgetsPage = () => {
-    return async (dispatch: Dispatch) => {
-        dispatch(startLoadingBudgetsList());
-
-        const request = new Request('/api/budgets/budget-detail/');
-        const result = await dispatch(authFetch(request));
-        const json = await result.json();
-
-        dispatch(setListForBudgetsPage(json.results));
-        dispatch(finisLoadingBudgetsList());
-    };
-};
+export { loadDataForBudgetsPage } from './Budgets';

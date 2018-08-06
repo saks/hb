@@ -17,9 +17,7 @@ const attrs = {
 describe('<Record>', () => {
     let wrapper, history;
 
-    beforeEach(() => {
-        history = { push: sinon.spy() };
-    });
+    beforeEach(() => (history = { push: sinon.spy() }));
 
     describe('with expence model', () => {
         beforeEach(() => {
