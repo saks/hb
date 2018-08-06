@@ -17,10 +17,12 @@ import NavigationHeader from '../components/NavigationHeader';
 
 import type { Attrs as BudgetAttrs } from '../types/Budget';
 import type { Attrs as RecordAttrs } from '../types/Record';
+import type { Action } from '../types/Action';
+import type { State as AuthState } from '../types/Auth';
 
 type Props = {
     actions: { [string]: Function },
-    auth: any,
+    auth: AuthState,
     records: { list: Array<RecordAttrs>, currentPage: number },
     spinner: { isVisible: boolean },
     budgets: { list: Array<BudgetAttrs> },

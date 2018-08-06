@@ -24,12 +24,13 @@ export type State = {
     +token: ?string,
     +profile: ?UserProfile,
     +parsedToken: ?Token,
+    +errors: Errors,
 };
 
 export type OpenDialogAction = { type: 'OPEN_AUTH_DIALOG' };
 export type SignOutAction = { type: 'SIGN_OUT' };
 export type CloseDialogAction = { type: 'CLOSE_AUTH_DIALOG' };
-export type SetErrorsAction = { type: 'SET_ERROR_AUTH', errors: { [string]: string } };
+export type SetErrorsAction = { type: 'SET_ERROR_AUTH', errors: Errors };
 export type SetTokenAction = { type: 'SET_AUTH_TOKEN', token: string, parsedToken: Token };
 export type SetUserProfileAction = { type: 'SET_AUTH_PROFILE', profile: UserProfile };
 
