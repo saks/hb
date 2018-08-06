@@ -1,14 +1,17 @@
-import { SHOW_SPINNER, HIDE_SPINNER } from '../constants/ActionTypes';
+// @flow
 
-const defaultState = {
+import type { SpinnerState as State } from '../types/Data';
+import type { Action } from '../actions/Spinner';
+
+const defaultState: State = {
     isVisible: false,
 };
 
-export default (state = defaultState, action) => {
+export default (state: State = defaultState, action: Action) => {
     switch (action.type) {
-        case SHOW_SPINNER:
+        case 'SHOW_SPINNER':
             return { ...state, isVisible: true };
-        case HIDE_SPINNER:
+        case 'HIDE_SPINNER':
             return { ...state, isVisible: false };
         default:
             return state;
