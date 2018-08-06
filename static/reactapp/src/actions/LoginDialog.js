@@ -1,12 +1,12 @@
 // @flow
 
 import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index';
-
 import { show as showSpinner, show as hideSpinner } from './Spinner';
 import { setAuthErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
+import type { Token, UserProfile } from '../types/Auth';
 
 export default (formData: {| username: string, password: string |}): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
@@ -28,15 +28,23 @@ export default (formData: {| username: string, password: string |}): ThunkAction
 
         const tokenData = await tokenResponse.json();
         dispatch(setAuthToken(tokenData.token));
-        const userId: number = getState().auth.parsedToken.user_id;
+        const parsedToken: ?Token = getState().auth.parsedToken;
 
-        const request = new Request(`/api/user/${userId}/`);
-        const profileResponse = await dispatch(authFetch(request));
-        if (null === profileResponse) {
+        if (!parsedToken) {
+            // TODO: dispatch error: "failed to parse auth token"
             return;
         }
 
-        const profile = await profileResponse.json();
+        const userId: number = parsedToken.user_id;
+        const request = new Request(`/api/user/${userId}/`);
+        const profileResponse = await dispatch(authFetch(request));
+
+        if (null === profileResponse) {
+            // TODO: dispatch error: "failed to get user profile"
+            return;
+        }
+
+        const profile: UserProfile = await profileResponse.json();
         dispatch(setAuthProfile(profile));
         dispatch(closeAuthDialog());
 

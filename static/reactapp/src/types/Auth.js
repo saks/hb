@@ -21,9 +21,9 @@ export type UserProfile = {
 
 export type State = {
     +isDialogOpen: boolean,
-    +token: null | string,
-    +profile: UserProfile,
-    +parsedToken: Token,
+    +token: ?string,
+    +profile: ?UserProfile,
+    +parsedToken: ?Token,
 };
 
 export type OpenDialogAction = { type: 'OPEN_AUTH_DIALOG' };
