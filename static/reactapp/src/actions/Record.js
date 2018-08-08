@@ -3,6 +3,7 @@
 import { authFetch } from './index';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
+import type { ThunkAction } from '../types/Action';
 import type {
     Attrs,
     StartLoadingAction,
@@ -24,7 +25,7 @@ const setList = (list: Array<Attrs>): SetListAction => ({
     list,
 });
 
-export const visitNextPage = () => {
+export const visitNextPage = (): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
         dispatch(startLoading());
 

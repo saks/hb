@@ -7,12 +7,13 @@ import Record from './Record';
 
 import type { RouterHistory } from 'react-router-dom';
 import type { Attrs } from '../types/Record';
+import type { ThunkAction } from '../types/Action';
 
 type Props = {
     list: Array<Attrs>,
     currentPage: number,
-    visitNextPage: () => void,
-    visitPrevPage: () => void,
+    visitNextPage: () => ThunkAction,
+    visitPrevPage: () => ThunkAction,
     history: RouterHistory,
 };
 
@@ -30,23 +31,27 @@ export default class RecordsList extends Component<Props, void> {
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>
-                <div>{this.renderedRecords}</div>
+                <div class="records">{this.renderedRecords}</div>
                 <div className="container">
                     <nav aria-label="pagination">
                         <ul className="pagination justify-content-center">
                             <li className="page-item">
                                 <a
-                                    className="page-link"
+                                    className="page-link visit-prev-page"
                                     tabIndex="-1"
                                     onClick={this.props.visitPrevPage}>
                                     Previous
                                 </a>
                             </li>
                             <li className="page-item">
-                                <a className="page-link">{this.props.currentPage}</a>
+                                <a className="page-link current-page-number">
+                                    {this.props.currentPage}
+                                </a>
                             </li>
                             <li className="page-item">
-                                <a className="page-link" onClick={this.props.visitNextPage}>
+                                <a
+                                    className="page-link visit-next-page"
+                                    onClick={this.props.visitNextPage}>
                                     Next
                                 </a>
                             </li>

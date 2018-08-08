@@ -8,5 +8,6 @@ import type { Action as BudgetAction } from './Budget';
 import type { Action as SpinnerAction } from './Spinner';
 
 export type ThunkAction = (dispatch: Dispatch, getState: GetState) => any;
+export type PromiseAction = Promise<Action>;
 
 export type Action = AuthAction | RecordAction | BudgetAction | SpinnerAction;

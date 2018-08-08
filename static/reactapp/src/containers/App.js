@@ -15,23 +15,13 @@ import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
 
-import type { Attrs as BudgetAttrs } from '../types/Budget';
-import type { Attrs as RecordAttrs } from '../types/Record';
-import type { Action } from '../types/Action';
+import type { Action, ThunkAction } from '../types/Action';
 import type { State } from '../types/State';
 import type { Dispatch } from '../types/Dispatch';
-import type { State as AuthState } from '../types/Auth';
-import type { State as RecordState } from '../types/Record';
-import type { State as SpinnerState } from '../types/Spinner';
-import type { State as BudgetState } from '../types/Budget';
 
-type Props = {
-    +actions: any,
-    +auth: AuthState,
-    +records: RecordState,
-    +spinner: SpinnerState,
-    +budgets: BudgetState,
-};
+type ActionsMap = { [string]: () => Action & ThunkAction };
+
+type Props = State & { +actions: ActionsMap };
 
 class App extends Component<Props, void> {
     componentDidMount() {
@@ -110,7 +100,7 @@ class App extends Component<Props, void> {
 
 const mapStateToProps = (state: State): State => state;
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): { actions: ActionsMap } => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 
