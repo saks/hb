@@ -1,20 +1,26 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import RecordModel from '../models/Record';
 import Record from './Record';
 
-class RecordsList extends Component {
-    static propTypes = {
-        list: PropTypes.array.isRequired,
-        currentPage: PropTypes.number.isRequired,
-        visitNextPage: PropTypes.func.isRequired,
-        visitPrevPage: PropTypes.func.isRequired,
-    };
+import type { RouterHistory } from 'react-router-dom';
+import type { Attrs } from '../types/Record';
+import type { ThunkAction } from '../types/Action';
 
+type Props = {
+    list: Array<Attrs>,
+    currentPage: number,
+    visitNextPage: () => ThunkAction,
+    visitPrevPage: () => ThunkAction,
+    history: RouterHistory,
+};
+
+export default class RecordsList extends Component<Props, void> {
     get renderedRecords() {
         return this.props.list.map(attrs => {
-            const model = new RecordModel(attrs);
+            const model = RecordModel.from(attrs);
             return <Record model={model} key={model.id} history={this.props.history} />;
         });
     }
@@ -25,23 +31,27 @@ class RecordsList extends Component {
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>
-                <div>{this.renderedRecords}</div>
+                <div className="records">{this.renderedRecords}</div>
                 <div className="container">
                     <nav aria-label="pagination">
                         <ul className="pagination justify-content-center">
                             <li className="page-item">
                                 <a
-                                    className="page-link"
+                                    className="page-link visit-prev-page"
                                     tabIndex="-1"
                                     onClick={this.props.visitPrevPage}>
                                     Previous
                                 </a>
                             </li>
                             <li className="page-item">
-                                <a className="page-link">{this.props.currentPage}</a>
+                                <a className="page-link current-page-number">
+                                    {this.props.currentPage}
+                                </a>
                             </li>
                             <li className="page-item">
-                                <a className="page-link" onClick={this.props.visitNextPage}>
+                                <a
+                                    className="page-link visit-next-page"
+                                    onClick={this.props.visitNextPage}>
                                     Next
                                 </a>
                             </li>
@@ -52,5 +62,3 @@ class RecordsList extends Component {
         );
     }
 }
-
-export default RecordsList;

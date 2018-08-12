@@ -1,3 +1,5 @@
+// @flow
+
 import { createStore, applyMiddleware } from 'redux';
 import storeSynchronize from 'redux-localstore';
 

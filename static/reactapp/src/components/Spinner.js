@@ -1,11 +1,8 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
-class Spinner extends Component {
-    static propTypes = {
-        isVisible: PropTypes.bool.isRequired,
-    };
-
+class Spinner extends Component<{| isVisible: boolean |}, void> {
     render() {
         return (
             <div className="loader" hidden={!this.props.isVisible}>

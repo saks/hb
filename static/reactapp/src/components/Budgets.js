@@ -1,13 +1,11 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import Budget from './Budget';
+import type { Attrs } from '../types/Budget';
 
-class Budgets extends Component {
-    static propTypes = {
-        list: PropTypes.array.isRequired,
-    };
-
+export default class Budgets extends Component<{| list: Array<Attrs> |}> {
     get budgets() {
         return this.props.list.map(attrs => <Budget attrs={attrs} key={attrs.name} />);
     }
@@ -23,5 +21,3 @@ class Budgets extends Component {
         );
     }
 }
-
-export default Budgets;

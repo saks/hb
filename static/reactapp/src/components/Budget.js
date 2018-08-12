@@ -1,16 +1,15 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import type { Attrs } from '../types/Budget';
 
 // TODO: DRY
-const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
+const fmtNum = (input: string | number): string => Number.parseFloat(String(input)).toFixed(2);
 
-class Budget extends Component {
-    static propTypes = {
-        attrs: PropTypes.object.isRequired,
-    };
-
+export default class Budget extends Component<{| attrs: Attrs |}, void> {
     get progress() {
-        return Math.round((this.props.attrs.spent / this.props.attrs.amount) * 100);
+        const amount = parseFloat(this.props.attrs.amount);
+        return Math.round((this.props.attrs.spent / amount) * 100);
     }
 
     get leftAveragePerDay() {
@@ -57,5 +56,3 @@ class Budget extends Component {
         );
     }
 }
-
-export default Budget;

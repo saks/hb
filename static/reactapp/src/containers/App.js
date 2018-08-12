@@ -1,6 +1,7 @@
+// @flow
+
 import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as Actions from '../actions';
@@ -15,13 +16,15 @@ import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
 
-class App extends Component {
-    static propTypes = {
-        actions: PropTypes.object.isRequired,
-        auth: PropTypes.object.isRequired,
-        records: PropTypes.object.isRequired,
-    };
+import type { Action, ThunkAction } from '../types/Action';
+import type { State } from '../types/State';
+import type { Dispatch } from '../types/Dispatch';
 
+type ActionsMap = { [string]: () => Action & ThunkAction };
+
+type Props = State & { +actions: ActionsMap };
+
+class App extends Component<Props, void> {
     componentDidMount() {
         if (this.isAuthenticated()) {
             this.props.actions.loadDataForRecordsPage();
@@ -33,6 +36,19 @@ class App extends Component {
 
     isAuthenticated() {
         return null !== this.props.auth.token;
+    }
+
+    newRecordForm(attrs, history: RouterHistory): RecordForm {
+        const profile = this.props.auth.profile;
+        const tags = profile ? profile.tags : [];
+        return (
+            <RecordForm
+                attrs={attrs}
+                history={history}
+                submit={this.props.actions.submitRecordForm}
+                tags={tags}
+            />
+        );
     }
 
     render() {
@@ -60,15 +76,23 @@ class App extends Component {
                             )}
                         />
                         <Switch>
-                            <Route path="/records/new" component={RecordForm} />
+                            <Route
+                                path="/records/new"
+                                render={({ history }) =>
+                                    this.newRecordForm(RecordModel.default().asJson, history)
+                                }
+                            />
                             {props.records.list.length && (
                                 <Route
                                     path="/records/:recordId"
-                                    render={({ match }) => {
+                                    render={({ history, match }) => {
                                         const id = parseInt(match.params.recordId, 10);
-                                        const data = props.records.list.find(r => r.id === id);
-                                        const record = new RecordModel(data);
-                                        return <RecordForm record={record} />;
+                                        const attrs = props.records.list.find(r => r.id === id);
+                                        if (undefined === attrs) {
+                                            return <Redirect to="/records" />;
+                                        } else {
+                                            return this.newRecordForm(attrs, history);
+                                        }
                                     }}
                                 />
                             )}
@@ -93,16 +117,9 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = state => {
-    return {
-        auth: state.auth,
-        records: state.records,
-        budgets: state.budgets,
-        spinner: state.spinner,
-    };
-};
+const mapStateToProps = (state: State): State => state;
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch: Dispatch): { actions: ActionsMap } => ({
     actions: bindActionCreators(Actions, dispatch),
 });
 

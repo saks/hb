@@ -1,6 +1,12 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+
 import { EXP } from '../constants/TransactionTypes';
+import RecordModel from '../models/Record';
+import { fmtNum } from '../utils';
+
+import type { RouterHistory } from 'react-router-dom';
 
 const DATETIME_FORMAT_OPTIONS = {
     month: 'short',
@@ -10,31 +16,26 @@ const DATETIME_FORMAT_OPTIONS = {
     hour12: false,
 };
 
-const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
+type Props = {
+    +model: RecordModel,
+    +history: RouterHistory,
+};
 
-class Record extends Component {
-    static propTypes = {
-        model: PropTypes.object.isRequired,
-    };
-
-    get model() {
-        return this.props.model;
+export default class Record extends Component<Props, void> {
+    get amount(): string {
+        return fmtNum(this.props.model.amount);
     }
 
-    get amount() {
-        return fmtNum(this.model.amount.amount);
-    }
-
-    get className() {
+    get className(): string {
         const suffix = this.props.model.transaction_type === EXP ? 'warning' : 'success';
         return `card record-item bd-callout bd-callout-${suffix}`;
     }
 
-    get tags() {
-        return Object.values(this.props.model.tags).join(', ');
+    get tags(): string {
+        return Array.from(this.props.model.tags).join(', ');
     }
 
-    get date() {
+    get date(): string {
         const fixInMinutes = 60;
         const offsetInSeconds = (new Date().getTimezoneOffset() + fixInMinutes) * 60;
         const localTimeInSeconds = this.props.model.created_at - offsetInSeconds;
@@ -42,8 +43,10 @@ class Record extends Component {
         return date.toLocaleString('en', DATETIME_FORMAT_OPTIONS);
     }
 
-    edit() {
-        this.props.history.push(`/records/${this.props.model.id}`);
+    edit(): void {
+        if (this.props.model.id) {
+            this.props.history.push(`/records/${this.props.model.id}`);
+        }
     }
 
     render() {
@@ -60,5 +63,3 @@ class Record extends Component {
         );
     }
 }
-
-export default Record;

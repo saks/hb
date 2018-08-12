@@ -1,27 +1,35 @@
+// @flow
+
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
 
 import $ from 'jquery';
 import 'bootstrap-material-design';
 
-const FormFieldError = props => (
+import type { Errors } from '../types/Auth';
+import AuthenticateAction from '../actions/LoginDialog';
+
+const FormFieldError = (props: { text: string }) => (
     <small className="form-text text-danger sign-in-error">{props.text}</small>
 );
 
-const NonFieldError = props => (
+const NonFieldError = (props: { text: string }) => (
     <div className="alert alert-danger sign-in-error" role="alert">
         {props.text}
     </div>
 );
 
-class LoginDialog extends Component {
-    static propTypes = {
-        authenticate: PropTypes.func.isRequired,
-        errors: PropTypes.object.isRequired,
-        isOpen: PropTypes.bool.isRequired,
-    };
+type Props = {
+    authenticate: typeof AuthenticateAction,
+    errors: Errors,
+    isOpen: boolean,
+};
 
-    constructor(props) {
+class LoginDialog extends Component<Props, void> {
+    usernameInput: { current: null | HTMLInputElement };
+    passwordInput: { current: null | HTMLInputElement };
+    modal: { current: null | HTMLDivElement };
+
+    constructor(props: Props) {
         super(props);
 
         this.modal = React.createRef();
@@ -29,7 +37,7 @@ class LoginDialog extends Component {
         this.passwordInput = React.createRef();
     }
 
-    componentDidUpdate(prevProps, prevState, snapshot) {
+    componentDidUpdate() {
         this.manageDialogState();
     }
 
@@ -50,13 +58,17 @@ class LoginDialog extends Component {
     }
 
     onSubmit() {
+        if (null === this.usernameInput.current) return;
+        if (null === this.passwordInput.current) return;
+
         const username = this.usernameInput.current.value;
         const password = this.passwordInput.current.value;
+
         this.props.authenticate({ username, password });
     }
 
     render() {
-        const errors = this.props.errors;
+        const errors: Errors = this.props.errors;
 
         return (
             <div className="modal" tabIndex="-1" role="dialog" ref={this.modal}>
