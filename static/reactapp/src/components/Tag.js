@@ -15,7 +15,7 @@ class Tag extends Component<Props, void> {
 
     get className() {
         const postfix = this.props.isSelected ? 'danger' : 'info';
-        return `btn btn-outline-${postfix}`;
+        return `tag-button btn btn-outline-${postfix}`;
     }
 
     render() {

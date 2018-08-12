@@ -11,6 +11,7 @@ import RecordForm from '../components/RecordForm';
 import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
 import AddRecordButton from '../components/AddRecordButton';
+import RecordModel from '../models/Record';
 import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
@@ -35,6 +36,19 @@ class App extends Component<Props, void> {
 
     isAuthenticated() {
         return null !== this.props.auth.token;
+    }
+
+    newRecordForm(attrs, history: RouterHistory): RecordForm {
+        const profile = this.props.auth.profile;
+        const tags = profile ? profile.tags : [];
+        return (
+            <RecordForm
+                attrs={attrs}
+                history={history}
+                submit={this.props.actions.submitRecordForm}
+                tags={tags}
+            />
+        );
     }
 
     render() {
@@ -62,17 +76,22 @@ class App extends Component<Props, void> {
                             )}
                         />
                         <Switch>
-                            <Route path="/records/new" component={RecordForm} />
+                            <Route
+                                path="/records/new"
+                                render={({ history }) =>
+                                    this.newRecordForm(RecordModel.default().asJson, history)
+                                }
+                            />
                             {props.records.list.length && (
                                 <Route
                                     path="/records/:recordId"
-                                    render={({ match }) => {
+                                    render={({ history, match }) => {
                                         const id = parseInt(match.params.recordId, 10);
                                         const attrs = props.records.list.find(r => r.id === id);
                                         if (undefined === attrs) {
                                             return <Redirect to="/records" />;
                                         } else {
-                                            return <RecordForm attrs={attrs} />;
+                                            return this.newRecordForm(attrs, history);
                                         }
                                     }}
                                 />

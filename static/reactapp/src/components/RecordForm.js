@@ -1,10 +1,6 @@
 // @flow
 
-import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
-import * as Actions from '../actions';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
 import Tag from './Tag';
 import { EXP, INC } from '../constants/TransactionTypes';
@@ -14,32 +10,23 @@ import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
 
-import type { RouterHistory, Match } from 'react-router-dom';
+import type { RouterHistory } from 'react-router-dom';
 import type { Attrs } from '../types/Record';
 
 type Props = {
     tags: Array<string>,
-    actions: { submitRecordForm: typeof submitRecordForm },
+    submit: typeof submitRecordForm,
     history: RouterHistory,
-    match: Match,
     attrs: Attrs,
 };
 
 type State = { record: RecordModel };
 
 const initState = (props: Props): State => {
-    let record;
-
-    if ('/records/new' === props.match.path) {
-        record = RecordModel.default();
-    } else {
-        record = RecordModel.from(props.attrs);
-    }
-
-    return { record };
+    return { record: RecordModel.from(props.attrs) };
 };
 
-class RecordForm extends Component<Props, State> {
+export default class RecordForm extends Component<Props, State> {
     amountInput: { current: null | HTMLInputElement };
 
     constructor(props) {
@@ -65,7 +52,7 @@ class RecordForm extends Component<Props, State> {
     }
 
     async submit(saveAddAnother = false) {
-        const success = await this.props.actions.submitRecordForm(this.record);
+        const success = await this.props.submit(this.record);
         // TODO: show valdation errors if any
 
         if (success) {
@@ -157,6 +144,8 @@ class RecordForm extends Component<Props, State> {
                         </label>
                         <div className="input-group">
                             <input
+                                id="record-form-amount"
+                                name="amount"
                                 value={this.amount}
                                 onChange={this.handleAmountChange.bind(this)}
                                 ref={this.amountInput}
@@ -198,13 +187,22 @@ class RecordForm extends Component<Props, State> {
                     </div>
                 </form>
                 <div className="form-group">
-                    <button onClick={() => this.submit()} className="btn btn-success btn-default">
+                    <button
+                        id="save-record"
+                        onClick={() => this.submit()}
+                        className="btn btn-success btn-default">
                         Save
                     </button>
-                    <button onClick={() => this.submit(true)} className="btn btn-default">
+                    <button
+                        id="save-add-another-record"
+                        onClick={() => this.submit(true)}
+                        className="btn btn-default">
                         Save & Add
                     </button>
-                    <button onClick={this.props.history.goBack} className="btn btn-info">
+                    <button
+                        id="record-form-cancel"
+                        onClick={this.props.history.goBack}
+                        className="btn btn-info">
                         Cancel
                     </button>
                 </div>
@@ -212,16 +210,3 @@ class RecordForm extends Component<Props, State> {
         );
     }
 }
-
-const mapStateToProps = state => ({ tags: state.auth.profile.tags });
-
-const mapDispatchToProps = dispatch => ({
-    actions: bindActionCreators(Actions, dispatch),
-});
-
-export default withRouter(
-    connect(
-        mapStateToProps,
-        mapDispatchToProps
-    )(RecordForm)
-);

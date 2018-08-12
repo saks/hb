@@ -31,7 +31,7 @@ export default class RecordsList extends Component<Props, void> {
                 <div className="row justify-content-center">
                     <h2>Last Records</h2>
                 </div>
-                <div class="records">{this.renderedRecords}</div>
+                <div className="records">{this.renderedRecords}</div>
                 <div className="container">
                     <nav aria-label="pagination">
                         <ul className="pagination justify-content-center">
