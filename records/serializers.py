@@ -1,6 +1,10 @@
 import time
+import decimal
+import moneyed
 
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from djmoney.money import Money
 
 from .models import Record
 
@@ -29,3 +33,31 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_created_at(self, obj):
         return time.mktime(obj.created_at.timetuple())
+
+    def validate(self, data):
+        '''
+        {
+            "tags": [
+                "Food",
+                "Transport"
+            ],
+            "amount": {
+                "amount": 1.0,
+                "currency":  "CAD"
+            },
+            "transaction_type": "EXP"
+        }
+        '''
+        if 'request' in self.context:
+            request = self.context['request']
+            if 'amount' not in request.data:
+                raise ValidationError('Amount required.')
+            amount = request.data.get('amount')
+            if 'amount' not in amount or 'currency' not in amount:
+                raise ValidationError('Amount and Currency is required')
+            try:
+                Money(amount['amount'], amount['currency'])
+            except decimal.InvalidOperation:
+                raise ValidationError('Amount is invalid.')
+            except moneyed.classes.CurrencyDoesNotExist:
+                raise ValidationError('Currency code is invalid.')

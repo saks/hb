@@ -19,7 +19,7 @@ services:
     environment:
       - "PYLINTHOME=/tmp"
     ports:
-      - "8000:8000"
+      - "8008:8008"
     links:
       - "db"
       - "redis"

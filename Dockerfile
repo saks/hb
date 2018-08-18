@@ -20,5 +20,5 @@ RUN git config --system user.name docker && git config --system user.email docke
 RUN pip install --upgrade pip
 RUN pip install psycopg2
 RUN pip install -r requirements.txt
-EXPOSE 8000
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+EXPOSE 8008
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8008"]
