@@ -29,7 +29,7 @@ const initState = (props: Props): State => {
 export default class RecordForm extends Component<Props, State> {
     amountInput: { current: null | HTMLInputElement };
 
-    constructor(props) {
+    constructor(props: Props): void {
         super(props);
 
         this.state = initState(this.props);
@@ -51,7 +51,7 @@ export default class RecordForm extends Component<Props, State> {
         ));
     }
 
-    async submit(saveAddAnother = false) {
+    async submit(saveAddAnother: boolean = false) {
         const success = await this.props.submit(this.record);
         // TODO: show valdation errors if any
 
@@ -67,16 +67,17 @@ export default class RecordForm extends Component<Props, State> {
         }
     }
 
-    handleAmountChange(event) {
+    handleAmountChange(event: SyntheticInputEvent<HTMLInputElement>): void {
         const value = event.target.value;
         this.setState(prevState => {
             const record = prevState.record.clone();
+            // TODO: fix type incompatibility
             record.amount = value;
             return { ...prevState, record };
         });
     }
 
-    handleTypeChange(event) {
+    handleTypeChange(event: SyntheticInputEvent<HTMLInputElement>): void {
         const value = event.target.value;
         this.setState(prevState => {
             const record = prevState.record.clone();
@@ -85,7 +86,7 @@ export default class RecordForm extends Component<Props, State> {
         });
     }
 
-    handleToggleTag(name) {
+    handleToggleTag(name: string): void {
         this.setState(prevState => {
             const record = prevState.record.clone();
             record.toggleTag(name);
@@ -93,7 +94,7 @@ export default class RecordForm extends Component<Props, State> {
         });
     }
 
-    handleSubmit(event) {
+    handleSubmit(event: SyntheticEvent<HTMLFormElement>): void {
         event.preventDefault();
     }
 

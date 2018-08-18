@@ -16,6 +16,8 @@ import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
 
+import type { RouterHistory } from 'react-router-dom';
+import type { Element } from 'react';
 import type { Action, ThunkAction } from '../types/Action';
 import type { State } from '../types/State';
 import type { Dispatch } from '../types/Dispatch';
@@ -38,7 +40,7 @@ class App extends Component<Props, void> {
         return null !== this.props.auth.token;
     }
 
-    newRecordForm(attrs, history: RouterHistory): RecordForm {
+    newRecordForm(attrs, history: RouterHistory): Element<typeof RecordForm> {
         const profile = this.props.auth.profile;
         const tags = profile ? profile.tags : [];
         return (

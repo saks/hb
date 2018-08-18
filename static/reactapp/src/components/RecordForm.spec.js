@@ -117,7 +117,7 @@ describe('<RecordForm />', () => {
     });
 
     describe('actions', () => {
-        it('should submit', () => {
+        it('should submit successfully', () => {
             const wrapper = new Wrapper(attrs);
 
             wrapper.find('button[children="Save"]').simulate('click');
