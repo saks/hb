@@ -8,8 +8,8 @@
         hour12: false,
     };
 
-    const $$ = (id) => document.getElementById(id);
-    const fmtNum = (input) => Number.parseFloat(input, 10).toFixed(2);
+    const $$ = id => document.getElementById(id);
+    const fmtNum = input => Number.parseFloat(input, 10).toFixed(2);
 
     const SIGN_IN_CHANNEL = Symbol.for('sign-in');
     const START_CHANNEL = Symbol.for('start');
@@ -28,7 +28,7 @@
             this.callbacks[channelName] = callbacks;
         }
 
-        notify(channelName, payload={}) {
+        notify(channelName, payload = {}) {
             console.log(`notify: ${channelName.toString()}`);
             this.callbacks[channelName].forEach(callback => callback(payload));
         }
@@ -99,47 +99,53 @@
                     element.textContent = '';
                     element.setAttribute('hidden', true);
                 }
-            })
+            });
         }
 
         bind() {
-            $('#butSubmitSignIn').on('click', (async () => {
-                APP.showSpinner();
-                const tokenResponse = await fetch('/auth/jwt/create/', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        username: $$('username').value,
-                        password: $$('password').value,
-                    }),
-                    headers: {
-                        'User-Agent': 'Home Budget PWA',
-                        'Content-Type': 'application/json',
-                    },
-                });
+            $('#butSubmitSignIn').on(
+                'click',
+                (async () => {
+                    APP.showSpinner();
+                    const tokenResponse = await fetch('/auth/jwt/create/', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            username: $$('username').value,
+                            password: $$('password').value,
+                        }),
+                        headers: {
+                            'User-Agent': 'Home Budget PWA',
+                            'Content-Type': 'application/json',
+                        },
+                    });
 
-                if (!tokenResponse.ok) {
-                    const responseBody = await tokenResponse.json();
-                    this.showErrors(responseBody);
-                    return;
-                }
+                    if (!tokenResponse.ok) {
+                        const responseBody = await tokenResponse.json();
+                        this.showErrors(responseBody);
+                        return;
+                    }
 
-                const tokenData = await tokenResponse.json();
-                Auth.token = tokenData.token;
+                    const tokenData = await tokenResponse.json();
+                    Auth.token = tokenData.token;
 
-                const success = await Auth.fetchProfile();
-                if (!success) {
-                    this.showErrors({ non_field_errors: ['Failed to load profile.'] });
-                    return;
-                }
+                    const success = await Auth.fetchProfile();
+                    if (!success) {
+                        this.showErrors({ non_field_errors: ['Failed to load profile.'] });
+                        return;
+                    }
 
-                this.toggle(false);
-                APP.hideSpinner();
-                BUS.notify(SIGN_IN_CHANNEL);
-            }).bind(this));
+                    this.toggle(false);
+                    APP.hideSpinner();
+                    BUS.notify(SIGN_IN_CHANNEL);
+                }).bind(this)
+            );
 
-            $('#butCancelSignIn').on('click', (() => {
-                this.toggle(false);
-            }).bind(this));
+            $('#butCancelSignIn').on(
+                'click',
+                (() => {
+                    this.toggle(false);
+                }).bind(this)
+            );
         }
     }
 
@@ -151,15 +157,18 @@
         }
 
         bind() {
-            BUS.subscribe(START_CHANNEL, (() => {
-                if (!this.isSignedIn) {
-                    this.form.toggle(true);
-                }
-            }).bind(this));
+            BUS.subscribe(
+                START_CHANNEL,
+                (() => {
+                    if (!this.isSignedIn) {
+                        this.form.toggle(true);
+                    }
+                }).bind(this)
+            );
         }
 
         get isSignedIn() {
-            return Auth.token && Auth.profile && Auth.profile.tags
+            return Auth.token && Auth.profile && Auth.profile.tags;
         }
 
         static async fetchProfile() {
@@ -199,11 +208,11 @@
         }
 
         static get TOKEN_KEY() {
-            return 'AUTH_TOKEN'
+            return 'AUTH_TOKEN';
         }
 
         static get PROFILE_KEY() {
-            return 'PROFILE'
+            return 'PROFILE';
         }
 
         static async refresh() {
@@ -218,16 +227,18 @@
                 this.profile = null;
                 this.instance.form.toggle(true);
             } else {
-                debugger
+                debugger;
             }
         }
 
-        static async fetch(url, options={}) {
+        static async fetch(url, options = {}) {
             APP.showSpinner();
 
             const token = localStorage.getItem(Auth.TOKEN_KEY);
 
-            if (!options.headers) { options.headers = {}; }
+            if (!options.headers) {
+                options.headers = {};
+            }
             options.headers.Authorization = `JWT ${token}`;
             options.headers['User-Agent'] = 'Home Budget PWA';
             options.headers['Content-Type'] = 'application/json';
@@ -245,7 +256,7 @@
 
             APP.hideSpinner();
 
-            return result
+            return result;
         }
     }
 
@@ -296,42 +307,62 @@
         }
 
         bind() {
-            $('#nextRecordsPageLink').on('click', (async e => {
-                e.preventDefault();
-                this.currentPage++;
-                const success = await this.show();
-                if (!success) { this.currentPage--; }
-                this.updateCurrentPageLabel();
-            }).bind(this));
+            $('#nextRecordsPageLink').on(
+                'click',
+                (async e => {
+                    e.preventDefault();
+                    this.currentPage++;
+                    const success = await this.show();
+                    if (!success) {
+                        this.currentPage--;
+                    }
+                    this.updateCurrentPageLabel();
+                }).bind(this)
+            );
 
-            $('#prevRecordsPageLink').on('click', (async e => {
-                e.preventDefault();
+            $('#prevRecordsPageLink').on(
+                'click',
+                (async e => {
+                    e.preventDefault();
 
-                if (1 === this.currentPage) { return; }
+                    if (1 === this.currentPage) {
+                        return;
+                    }
 
-                this.currentPage--;
-                const success = await this.show();
-                if (!success) { this.currentPage++; }
-                this.updateCurrentPageLabel();
-            }).bind(this));
+                    this.currentPage--;
+                    const success = await this.show();
+                    if (!success) {
+                        this.currentPage++;
+                    }
+                    this.updateCurrentPageLabel();
+                }).bind(this)
+            );
 
             BUS.subscribe(SIGN_IN_CHANNEL, this.show.bind(this));
 
-            BUS.subscribe(START_CHANNEL, (widget => {
-                if (Auth.instance.isSignedIn) { this.show(); }
-            }).bind(this));
+            BUS.subscribe(
+                START_CHANNEL,
+                (widget => {
+                    if (Auth.instance.isSignedIn) {
+                        this.show();
+                    }
+                }).bind(this)
+            );
 
-            BUS.subscribe(NEW_RECORD_CHANNEL, (record => {
-                this.drawCard(record, false);
-                this.cards.lastElementChild.remove();
-            }).bind(this));
+            BUS.subscribe(
+                NEW_RECORD_CHANNEL,
+                (record => {
+                    this.drawCard(record, false);
+                    this.cards.lastElementChild.remove();
+                }).bind(this)
+            );
         }
 
         updateCurrentPageLabel() {
             this.currentPageNumberLabel.innerText = this.currentPage;
         }
 
-        drawCard(record, append=true) {
+        drawCard(record, append = true) {
             const card = this.template.cloneNode(true);
             card.classList.remove('cardTemplate');
 
@@ -382,52 +413,65 @@
                 e.stopPropagation();
 
                 // ignore clicks on label
-                if (undefined === e.target.value) { return; }
+                if (undefined === e.target.value) {
+                    return;
+                }
                 $(e.currentTarget).toggleClass('btn-outline-info btn-outline-danger');
             });
 
-            $('#butCalculateResult').click((() => {
-                const input = this.dom.amountField;
-                let result;
+            $('#butCalculateResult').click(
+                (() => {
+                    const input = this.dom.amountField;
+                    let result;
 
-                try {
-                    result = Number.parseFloat(eval(input.value));
-                } catch (e) {
-                    input.value = '';
-                }
+                    try {
+                        result = Number.parseFloat(eval(input.value));
+                    } catch (e) {
+                        input.value = '';
+                    }
 
-                if (Number.isFinite(result)) {
-                    input.value = result.toFixed(2);
-                }
+                    if (Number.isFinite(result)) {
+                        input.value = result.toFixed(2);
+                    }
 
-                input.focus();
-            }).bind(this));
+                    input.focus();
+                }).bind(this)
+            );
 
-            $('#newRecordSubmit').on('click', (async e => {
-                e.stopImmediatePropagation();
-                e.stopPropagation();
+            $('#newRecordSubmit').on(
+                'click',
+                (async e => {
+                    e.stopImmediatePropagation();
+                    e.stopPropagation();
 
-                await this.addNewRecord();
-                this.reset();
-                BUS.notify(HIDE_WIDGET_CHANNEL);
-            }).bind(this));
+                    await this.addNewRecord();
+                    this.reset();
+                    BUS.notify(HIDE_WIDGET_CHANNEL);
+                }).bind(this)
+            );
 
-            $('#newRecordAddAnother').on('click', (async e => {
-                e.stopImmediatePropagation();
-                e.stopPropagation();
+            $('#newRecordAddAnother').on(
+                'click',
+                (async e => {
+                    e.stopImmediatePropagation();
+                    e.stopPropagation();
 
-                await this.addNewRecord();
-                this.reset();
-                this.dom.amountField.focus();
-            }).bind(this));
+                    await this.addNewRecord();
+                    this.reset();
+                    this.dom.amountField.focus();
+                }).bind(this)
+            );
 
             BUS.subscribe(SIGN_IN_CHANNEL, this.setup.bind(this));
 
-            BUS.subscribe(START_CHANNEL, (() => {
-                if (Auth.instance.isSignedIn) {
-                    this.setup();
-                }
-            }).bind(this));
+            BUS.subscribe(
+                START_CHANNEL,
+                (() => {
+                    if (Auth.instance.isSignedIn) {
+                        this.setup();
+                    }
+                }).bind(this)
+            );
         }
 
         reset() {
@@ -435,8 +479,7 @@
 
             $('#tagsContainer .btn')
                 .addClass('btn-outline-info')
-                .removeClass('btn-outline-danger')
-            ;
+                .removeClass('btn-outline-danger');
         }
 
         async addNewRecord() {
@@ -450,9 +493,11 @@
                 transaction_type: $('#newRecordTransactionType').val(),
             };
 
-            data.tags = $.makeArray($('#tagsContainer input:checked').map((_i, input) => {
-                return input.value;
-            }));
+            data.tags = $.makeArray(
+                $('#tagsContainer input:checked').map((_i, input) => {
+                    return input.value;
+                })
+            );
 
             const res = await Auth.fetch('/api/records/record-detail/', {
                 method: 'POST',
@@ -469,7 +514,9 @@
 
         toggle(visible) {
             super.toggle(visible);
-            if (visible) { this.dom.amountField.focus(); }
+            if (visible) {
+                this.dom.amountField.focus();
+            }
         }
 
         setup() {
@@ -547,9 +594,14 @@
         }
 
         bind() {
-            BUS.subscribe(START_CHANNEL, (widget => {
-                if (Auth.instance.isSignedIn) { this.show(); }
-            }).bind(this));
+            BUS.subscribe(
+                START_CHANNEL,
+                (widget => {
+                    if (Auth.instance.isSignedIn) {
+                        this.show();
+                    }
+                }).bind(this)
+            );
 
             BUS.subscribe(SIGN_IN_CHANNEL, this.show.bind(this));
             BUS.subscribe(NEW_RECORD_CHANNEL, this.show.bind(this));
@@ -570,7 +622,6 @@
             this.signInForm = new SignInForm();
             this.auth = new Auth(this.signInForm);
 
-
             this.bind();
         }
 
@@ -583,7 +634,7 @@
         }
 
         addFullScreenWidget(constructor) {
-            const widget = this.widgetsRegistry[constructor.name] = new constructor();
+            const widget = (this.widgetsRegistry[constructor.name] = new constructor());
 
             if (!this.fullScreenWidgets) {
                 this.fullScreenWidgets = {};
@@ -599,10 +650,12 @@
 
             this.currentWidget = widgetToShow;
 
-            Object.keys(this.fullScreenWidgets).forEach((constructorName => {
-                const widget = this.fullScreenWidgets[constructorName];
-                widget.toggle(widget === widgetToShow);
-            }).bind(this));
+            Object.keys(this.fullScreenWidgets).forEach(
+                (constructorName => {
+                    const widget = this.fullScreenWidgets[constructorName];
+                    widget.toggle(widget === widgetToShow);
+                }).bind(this)
+            );
         }
 
         set currentWidget(currentWidget) {
@@ -615,27 +668,36 @@
         }
 
         bind() {
-            $('a.nav-link').on('click', (e => {
-                const targetName = e.currentTarget.dataset.target;
-                const widget = this.fullScreenWidgets[targetName];
-                if (widget) {
-                    BUS.notify(SHOW_WIDGET_CHANNEL, widget);
-                }
-            }).bind(this));
+            $('a.nav-link').on(
+                'click',
+                (e => {
+                    const targetName = e.currentTarget.dataset.target;
+                    const widget = this.fullScreenWidgets[targetName];
+                    if (widget) {
+                        BUS.notify(SHOW_WIDGET_CHANNEL, widget);
+                    }
+                }).bind(this)
+            );
 
-            BUS.subscribe(START_CHANNEL, (() => {
-                this.showWidget(this.currentWidget || this.firstWidget);
-            }).bind(this));
+            BUS.subscribe(
+                START_CHANNEL,
+                (() => {
+                    this.showWidget(this.currentWidget || this.firstWidget);
+                }).bind(this)
+            );
 
             BUS.subscribe(SHOW_WIDGET_CHANNEL, this.showWidget.bind(this));
 
-            BUS.subscribe(HIDE_WIDGET_CHANNEL, (() => {
-                if (!this.previouslyVisibleWidget) {
-                    this.previouslyVisibleWidget = this.firstWidget;
-                }
+            BUS.subscribe(
+                HIDE_WIDGET_CHANNEL,
+                (() => {
+                    if (!this.previouslyVisibleWidget) {
+                        this.previouslyVisibleWidget = this.firstWidget;
+                    }
 
-                this.showWidget(this.previouslyVisibleWidget);
-            }).bind(this));
+                    this.showWidget(this.previouslyVisibleWidget);
+                }).bind(this)
+            );
         }
 
         run() {
@@ -650,10 +712,8 @@
     APP.run();
 
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
-            .register('./service-worker.js')
-            .then(() => {
-                console.log('Service Worker Registered');
-            });
+        navigator.serviceWorker.register('./service-worker.js').then(() => {
+            console.log('Service Worker Registered');
+        });
     }
 })();
