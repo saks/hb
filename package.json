@@ -1,0 +1,14 @@
+{
+    "name": "reactapp",
+    "version": "0.1.0",
+    "private": true,
+    "dependencies": {},
+    "engines": {
+        "yarn": "1.4.0"
+    },
+    "scripts": {
+        "postinstall": "cd static/reactapp && yarn install && yarn build",
+        "heroku-postbuild": "rm -rf static/reactapp/node_modules"
+    },
+    "cacheDirectories": ["static/reactapp/node_modules"]
+}

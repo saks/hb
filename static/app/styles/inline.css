@@ -96,6 +96,10 @@ body {
   margin: 10px 0 10px 0;
 }
 
+.budget-name {
+  display: inline-block;
+}
+
 /*-----------------------------*/
 .bd-callout {
   border:1px solid #eee !important;
