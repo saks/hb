@@ -24,13 +24,14 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test --env=jsdom",
+        "cov": "react-scripts test --coverage --env=jsdom",
         "eject": "react-scripts eject"
     },
     "devDependencies": {
-        "enzyme": "^3.3.0",
-        "enzyme-adapter-react-16": "^1.1.1",
-        "flow": "^0.2.3",
-        "flow-bin": "^0.78.0",
-        "sinon": "^6.1.4"
+        "enzyme": "*",
+        "enzyme-adapter-react-16": "*",
+        "flow": "*",
+        "flow-bin": "*",
+        "sinon": "*"
     }
 }
