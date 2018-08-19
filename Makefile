@@ -20,6 +20,12 @@ production_dbshell:
 production_shell:
 	heroku run python manage.py shell --settings=hbapi.settings.heroku --app home-b
 
+psql:
+	@bin/docker_exec python manage.py dbshell
+
+c:
+	@bin/docker_exec python manage.py shell
+
 createsuperuser:
 	@bin/exec createsuperuser
 
@@ -29,7 +35,10 @@ pep:
 pylint:
 	@bin/docker_exec prospector .
 
-shell:
+sh:
 	@bin/docker_exec bash
 
-.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell shell production_shell
+shell: sh
+
+.PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell sh \
+	production_shell psql shell c
