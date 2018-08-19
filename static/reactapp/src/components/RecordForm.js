@@ -20,10 +20,16 @@ type Props = {
     attrs: Attrs,
 };
 
-type State = { record: RecordModel };
+type State = {
+    record: RecordModel,
+    amount: string,
+};
 
 const initState = (props: Props): State => {
-    return { record: RecordModel.from(props.attrs) };
+    const record = RecordModel.from(props.attrs);
+    const amount = 0 === record.amount ? '' : String(record.amount);
+
+    return { record, amount };
 };
 
 export default class RecordForm extends Component<Props, State> {
@@ -51,29 +57,35 @@ export default class RecordForm extends Component<Props, State> {
         ));
     }
 
-    async submit(saveAddAnother: boolean = false) {
-        const success = await this.props.submit(this.record);
-        // TODO: show valdation errors if any
+    submit(saveAddAnother: boolean = false) {
+        this.setState((prevState: State) => {
+            const amount = calc(prevState.amount);
 
-        if (success) {
-            if (saveAddAnother) {
-                this.setState(prevState => {
-                    return { ...prevState, record: RecordModel.default() };
+            if (amount !== null) {
+                const record = prevState.record.clone();
+                record.amount = parseFloat(prevState.amount);
+
+                // TODO: show valdation errors if any
+                this.props.submit(record).then(success => {
+                    if (success) {
+                        if (saveAddAnother) {
+                            this.setState(prevState => {
+                                return { ...prevState, record: RecordModel.default() };
+                            });
+                            this.focus();
+                        } else {
+                            this.props.history.push('/records');
+                        }
+                    }
                 });
-                this.focus();
-            } else {
-                this.props.history.push('/records');
             }
-        }
+        });
     }
 
     handleAmountChange(event: SyntheticInputEvent<HTMLInputElement>): void {
-        const value = event.target.value;
+        const amount = event.target.value;
         this.setState(prevState => {
-            const record = prevState.record.clone();
-            // TODO: fix type incompatibility
-            record.amount = value;
-            return { ...prevState, record };
+            return { ...prevState, amount };
         });
     }
 
@@ -102,12 +114,10 @@ export default class RecordForm extends Component<Props, State> {
         this.setState(
             (prevState: State): State => {
                 const newState: State = { ...prevState };
-                const amount = calc(String(prevState.record.amount));
+                const amount = calc(prevState.amount);
 
                 if (null !== amount) {
-                    const record = prevState.record.clone();
-                    record.amount = amount;
-                    newState.record = record;
+                    newState.amount = amount;
                 }
 
                 return newState;
@@ -128,10 +138,6 @@ export default class RecordForm extends Component<Props, State> {
         return this.record && this.record.isPersisted ? 'Edit Record' : 'Add New Record';
     }
 
-    get amount(): string {
-        return 0 === this.record.amount ? '' : String(this.record.amount);
-    }
-
     render() {
         return (
             <div id="newRecordForm">
@@ -147,7 +153,7 @@ export default class RecordForm extends Component<Props, State> {
                             <input
                                 id="record-form-amount"
                                 name="amount"
-                                value={this.amount}
+                                value={this.state.amount}
                                 onChange={this.handleAmountChange.bind(this)}
                                 ref={this.amountInput}
                                 type="tel"

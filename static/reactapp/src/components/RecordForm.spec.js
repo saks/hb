@@ -17,16 +17,14 @@ const attrs = {
 
 class Wrapper {
     constructor(attrs, tags = ['foo-tag', 'bar-tag']) {
-        this.submit = sinon.spy();
-        this.history = { goBack: sinon.spy() };
+        const submit = sinon.stub();
+        const history = { goBack: sinon.stub(), push: sinon.stub() };
+
+        this.submit = submit;
+        this.history = history;
 
         this.wrapper = shallow(
-            <RecordForm
-                attrs={{ ...attrs }}
-                history={this.history}
-                submit={this.submit}
-                tags={tags}
-            />
+            <RecordForm attrs={{ ...attrs }} history={history} submit={submit} tags={tags} />
         );
     }
 
@@ -52,8 +50,12 @@ class Wrapper {
         return this.wrapper.find('button[children="calculate"]');
     }
 
-    get record() {
-        return this.wrapper.state().record;
+    get state() {
+        return this.wrapper.state();
+    }
+
+    click(buttonText) {
+        return this.find(`button[children="${buttonText}"]`).simulate('click');
     }
 
     tag(name) {
@@ -117,67 +119,153 @@ describe('<RecordForm />', () => {
     });
 
     describe('actions', () => {
-        it('should submit successfully', () => {
-            const wrapper = new Wrapper(attrs);
+        describe('submit', () => {
+            describe('with "Save" button', () => {
+                it('should submit successfully and redirect to records page', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(true);
 
-            wrapper.find('button[children="Save"]').simulate('click');
+                    await wrapper.click('Save');
 
-            expect(wrapper.submit.calledOnceWith(wrapper.record)).toEqual(true);
-        });
+                    expect(wrapper.history.push.calledOnceWith('/records')).toBe(true);
+                });
 
-        it('should submit and add another', () => {
-            const wrapper = new Wrapper(attrs);
+                it('should submit updated value if expression is OK', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(true);
 
-            wrapper.find('button[children="Save & Add"]').simulate('click');
+                    // set amount to an expression
+                    wrapper.amount = '1 + 2.2';
+                    // calculate result
+                    await wrapper.click('calculate');
+                    // submit
+                    await wrapper.click('Save');
 
-            expect(wrapper.submit.calledOnceWith(wrapper.record)).toEqual(true);
+                    expect(wrapper.submit.callCount).toEqual(1);
+
+                    const submittedRecord = wrapper.submit.lastCall.args[0];
+                    expect(submittedRecord.amount).toEqual(3.2);
+                });
+
+                it('should not submit if expression is not OK', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(true);
+
+                    // set amount to an expression
+                    wrapper.amount = '1 + foo';
+                    // calculate result
+                    await wrapper.click('calculate');
+                    // submit
+                    await wrapper.click('Save');
+
+                    expect(wrapper.submit.notCalled).toBe(true);
+                });
+
+                it('should not redirect if submit failed', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(false);
+
+                    await wrapper.click('Save');
+
+                    expect(wrapper.history.push.notCalled).toBe(true);
+                });
+            });
+
+            describe('with "Save & Add" button', () => {
+                it('should submit successfully', async () => {
+                    const wrapper = new Wrapper(attrs);
+                    wrapper.submit.resolves(true);
+
+                    await wrapper.click('Save & Add');
+
+                    expect(wrapper.submit.calledOnce).toEqual(true);
+                    expect(wrapper.history.push.notCalled).toBe(true);
+                });
+
+                it('should submit updated value if expression is OK', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(true);
+
+                    // set amount to an expression
+                    wrapper.amount = '1 + 2.2';
+                    // calculate result
+                    await wrapper.click('calculate');
+                    // submit
+                    await wrapper.click('Save & Add');
+
+                    expect(wrapper.submit.callCount).toEqual(1);
+
+                    const submittedRecord = wrapper.submit.lastCall.args[0];
+                    expect(submittedRecord.amount).toEqual(3.2);
+                });
+
+                it('should not submit if expression is not OK', async () => {
+                    const wrapper = new Wrapper(attrs, ['foo']);
+                    wrapper.submit.resolves(true);
+
+                    // set amount to an expression
+                    wrapper.amount = '1 + foo';
+                    // calculate result
+                    await wrapper.click('calculate');
+                    // submit
+                    await wrapper.click('Save & Add');
+
+                    expect(wrapper.submit.notCalled).toBe(true);
+                });
+            });
         });
 
         it('should go back', () => {
             const wrapper = new Wrapper(attrs);
 
-            wrapper.find('button[children="Cancel"]').simulate('click');
+            wrapper.click('Cancel');
 
             expect(wrapper.history.goBack.calledOnce).toEqual(true);
         });
 
-        it('should calculate correct expression', () => {
+        it('should calculate correct expression', async () => {
             const wrapper = new Wrapper(attrs);
 
             wrapper.amount = '1 + 2.2';
-            wrapper.calculateButton.simulate('click');
+            await wrapper.click('calculate');
 
-            expect(wrapper.find('#record-form-amount').props().value).toEqual('3.2');
-            expect(wrapper.record.amount).toEqual(3.2);
+            // should update form input
+            expect(wrapper.find('#record-form-amount').props().value).toEqual('3.20');
+
+            // should update "amount" in state
+            expect(wrapper.state.amount).toEqual('3.20');
+
+            // should not update "record" in state
+            expect(wrapper.state.record.amount).toEqual(12.5);
         });
 
-        it('should do nothing with wrong expression', () => {
+        it('should do nothing with wrong expression', async () => {
             const wrapper = new Wrapper(attrs);
 
             wrapper.amount = '1 + asd';
-            wrapper.calculateButton.simulate('click');
+            await wrapper.click('calculate');
             expect(wrapper.find('#record-form-amount').props().value).toEqual('1 + asd');
         });
 
         it('should update transaction type', () => {
             const wrapper = new Wrapper(attrs);
 
-            expect(wrapper.record.transaction_type).toEqual('EXP');
+            expect(wrapper.state.record.transaction_type).toEqual('EXP');
             wrapper.transactionType = 'INC';
-            expect(wrapper.record.transaction_type).toEqual('INC');
+            expect(wrapper.state.record.transaction_type).toEqual('INC');
         });
 
         it('should toggle tag', () => {
             const wrapper = new Wrapper(attrs);
 
-            expect(wrapper.record.tags.has('foo-tag')).toBe(true);
+            expect(wrapper.state.record.tags.has('foo-tag')).toBe(true);
 
             wrapper
                 .tag('foo-tag')
                 .props()
                 .toggle('foo-tag');
 
-            expect(wrapper.record.tags.has('foo-tag')).toBe(false);
+            expect(wrapper.state.record.tags.has('foo-tag')).toBe(false);
         });
     });
 });
