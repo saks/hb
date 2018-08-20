@@ -25,62 +25,47 @@ const setList = (list: Array<Attrs>): SetListAction => ({
     list,
 });
 
+const loadPageNum = async (
+    dispatch: Dispatch,
+    pageNum: number,
+    updateCurrentPage: boolean = true
+): Promise<typeof undefined> => {
+    dispatch(startLoading());
+
+    const request = new Request(`/api/records/record-detail/?page=${pageNum}`);
+    const result = await dispatch(authFetch(request));
+
+    // TODO: show errors to user if any happens
+    const json = await result.json();
+
+    if (updateCurrentPage) {
+        dispatch(setCurrentPage(pageNum));
+    }
+
+    dispatch(setList(json.results));
+    dispatch(finisLoading());
+};
+
 export const visitNextPage = (): ThunkAction => {
-    return async (dispatch: Dispatch, getState: GetState) => {
-        dispatch(startLoading());
-
-        const nextPageNum = getState().records.currentPage + 1;
-        const request = new Request(`/api/records/record-detail/?page=${nextPageNum}`);
-        const result = await dispatch(authFetch(request));
-
-        if (null === result) {
-            return;
-        }
-
-        if (404 === result.status) {
-            dispatch(finisLoading());
-            return;
-        }
-
-        const json = await result.json();
-
-        dispatch(setCurrentPage(nextPageNum));
-        dispatch(setList(json.results));
-        dispatch(finisLoading());
+    return (dispatch: Dispatch, getState: GetState) => {
+        return loadPageNum(dispatch, getState().records.currentPage + 1);
     };
 };
 
 export const visitPrevPage = () => {
-    return async (dispatch: Dispatch, getState: GetState) => {
+    return (dispatch: Dispatch, getState: GetState) => {
         const prevPageNum = getState().records.currentPage - 1;
 
         if (0 === prevPageNum) {
             return;
         }
 
-        dispatch(startLoading());
-
-        const request = new Request(`/api/records/record-detail/?page=${prevPageNum}`);
-        const result = await dispatch(authFetch(request));
-        const json = await result.json();
-
-        dispatch(setCurrentPage(prevPageNum));
-        dispatch(setList(json.results));
-        dispatch(finisLoading());
+        return loadPageNum(dispatch, prevPageNum);
     };
 };
 
 export const loadData = () => {
     return async (dispatch: Dispatch, getState: GetState) => {
-        const pageNum = getState().records.currentPage;
-
-        dispatch(startLoading());
-
-        const request = new Request(`/api/records/record-detail/?page=${pageNum}`);
-        const result = await dispatch(authFetch(request));
-        const json = await result.json();
-
-        dispatch(setList(json.results));
-        dispatch(finisLoading());
+        return loadPageNum(dispatch, getState().records.currentPage, false);
     };
 };

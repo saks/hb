@@ -30,8 +30,10 @@
     "devDependencies": {
         "enzyme": "*",
         "enzyme-adapter-react-16": "*",
+        "fetch-mock": "^6.5.2",
         "flow": "*",
         "flow-bin": "*",
+        "redux-mock-store": "^1.5.3",
         "sinon": "*"
     }
 }
