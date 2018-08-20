@@ -23,7 +23,6 @@ class Budget(models.Model):
     '''
         Budget model defines the storage of monthly budgets.
 
-        Tags field is BitField. Order of tags items shouldn't be changed.
         Tags Type field determines if include selected tags or exclude selected tags from budget.
         Amount field is MoneyField. Determines amount of money and currency. HKD by default.
         Start date field determines a start month for budget history.

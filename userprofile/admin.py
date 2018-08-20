@@ -5,7 +5,7 @@ from userprofile.models import User
 
 
 class UserAdmin(UserAdmin):
-    pass
+    list_display = ('username', 'tags',)
 
 
 admin.site.register(User, UserAdmin)

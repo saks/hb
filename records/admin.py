@@ -1,10 +1,7 @@
 from django.contrib import admin
 from django.forms import TextInput
 
-from bitfield import BitField
-
 from records.models import Record
-from records.widgets import TagsWidget
 
 
 class RecordAdmin(admin.ModelAdmin):
@@ -18,9 +15,6 @@ class RecordAdmin(admin.ModelAdmin):
         'transaction_type',
     )
     ordering = ('-created_at', )
-    formfield_overrides = {
-        BitField: {'widget': TagsWidget},
-    }
     fields = ('amount', 'tags', 'transaction_type', 'user', )
 
     def get_form(self, request, obj=None, **kwargs):
