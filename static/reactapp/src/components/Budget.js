@@ -1,10 +1,9 @@
 // @flow
 
 import React, { Component } from 'react';
-import type { Attrs } from '../types/Budget';
+import { fmtNum } from '../utils';
 
-// TODO: DRY
-const fmtNum = (input: string | number): string => Number.parseFloat(String(input)).toFixed(2);
+import type { Attrs } from '../types/Budget';
 
 export default class Budget extends Component<{| attrs: Attrs |}, void> {
     get progress() {

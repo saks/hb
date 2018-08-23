@@ -1,3 +1,4 @@
 // @flow
 
-export const fmtNum = (input: number): string => Number.parseFloat(String(input)).toFixed(2);
+export const fmtNum = (input: number | string): string =>
+    Number.parseFloat(String(input)).toFixed(2);
