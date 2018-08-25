@@ -1,7 +1,7 @@
-from django.db import models
 from django.conf import settings
-from django.contrib.postgres.fields import ArrayField
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import ArrayField
+from django.db import models
 
 
 class User(AbstractUser):
@@ -19,7 +19,7 @@ class User(AbstractUser):
         '''
         Return Redis key where stored sorted set of tags frequency usage.
         '''
-        return settings.REDIS_KEY_USER_TAGS % (self.id,)
+        return settings.REDIS_KEY_USER_TAGS % (self.id, )
 
     def get_tags_order_by_frequency(self):
         '''
@@ -35,10 +35,15 @@ class User(AbstractUser):
         '''
         ordered = self.get_tags_order_by_frequency()
         result = []
+
+        if not self.tags:
+            return result
+
         for item in ordered:
             if item in self.tags:
                 result.append(item)
         for tag in self.tags:
             if tag not in result:
                 result.append(tag)
+
         return result
