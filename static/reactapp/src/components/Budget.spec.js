@@ -1,8 +1,6 @@
 require('../../test/helpers.js');
 
 import React from 'react';
-import sinon from 'sinon';
-
 import Budget from './Budget';
 
 const attrs = {

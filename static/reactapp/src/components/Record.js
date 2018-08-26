@@ -1,6 +1,7 @@
 // @flow
 
 import React, { Component } from 'react';
+import './Record.css';
 
 import { EXP } from '../constants/TransactionTypes';
 import RecordModel from '../models/Record';
