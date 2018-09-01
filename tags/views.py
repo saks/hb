@@ -13,7 +13,10 @@ class TagsView(APIView):
     def get(self, request, format=None):  # return all tags
         return Response({'tags': request.user.get_ordered_tags()})
 
-    def put(self):  # update list of all tags
+    def put(self, request, format=None):  # update list of all tags
+        user = request.user
 
-        content = {'tags': ['foo', 'bar']}
-        return Response(content)
+        user.tags = request.data['tags']
+        user.save()
+
+        return Response({'tags': user.get_ordered_tags()})

@@ -4,6 +4,7 @@ import RecordModel from '../models/Record';
 import { show as showSpinner, hide as hideSpinner } from './Spinner';
 import { signOut } from './Auth';
 import { loadData as loadDataForRecordsPage } from './Record';
+import { loadData as loadDataForTagsPage } from './Tags';
 import authenticate from './LoginDialog';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
@@ -43,7 +44,7 @@ export {
     visitPrevPage as visitPrevRecordsPage,
     visitNextPage as visitNextRecordsPage,
 } from './Record';
-export { loadDataForRecordsPage, authenticate };
+export { loadDataForRecordsPage, loadDataForTagsPage, authenticate };
 
 // record form
 export const submitRecordForm = (record: RecordModel): ThunkAction => {
@@ -61,6 +62,7 @@ export const submitRecordForm = (record: RecordModel): ThunkAction => {
             // const record = await result.json();
             // refresh all data
             dispatch(loadDataForRecordsPage());
+            dispatch(loadDataForTagsPage());
         } else {
             debugger;
         }
@@ -70,4 +72,4 @@ export const submitRecordForm = (record: RecordModel): ThunkAction => {
 };
 
 export { loadData as loadDataForBudgetsPage } from './Budget';
-export { loadData as loadDataForTagsPage } from './Tags';
+export { syncData as syncTags } from './Tags';

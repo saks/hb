@@ -62,7 +62,6 @@ class Wrapper {
         return this.wrapper
             .find(Tag)
             .filterWhere(tag => {
-                // console.log(tag.props);
                 return name === tag.props().name;
             })
             .first();
@@ -76,14 +75,26 @@ class Wrapper {
 describe('<RecordForm />', () => {
     describe('showing attribute values', () => {
         it('should have empty list of tags', () => {
-            const wrapper = new Wrapper(attrs, []);
+            const newAttrs = { ...attrs, tags: [] };
+            const wrapper = new Wrapper(newAttrs, []);
 
             expect(wrapper.find('#tagsContainer').text()).toEqual('');
             expect(wrapper.find(Tag)).toHaveLength(0);
         });
 
-        it('should render tags', () => {
+        it('should render tags from attrs and from user profile', () => {
             const wrapper = new Wrapper(attrs, ['foo', 'bar']);
+            expect(wrapper.find(Tag)).toHaveLength(4);
+        });
+
+        it('should render tags from attrs only', () => {
+            const wrapper = new Wrapper(attrs, []);
+            expect(wrapper.find(Tag)).toHaveLength(2);
+        });
+
+        it('should render tags from user profile only', () => {
+            const newAttrs = { ...attrs, tags: [] };
+            const wrapper = new Wrapper(newAttrs, ['foo', 'bar']);
             expect(wrapper.find(Tag)).toHaveLength(2);
         });
 

@@ -37,8 +37,6 @@ export default (formData: {| username: string, password: string |}): ThunkAction
         }
 
         const userId = parsedToken.user_id;
-
-        //----------------- start getting profile and tags
         const profileRequest = new Request(`/api/user/${userId}/`);
         const profileResponse = await dispatch(authFetch(profileRequest));
 
@@ -49,8 +47,6 @@ export default (formData: {| username: string, password: string |}): ThunkAction
 
         const profile: UserProfile = await profileResponse.json();
         dispatch(setAuthProfile(profile));
-        //-------------- end
-
         dispatch(closeAuthDialog());
 
         // refresh all data

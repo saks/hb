@@ -3,23 +3,65 @@
 import React, { Component } from 'react';
 import DeleteIcon from './DeleteIcon';
 
-export default class TagsList extends Component<{| list: Array<string> |}> {
-    constructor(props) {
+import type { ThunkAction } from '../types/Action';
+
+type Props = {
+    list: Array<string>,
+    sync: (list: Array<string>) => ThunkAction,
+};
+
+type State = {
+    newTagName: string,
+};
+
+export default class TagsList extends Component<Props, State> {
+    tagNameInput: { current: null | HTMLInputElement };
+
+    constructor(props: Props) {
         super(props);
 
         this.tagNameInput = React.createRef();
+        this.state = { newTagName: '' };
     }
 
     deleteTag(event: SyntheticEvent<HTMLAnchorElement>) {
-        // TODO
+        const toDelete = event.currentTarget.dataset.name;
+        const newList = this.listToSync({ delete: toDelete });
+        this.props.sync(newList);
+    }
+
+    async addNewTag(event: SyntheticEvent<HTMLButtonElement>) {
+        const newTag = this.state.newTagName;
+        const newList = this.listToSync({ add: newTag });
+
+        await this.props.sync(newList);
+
+        this.setState({ newTagName: '' });
+        this.focus();
+    }
+
+    focus() {
+        if (this.tagNameInput.current) {
+            this.tagNameInput.current.focus();
+        }
     }
 
     handleNewTagNameChange(event: SyntheticInputEvent<HTMLInputElement>) {
-        console.log(event.target.value);
+        this.setState({ newTagName: event.target.value });
     }
 
-    addNewTag(event: SyntheticEvent<HTMLButtonElement>) {
-        console.log(this.tagNameInput.current.value);
+    listToSync(options: {| delete?: string, add?: string |}): Array<string> {
+        const newList = new Set(this.props.list);
+
+        if (options.delete) {
+            newList.delete(options.delete);
+        }
+
+        if (options.add) {
+            newList.add(options.add);
+        }
+
+        return Array.from(newList);
     }
 
     get list() {
@@ -27,9 +69,9 @@ export default class TagsList extends Component<{| list: Array<string> |}> {
             <tr key={tag}>
                 <td>{tag}</td>
                 <td align="right">
-                    <a href="#" onClick={this.deleteTag.bind(this)}>
+                    <span onClick={this.deleteTag.bind(this)} data-name={tag}>
                         <DeleteIcon />
-                    </a>
+                    </span>
                 </td>
             </tr>
         ));
@@ -47,6 +89,7 @@ export default class TagsList extends Component<{| list: Array<string> |}> {
                             <input
                                 name="tag_name"
                                 type="text"
+                                value={this.state.newTagName}
                                 ref={this.tagNameInput}
                                 className="form-control"
                                 autoComplete="off"

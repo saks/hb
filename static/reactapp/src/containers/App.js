@@ -43,14 +43,12 @@ class App extends Component<Props, void> {
     }
 
     newRecordForm(attrs, history: RouterHistory): Element<typeof RecordForm> {
-        const profile = this.props.auth.profile;
-        const tags = profile ? profile.tags : [];
         return (
             <RecordForm
                 attrs={attrs}
                 history={history}
                 submit={this.props.actions.submitRecordForm}
-                tags={tags}
+                tags={this.props.tags.list}
             />
         );
     }
@@ -68,7 +66,12 @@ class App extends Component<Props, void> {
                         <Route
                             exact
                             path="/tags"
-                            render={({ match, history }) => <TagsList list={props.tags.list} />}
+                            render={() => (
+                                <TagsList
+                                    list={props.tags.list}
+                                    sync={this.props.actions.syncTags}
+                                />
+                            )}
                         />
                         <Route
                             exact

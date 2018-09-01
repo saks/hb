@@ -10,6 +10,7 @@ import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
 
+import type { Element } from 'react';
 import type { RouterHistory } from 'react-router-dom';
 import type { Attrs } from '../types/Record';
 
@@ -46,8 +47,17 @@ export default class RecordForm extends Component<Props, State> {
         return this.state.record;
     }
 
-    get tags() {
-        return this.props.tags.map(name => (
+    // At times, when we edit record, current list of tags might not contain
+    // tags that are currently attached to a record. In this case we will add record.tags
+    // into list of tags that we render.
+    get tagList(): Array<string> {
+        const userTags: Set<string> = new Set(this.props.tags);
+        this.props.attrs.tags.forEach(tag => userTags.add(tag));
+        return Array.from(userTags);
+    }
+
+    get tags(): Array<Element<typeof Tag>> {
+        return this.tagList.map(name => (
             <Tag
                 name={name}
                 key={name}

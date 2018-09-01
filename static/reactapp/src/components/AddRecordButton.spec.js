@@ -26,7 +26,8 @@ describe('<AddRecordButton>', () => {
     });
 
     it('should lead to record form', () => {
-        console.log(wrapper.context());
+        // TODO:
+        // console.log(wrapper.context());
         wrapper.find('a').simulate('click');
         // console.log(wrapper.find(Link).context());
         // console.log(wrapper.props());
