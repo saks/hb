@@ -11,7 +11,7 @@ class TagsView(APIView):
     renderer_classes = (JSONRenderer, )
 
     def get(self, request, format=None):  # return all tags
-        return Response({'tags': request.user.tags})
+        return Response({'tags': request.user.get_ordered_tags()})
 
     def put(self):  # update list of all tags
 
