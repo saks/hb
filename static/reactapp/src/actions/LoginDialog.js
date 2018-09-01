@@ -3,6 +3,7 @@
 import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index';
 import { show as showSpinner, show as hideSpinner } from './Spinner';
 import { setAuthErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
+import { loadData as loadTags } from './Tags';
 
 import type { Dispatch, GetState } from '../types/Dispatch';
 import type { ThunkAction } from '../types/Action';
@@ -53,6 +54,7 @@ export default (formData: {| username: string, password: string |}): ThunkAction
         dispatch(closeAuthDialog());
 
         // refresh all data
+        dispatch(loadTags());
         dispatch(loadDataForRecordsPage());
         dispatch(loadDataForBudgetsPage());
     };
