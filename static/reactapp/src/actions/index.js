@@ -70,3 +70,4 @@ export const submitRecordForm = (record: RecordModel): ThunkAction => {
 };
 
 export { loadData as loadDataForBudgetsPage } from './Budget';
+export { loadData as loadDataForTagsPage } from './Tags';

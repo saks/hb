@@ -7,6 +7,7 @@ import { connect } from 'react-redux';
 import * as Actions from '../actions';
 import LoginDialog from '../components/LoginDialog';
 import RecordsList from '../components/RecordsList';
+import TagsList from '../components/TagsList';
 import RecordForm from '../components/RecordForm';
 import Budgets from '../components/Budgets';
 import Spinner from '../components/Spinner';
@@ -31,6 +32,7 @@ class App extends Component<Props, void> {
         if (this.isAuthenticated()) {
             this.props.actions.loadDataForRecordsPage();
             this.props.actions.loadDataForBudgetsPage();
+            this.props.actions.loadDataForTagsPage();
         } else {
             this.props.actions.openAuthDialog();
         }
@@ -63,6 +65,11 @@ class App extends Component<Props, void> {
                     {/* redirect to "/records" page by default */}
                     <Route exact path="/" render={() => <Redirect to="/records" />} />
                     <div className="container">
+                        <Route
+                            exact
+                            path="/tags"
+                            render={({ match, history }) => <TagsList list={props.tags.list} />}
+                        />
                         <Route
                             exact
                             path="/records"

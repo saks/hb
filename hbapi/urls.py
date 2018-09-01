@@ -13,35 +13,31 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import (
-    include,
-    url,
-)
-from django.urls import reverse_lazy
+from django.conf import settings
+from django.conf.urls import include, url
 from django.contrib import admin
-from django.views.generic.base import RedirectView
-
 # for local static serve
 from django.contrib.staticfiles import views
-from django.conf import settings
+from django.urls import reverse_lazy
+from django.views.generic.base import RedirectView
 
-
-favicon_view = RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)
-
+favicon_view = RedirectView.as_view(
+    url='/static/img/favicon.ico', permanent=True)
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
+    url(r'^$',
+        RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
     url(r'^favicon\.ico$', favicon_view),
     url(r'^admin/', admin.site.urls),
     url(r'^api/records/', include('records.urls')),
     url(r'^api/user/', include('userprofile.urls')),
     url(r'^api/budgets/', include('budgets.urls')),
-    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
-
+    url(r'^api/tags/', include('tags.urls')),
+    url(r'^api/auth/',
+        include('rest_framework.urls', namespace='rest_framework')),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.jwt')),
 ]
-
 
 if settings.DEBUG:
     urlpatterns += [
