@@ -100,6 +100,14 @@ module.exports = {
     module: {
         strictExportPresence: true,
         rules: [
+            {
+                test: /\.scss$/,
+                use: [
+                    'style-loader', // creates style nodes from JS strings
+                    'css-loader', // translates CSS into CommonJS
+                    'sass-loader', // compiles Sass to CSS, using Node Sass by default
+                ],
+            },
             // TODO: Disable require.ensure as it's not a standard language feature.
             // We are waiting for https://github.com/facebookincubator/create-react-app/issues/2176.
             // { parser: { requireEnsure: false } },
@@ -173,10 +181,10 @@ module.exports = {
                                         require('postcss-flexbugs-fixes'),
                                         autoprefixer({
                                             browsers: [
-                                                '>1%',
-                                                'last 4 versions',
+                                                '>50%',
+                                                'last 1 versions',
                                                 'Firefox ESR',
-                                                'not ie < 9', // React doesn't support IE8 anyway
+                                                'not ie < 11', // React doesn't support IE8 anyway
                                             ],
                                             flexbox: 'no-2009',
                                         }),
@@ -195,7 +203,7 @@ module.exports = {
                         // its runtime that would otherwise processed through "file" loader.
                         // Also exclude `html` and `json` extensions so they get processed
                         // by webpacks internal loaders.
-                        exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/],
+                        exclude: [/\.(js|jsx|mjs)$/, /\.html$/, /\.json$/, /\.scss$/],
                         loader: require.resolve('file-loader'),
                         options: {
                             name: 'static/media/[name].[hash:8].[ext]',
