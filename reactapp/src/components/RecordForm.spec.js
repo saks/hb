@@ -223,6 +223,15 @@ describe('<RecordForm />', () => {
 
                     expect(wrapper.submit.notCalled).toBe(true);
                 });
+
+                it('should cleanup amount field after successful submit', async () => {
+                    const wrapper = new Wrapper(attrs);
+                    wrapper.submit.resolves(true);
+
+                    await wrapper.click('Save & Add');
+
+                    expect(wrapper.amountInput.props().value).toEqual('');
+                });
             });
         });
 

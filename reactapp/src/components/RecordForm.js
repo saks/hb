@@ -80,7 +80,7 @@ export default class RecordForm extends Component<Props, State> {
                     if (success) {
                         if (saveAddAnother) {
                             this.setState(prevState => {
-                                return { ...prevState, record: RecordModel.default() };
+                                return { ...prevState, record: RecordModel.default(), amount: '' };
                             });
                             this.focus();
                         } else {
