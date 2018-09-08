@@ -1,16 +1,17 @@
-language: python
-cache: pip
-python:
-    - "3.6"
-# install dependencies
-install: "pip install -r requirements.txt"
-services:
-    - postgresql
-    - redis-server
-before_script:
-  - pycodestyle
-#    - psql -c 'create database test_postgres;' -U postgres
-#    - python manage.py migrate
-#  - prospector
-script: python manage.py test --settings=hbapi.settings.travis
-
+matrix:
+  include:
+    - language: python
+      cache: pip
+      python:
+          - "3.6"
+      # install dependencies
+      install: "pip install -r requirements.txt"
+      services:
+          - postgresql
+          - redis-server
+      before_script:
+        - pycodestyle
+      #    - psql -c 'create database test_postgres;' -U postgres
+      #    - python manage.py migrate
+      #  - prospector
+      script: python manage.py test --settings=hbapi.settings.travis
