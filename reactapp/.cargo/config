@@ -1,0 +1,4 @@
+[build]
+target-dir = "src/wasm"
+target = "wasm32-unknown-unknown"
+

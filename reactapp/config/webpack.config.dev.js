@@ -1,23 +1,5 @@
 'use strict';
 
-// {
-//     test: /\.rs$/,
-//     use: [
-//         {
-//             loader: 'wasm-loader',
-//         },
-//         {
-//             loader: 'rust-native-wasm-loader',
-//             options: {
-//                 release: true,
-//                 wasmBindgen: {
-//                     wasm2es6js: true,
-//                 },
-//             },
-//         },
-//     ],
-// },
-
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
@@ -130,7 +112,7 @@ module.exports = {
                     {
                         loader: 'rust-native-wasm-loader',
                         options: {
-                            release: true,
+                            release: false,
                             wasmBindgen: {
                                 wasm2es6js: true,
                             },

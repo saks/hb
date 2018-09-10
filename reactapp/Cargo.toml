@@ -1,5 +1,3 @@
-default-target = "wasm32-unknown-unknown"
-
 [package]
 name = "react_rust_wasm"
 version = "1.0.0"

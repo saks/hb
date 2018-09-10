@@ -18,7 +18,13 @@ extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub extern "C" fn hello_world(mut first_name: &str, mut last_name: &str) -> String {
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+}
+
+#[wasm_bindgen(js_namespace = WebAssembly)]
+pub extern "C" fn hello_world(mut first_name: &str, mut last_name: &str) {
     // This is fairly silly code but it is just an example...
     if first_name.is_empty() {
         first_name = "John";
@@ -26,11 +32,29 @@ pub extern "C" fn hello_world(mut first_name: &str, mut last_name: &str) -> Stri
     if last_name.is_empty() {
         last_name = "Doe";
     }
-    format!("Hello, {} {}!", first_name, last_name)
+    let msg = format!("Hello, {} {}!", first_name, last_name);
+    log(&msg);
 }
 
 #[no_mangle]
 pub fn add(a: i32, b: i32) -> i32 {
     println!("add({:?}, {:?}) was called", a, b);
     a + b
+}
+
+#[derive(Debug)]
+#[wasm_bindgen]
+pub struct Record {
+    amount: f32,
+}
+
+#[wasm_bindgen]
+impl Record {
+    pub fn new() -> Self {
+        return Self { amount: 5.1 };
+    }
+
+    pub fn amount(&self) -> f32 {
+        self.amount
+    }
 }
