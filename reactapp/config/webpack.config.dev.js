@@ -1,5 +1,23 @@
 'use strict';
 
+// {
+//     test: /\.rs$/,
+//     use: [
+//         {
+//             loader: 'wasm-loader',
+//         },
+//         {
+//             loader: 'rust-native-wasm-loader',
+//             options: {
+//                 release: true,
+//                 wasmBindgen: {
+//                     wasm2es6js: true,
+//                 },
+//             },
+//         },
+//     ],
+// },
+
 const autoprefixer = require('autoprefixer');
 const path = require('path');
 const webpack = require('webpack');
@@ -100,6 +118,26 @@ module.exports = {
     module: {
         strictExportPresence: true,
         rules: [
+            {
+                test: /\.rs$/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                        options: {
+                            compact: true,
+                        },
+                    },
+                    {
+                        loader: 'rust-native-wasm-loader',
+                        options: {
+                            release: true,
+                            wasmBindgen: {
+                                wasm2es6js: true,
+                            },
+                        },
+                    },
+                ],
+            },
             {
                 test: /\.scss$/,
                 use: [
