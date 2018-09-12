@@ -28,7 +28,7 @@
             "type": "image/png"
         }
     ],
-    "start_url": "/static/reactapp/build/index.html",
+    "start_url": "/static/reactapp/index.html",
     "display": "standalone",
     "background_color": "#03a9f4",
     "theme_color": "#03a9f4"
