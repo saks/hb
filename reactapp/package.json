@@ -16,7 +16,7 @@
         "babel-preset-react-app": "4.0.0-next.a671462c",
         "bfj": "5.2.0",
         "bootstrap-material-design": "^4.1.1",
-        "case-sensitive-paths-webpack-plugin": "2.1.2",
+        "case-sensitive-paths-webpack-plugin": "*",
         "chalk": "2.4.1",
         "css-loader": "0.28.11",
         "dotenv": "5.0.1",
@@ -32,14 +32,14 @@
         "fs-extra": "5.0.0",
         "graphql": "0.13.2",
         "graphql-tag": "2.9.2",
-        "html-webpack-plugin": "3.2.0",
+        "html-webpack-plugin": "*",
         "identity-obj-proxy": "3.0.0",
         "jest": "22.4.3",
         "jquery": "^3.3.1",
         "loader-utils": "^1.1.0",
         "mini-css-extract-plugin": "^0.4.0",
         "object-assign": "4.1.1",
-        "optimize-css-assets-webpack-plugin": "^4.0.1",
+        "optimize-css-assets-webpack-plugin": "*",
         "popper.js": "^1.14.4",
         "postcss-flexbugs-fixes": "3.3.1",
         "postcss-loader": "2.1.5",
@@ -58,13 +58,13 @@
         "sass-loader": "7.0.1",
         "style-loader": "0.21.0",
         "svgr": "1.9.2",
-        "sw-precache-webpack-plugin": "0.11.5",
+        "sw-precache-webpack-plugin": "*",
         "thread-loader": "1.1.5",
-        "uglifyjs-webpack-plugin": "1.2.5",
+        "uglifyjs-webpack-plugin": "*",
         "url-loader": "1.0.1",
-        "webpack": "4.8.3",
-        "webpack-dev-server": "3.1.5",
-        "webpack-manifest-plugin": "2.0.3",
+        "webpack": "*",
+        "webpack-dev-server": "*",
+        "webpack-manifest-plugin": "*",
         "whatwg-fetch": "2.0.4"
     },
     "scripts": {
@@ -111,6 +111,7 @@
         "flow-bin": "^0.80.0",
         "node-fetch": "^2.2.0",
         "redux-mock-store": "^1.5.3",
-        "sinon": "^6.2.0"
+        "sinon": "^6.2.0",
+        "webpack-cli": "*"
     }
 }

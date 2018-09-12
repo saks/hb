@@ -135,7 +135,7 @@ module.exports = {
         // https://github.com/facebook/create-react-app/issues/290
         // `web` extension prefixes have been added for better support
         // for React Native Web.
-        extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx'],
+        extensions: ['.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx', '.wasm'],
         alias: {
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
@@ -181,6 +181,10 @@ module.exports = {
                 // match the requirements. When no loader matches it will fall
                 // back to the "file" loader at the end of the loader list.
                 oneOf: [
+                    {
+                        test: /\.wasm$/,
+                        type: 'webassembly/experimental',
+                    },
                     // "url" loader works like "file" loader except that it embeds assets
                     // smaller than specified limit in bytes as data URLs to avoid requests.
                     // A missing `test` is equivalent to a match.

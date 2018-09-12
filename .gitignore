@@ -2,3 +2,5 @@
 *.swp
 Session.vim
 .mypy_cache
+rust/target
+rust/node_modules
