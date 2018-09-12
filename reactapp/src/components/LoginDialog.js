@@ -100,6 +100,7 @@ class LoginDialog extends Component<Props, void> {
                                         ref={this.usernameInput}
                                         type="text"
                                         className="form-control"
+                                        autoComplete="username"
                                         required
                                     />
                                     {errors.username && <FormFieldError text={errors.username} />}
