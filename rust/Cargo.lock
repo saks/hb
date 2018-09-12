@@ -7,6 +7,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "home_budget"
 version = "0.1.0"
 dependencies = [
+ "js-sys 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "wasm-bindgen 0.2.21 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -14,6 +15,14 @@ dependencies = [
 name = "itoa"
 version = "0.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "js-sys"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "wasm-bindgen 0.2.21 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "lazy_static"
@@ -152,6 +161,7 @@ dependencies = [
 [metadata]
 "checksum cfg-if 0.1.5 (registry+https://github.com/rust-lang/crates.io-index)" = "0c4e7bb64a8ebb0d856483e1e682ea3422f883c5f5615a90d51a2c82fe87fdd3"
 "checksum itoa 0.4.3 (registry+https://github.com/rust-lang/crates.io-index)" = "1306f3464951f30e30d12373d31c79fbd52d236e5e896fd92f96ec7babbbe60b"
+"checksum js-sys 0.2.6 (registry+https://github.com/rust-lang/crates.io-index)" = "352edacd81f94086d4330c490bf571281debfc0e4eaa1af650dcae7608191cf8"
 "checksum lazy_static 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "ca488b89a5657b0a2ecd45b95609b3e848cf1755da332a0da46e2b2b1cb371a7"
 "checksum log 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)" = "d4fcce5fa49cc693c312001daf1d13411c4a5283796bac1084299ea3e567113f"
 "checksum proc-macro2 0.4.19 (registry+https://github.com/rust-lang/crates.io-index)" = "ffe022fb8c8bd254524b0b3305906c1921fa37a84a644e29079a9e62200c3901"

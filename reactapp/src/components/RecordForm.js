@@ -9,6 +9,7 @@ import RecordModel from '../models/Record';
 import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
+import { wasmModule } from '../wasm/all.js';
 
 import type { Element } from 'react';
 import type { RouterHistory } from 'react-router-dom';
@@ -124,9 +125,10 @@ export default class RecordForm extends Component<Props, State> {
         this.setState(
             (prevState: State): State => {
                 const newState: State = { ...prevState };
-                const amount = calc(prevState.amount);
+                // TODO: annotate types for rust code
+                const amount = wasmModule.calc(prevState.amount);
 
-                if (null !== amount) {
+                if (undefined !== amount) {
                     newState.amount = amount;
                 }
 

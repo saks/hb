@@ -16,7 +16,6 @@ import RecordModel from '../models/Record';
 import './../App.css';
 
 import NavigationHeader from '../components/NavigationHeader';
-import { wasmModule } from '../wasm/all.js';
 
 import type { RouterHistory } from 'react-router-dom';
 import type { Element } from 'react';
@@ -30,10 +29,6 @@ type Props = State & { +actions: ActionsMap };
 
 class App extends Component<Props, void> {
     componentDidMount() {
-        const { Foo } = wasmModule;
-        const foo = Foo.new();
-        foo.set(123);
-        console.log(foo.get());
         if (this.isAuthenticated()) {
             this.props.actions.loadDataForRecordsPage();
             this.props.actions.loadDataForBudgetsPage();

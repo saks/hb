@@ -1,9 +1,25 @@
 extern crate wasm_bindgen;
 use wasm_bindgen::prelude::*;
 
+extern crate js_sys;
+
+use js_sys::eval as js_eval;
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_f64(a: f64);
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
 }
 
 #[wasm_bindgen]
@@ -17,6 +33,14 @@ pub struct Foo {
 }
 
 #[wasm_bindgen]
+pub fn calc(text: &str) -> Option<String> {
+    match js_eval(text).map(|value| value.as_f64()) {
+        Ok(res) => res.map(|n| format!("{:.2}", n)),
+        Err(_) => None,
+    }
+}
+
+#[wasm_bindgen]
 impl Foo {
     pub fn new(val: i32) -> Foo {
         Foo { internal: val }
@@ -27,6 +51,7 @@ impl Foo {
     }
 
     pub fn set(&mut self, val: i32) {
+        log(&format!("set new value to {}", val));
         self.internal = val;
     }
 }
