@@ -36,24 +36,24 @@ export default class RecordsList extends Component<Props, void> {
                     <nav aria-label="pagination">
                         <ul className="pagination justify-content-center">
                             <li className="page-item">
-                                <a
+                                <span
                                     className="page-link visit-prev-page"
                                     tabIndex="-1"
                                     onClick={this.props.visitPrevPage}>
                                     Previous
-                                </a>
+                                </span>
                             </li>
                             <li className="page-item">
-                                <a className="page-link current-page-number">
+                                <span className="page-link current-page-number">
                                     {this.props.currentPage}
-                                </a>
+                                </span>
                             </li>
                             <li className="page-item">
-                                <a
+                                <span
                                     className="page-link visit-next-page"
                                     onClick={this.props.visitNextPage}>
                                     Next
-                                </a>
+                                </span>
                             </li>
                         </ul>
                     </nav>
