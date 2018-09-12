@@ -111,6 +111,7 @@ class LoginDialog extends Component<Props, void> {
                                     <input
                                         ref={this.passwordInput}
                                         type="password"
+                                        autoComplete="current-password"
                                         className="form-control"
                                         required
                                     />
