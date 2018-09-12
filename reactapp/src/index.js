@@ -10,10 +10,10 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import store from './store';
 
-import { loadedPromise } from './wasm/all.js';
+import { wasmLoaded } from './wasm/all.js';
 
 // const wasm = import('./wasm/home_budget');
-loadedPromise.then(z => {
+wasmLoaded.then(z => {
     console.log(z);
     ReactDOM.render(
         <Provider store={store}>

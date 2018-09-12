@@ -1,9 +1,8 @@
 const js = import('./home_budget');
-let wasm;
+let wasmModule;
 
-const loadedPromise = js.then(js => {
-    console.log(js);
-    wasm = js;
+const wasmLoaded = js.then(js => {
+    wasmModule = js;
 });
 
-export { loadedPromise, wasm };
+export { wasmLoaded, wasmModule };
