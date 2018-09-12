@@ -12,7 +12,6 @@ import store from './store';
 
 import { wasmLoaded } from './wasm/all.js';
 
-// const wasm = import('./wasm/home_budget');
 wasmLoaded.then(z => {
     console.log(z);
     ReactDOM.render(

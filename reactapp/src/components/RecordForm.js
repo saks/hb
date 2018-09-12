@@ -127,6 +127,7 @@ export default class RecordForm extends Component<Props, State> {
                 const newState: State = { ...prevState };
                 // TODO: annotate types for rust code
                 const amount = wasmModule.calc(prevState.amount);
+                // const amount = undefined;
 
                 if (undefined !== amount) {
                     newState.amount = amount;
