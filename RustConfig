@@ -1,0 +1,2 @@
+BUILD_PATH="rust"
+RUST_SKIP_BUILD="1"

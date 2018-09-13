@@ -34,10 +34,10 @@ pub struct Foo {
 
 #[wasm_bindgen]
 pub fn calc(text: &str) -> Option<String> {
-    match js_eval(text).map(|value| value.as_f64()) {
-        Ok(res) => res.map(|n| format!("{:.2}", n)),
-        Err(_) => None,
-    }
+    js_eval(text)
+        .ok()
+        .and_then(|value| value.as_f64())
+        .map(|number| format!("{:.2}", number))
 }
 
 #[wasm_bindgen]
