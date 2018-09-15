@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
-import mimetypes
 import os
 
 import redis
@@ -49,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -127,6 +127,8 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, '../static'),
 ]
 
+WHITENOISE_MIMETYPES = {'.wasm': 'application/wasm'}
+
 # Redis keys
 REDIS_KEY_USER_TAGS = 'user_tags_%s'
 
@@ -167,5 +169,3 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS':
     'rest_framework.pagination.PageNumberPagination',
 }
-
-mimetypes.add_type('application/wasm', '.wasm', True)
