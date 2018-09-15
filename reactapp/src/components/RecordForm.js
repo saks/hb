@@ -8,7 +8,7 @@ import { EXP, INC } from '../constants/TransactionTypes';
 import RecordModel from '../models/Record';
 
 import { submitRecordForm } from '../actions';
-import { wasmModule } from '../wasm/all.js';
+import * as wasmModule from '../wasm/home_budget';
 
 import type { Element } from 'react';
 import type { RouterHistory } from 'react-router-dom';

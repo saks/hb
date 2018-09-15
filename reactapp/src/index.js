@@ -10,7 +10,7 @@ import * as serviceWorker from './serviceWorker';
 import { Provider } from 'react-redux';
 import store from './store';
 
-import { wasmLoaded } from './wasm/all.js';
+const wasmLoaded = import('./wasm/home_budget');
 
 wasmLoaded.then(() => {
     ReactDOM.render(
