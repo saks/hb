@@ -7,7 +7,7 @@ else
 	BINDGEN_CLI_INSTALLED = 0
 endif
 
-all: build wasm
+all: build wasm wasm2es6js
 
 build:
 	rustup target add wasm32-unknown-unknown
@@ -17,6 +17,11 @@ wasm: bindgen_cli
 	${CARGO_HOME}/bin/wasm-bindgen \
 		./target/wasm32-unknown-unknown/release/home_budget.wasm \
 		--out-dir ./../reactapp/src/wasm/
+
+wasm2es6js: bindgen_cli
+	wasm2es6js ./../reactapp/src/wasm/home_budget_bg.wasm \
+		-o ./../reactapp/src/wasm/home_budget_bg.js \
+		--base64
 
 bindgen_cli:
 	@if [ ${BINDGEN_CLI_INSTALLED} -ne 1 ]; then \

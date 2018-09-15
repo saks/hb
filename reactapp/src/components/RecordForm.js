@@ -6,7 +6,6 @@ import Tag from './Tag';
 import { EXP, INC } from '../constants/TransactionTypes';
 
 import RecordModel from '../models/Record';
-import calc from '../utils/calc';
 
 import { submitRecordForm } from '../actions';
 import { wasmModule } from '../wasm/all.js';
@@ -70,9 +69,9 @@ export default class RecordForm extends Component<Props, State> {
 
     submit(saveAddAnother: boolean = false) {
         this.setState((prevState: State) => {
-            const amount = calc(prevState.amount);
+            const amount = wasmModule.calc(prevState.amount);
 
-            if (amount !== null) {
+            if (amount !== undefined) {
                 const record = prevState.record.clone();
                 record.amount = parseFloat(prevState.amount);
 

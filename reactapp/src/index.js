@@ -12,8 +12,7 @@ import store from './store';
 
 import { wasmLoaded } from './wasm/all.js';
 
-wasmLoaded.then(z => {
-    console.log(z);
+wasmLoaded.then(() => {
     ReactDOM.render(
         <Provider store={store}>
             <App />

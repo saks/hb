@@ -2,6 +2,7 @@ require('../../test/helpers.js');
 import React from 'react';
 import sinon from 'sinon';
 
+const wasm = require('./../wasm/home_budget_bg');
 import RecordForm from './RecordForm';
 import RecordModel from '../models/Record';
 import Tag from './Tag';
@@ -73,6 +74,8 @@ class Wrapper {
 }
 
 describe('<RecordForm />', () => {
+    beforeAll(async () => await wasm.booted);
+
     describe('showing attribute values', () => {
         it('should have empty list of tags', () => {
             const newAttrs = { ...attrs, tags: [] };

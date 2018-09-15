@@ -72,7 +72,7 @@
         "flow": "flow",
         "start": "node scripts/start.js",
         "build": "node scripts/build.js",
-        "test": "node scripts/test.js --env=jsdom",
+        "test": "node --expose-wasm scripts/test.js --env=jsdom",
         "cov": "node scripts/test.js --coverage --env=jsdom",
         "storybook": "start-storybook -p 9009 -s public",
         "build-storybook": "build-storybook -s public"
@@ -102,14 +102,14 @@
             "^react-native$": "react-native-web",
             "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
         },
-        "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node", "mjs"]
+        "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node", "mjs", "wasm"]
     },
     "devDependencies": {
         "enzyme": "^3.6.0",
         "enzyme-adapter-react-16": "^1.5.0",
         "fetch-mock": "6.5.2",
-        "flow": "^0.2.3",
-        "flow-bin": "^0.80.0",
+        "flow": "*",
+        "flow-bin": "*",
         "node-fetch": "^2.2.0",
         "redux-mock-store": "^1.5.3",
         "sinon": "^6.2.0",

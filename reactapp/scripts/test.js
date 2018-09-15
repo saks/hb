@@ -9,24 +9,18 @@ process.env.PUBLIC_URL = '';
 // ignoring them. In the future, promise rejections that are not handled will
 // terminate the Node.js process with a non-zero exit code.
 process.on('unhandledRejection', err => {
-  throw err;
+    throw err;
 });
 
 // Ensure environment variables are read.
 require('../config/env');
 
-
 const jest = require('jest');
 let argv = process.argv.slice(2);
 
 // Watch unless on CI, in coverage mode, or explicitly running all tests
-if (
-  !process.env.CI &&
-  argv.indexOf('--coverage') === -1 &&
-  argv.indexOf('--watchAll') === -1
-) {
-  argv.push('--watch');
+if (!process.env.CI && argv.indexOf('--coverage') === -1 && argv.indexOf('--watchAll') === -1) {
+    argv.push('--watch');
 }
-
 
 jest.run(argv);
