@@ -20,11 +20,18 @@ matrix:
         yarn: true
         directories:
           - reactapp/node_modules
+          - /home/travis/.cargo
       node_js:
         - "8.9.1"
       before_install:
+        - curl -sSf https://build.travis-ci.org/files/rustup-init.sh | sh -s -- --default-toolchain=$TRAVIS_RUST_VERSION -y
+        - cargo --version
         - export TZ=America/Vancouver
       before_script:
         - cd reactapp
       script:
         - npm test
+      env:
+        - TRAVIS_RUST_VERSION=nightly-2018-09-01
+        - CARGO_HOME="$HOME/.cargo"
+        - PATH="$CARGO_HOME/bin:$PATH"
