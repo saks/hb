@@ -1,9 +1,9 @@
 // @flow
 
-import { Link } from 'react-router-dom';
-import React from 'react';
+import { Link } from 'react-router-dom'
+import React from 'react'
 
-import PlusIcon from '../components/PlusIcon';
+import PlusIcon from '../components/PlusIcon'
 
 export default () => (
     <div id="add-button" className="position-fixed">
@@ -13,4 +13,4 @@ export default () => (
             </button>
         </Link>
     </div>
-);
+)

@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 class Spinner extends Component<{| isVisible: boolean |}, void> {
     render() {
@@ -10,8 +10,8 @@ class Spinner extends Component<{| isVisible: boolean |}, void> {
                     <circle id="spinner" cx="16" cy="16" r="14" fill="none" />
                 </svg>
             </div>
-        );
+        )
     }
 }
 
-export default Spinner;
+export default Spinner

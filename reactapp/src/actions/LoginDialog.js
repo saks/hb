@@ -1,17 +1,17 @@
 // @flow
 
-import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index';
-import { show as showSpinner, show as hideSpinner } from './Spinner';
-import { setAuthErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth';
-import { loadData as loadTags } from './Tags';
+import { loadDataForBudgetsPage, loadDataForRecordsPage, authFetch } from './index'
+import { show as showSpinner, show as hideSpinner } from './Spinner'
+import { setAuthErrors, setAuthToken, setAuthProfile, closeAuthDialog } from './Auth'
+import { loadData as loadTags } from './Tags'
 
-import type { Dispatch, GetState } from '../types/Dispatch';
-import type { ThunkAction } from '../types/Action';
-import type { UserProfile } from '../types/Auth';
+import type { Dispatch, GetState } from '../types/Dispatch'
+import type { ThunkAction } from '../types/Action'
+import type { UserProfile } from '../types/Auth'
 
 export default (formData: {| username: string, password: string |}): ThunkAction => {
     return async (dispatch: Dispatch, getState: GetState) => {
-        dispatch(showSpinner());
+        dispatch(showSpinner())
         const tokenResponse = await fetch('/auth/jwt/create/', {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -19,39 +19,39 @@ export default (formData: {| username: string, password: string |}): ThunkAction
                 'User-Agent': 'Home Budget PWA',
                 'Content-Type': 'application/json',
             },
-        });
-        dispatch(hideSpinner());
+        })
+        dispatch(hideSpinner())
 
         if (!tokenResponse.ok) {
-            dispatch(setAuthErrors(await tokenResponse.json()));
-            return;
+            dispatch(setAuthErrors(await tokenResponse.json()))
+            return
         }
 
-        const tokenData = await tokenResponse.json();
-        dispatch(setAuthToken(tokenData.token));
-        const parsedToken = getState().auth.parsedToken;
+        const tokenData = await tokenResponse.json()
+        dispatch(setAuthToken(tokenData.token))
+        const parsedToken = getState().auth.parsedToken
 
         if (!parsedToken) {
             // TODO: dispatch error: "failed to parse auth token"
-            return;
+            return
         }
 
-        const userId = parsedToken.user_id;
-        const profileRequest = new Request(`/api/user/${userId}/`);
-        const profileResponse = await dispatch(authFetch(profileRequest));
+        const userId = parsedToken.user_id
+        const profileRequest = new Request(`/api/user/${userId}/`)
+        const profileResponse = await dispatch(authFetch(profileRequest))
 
         if (null === profileResponse) {
             // TODO: dispatch error: "failed to get user profile"
-            return;
+            return
         }
 
-        const profile: UserProfile = await profileResponse.json();
-        dispatch(setAuthProfile(profile));
-        dispatch(closeAuthDialog());
+        const profile: UserProfile = await profileResponse.json()
+        dispatch(setAuthProfile(profile))
+        dispatch(closeAuthDialog())
 
         // refresh all data
-        dispatch(loadTags());
-        dispatch(loadDataForRecordsPage());
-        dispatch(loadDataForBudgetsPage());
-    };
-};
+        dispatch(loadTags())
+        dispatch(loadDataForRecordsPage())
+        dispatch(loadDataForBudgetsPage())
+    }
+}

@@ -1,26 +1,26 @@
 // @flow
 
-import React, { Component } from 'react';
-import { fmtNum } from '../utils';
+import React, { Component } from 'react'
+import { fmtNum } from '../utils'
 
-import type { Attrs } from '../types/Budget';
+import type { Attrs } from '../types/Budget'
 
 export default class Budget extends Component<{| attrs: Attrs |}, void> {
     get progress() {
-        const amount = parseFloat(this.props.attrs.amount);
-        return Math.round((this.props.attrs.spent / amount) * 100);
+        const amount = parseFloat(this.props.attrs.amount)
+        return Math.round((this.props.attrs.spent / amount) * 100)
     }
 
     get leftAveragePerDay() {
-        return fmtNum(this.props.attrs.left_average_per_day);
+        return fmtNum(this.props.attrs.left_average_per_day)
     }
 
     get left() {
-        return fmtNum(this.props.attrs.left);
+        return fmtNum(this.props.attrs.left)
     }
 
     get total() {
-        return fmtNum(this.props.attrs.amount);
+        return fmtNum(this.props.attrs.amount)
     }
 
     render() {
@@ -52,6 +52,6 @@ export default class Budget extends Component<{| attrs: Attrs |}, void> {
                     />
                 </div>
             </div>
-        );
+        )
     }
 }

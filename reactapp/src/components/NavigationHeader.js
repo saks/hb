@@ -1,10 +1,10 @@
 // @flow
 
-import { NavLink } from 'react-router-dom';
-import React from 'react';
-import GraphIcon from './GraphIcon';
-import ListIcon from './ListIcon';
-import TagsIcon from './TagsIcon';
+import { NavLink } from 'react-router-dom'
+import React from 'react'
+import GraphIcon from './GraphIcon'
+import ListIcon from './ListIcon'
+import TagsIcon from './TagsIcon'
 
 const NavigationHeader = () => (
     <header className="navbar navbar-expand navbar-dark bg-info mb-3 py-0">
@@ -17,7 +17,8 @@ const NavigationHeader = () => (
                     activeClassName="active"
                     className="nav-link text-white"
                     to="/records"
-                    exact>
+                    exact
+                >
                     <ListIcon />
                 </NavLink>
             </li>
@@ -26,7 +27,8 @@ const NavigationHeader = () => (
                     activeClassName="active"
                     className="nav-link text-white"
                     to="/budgets"
-                    exact>
+                    exact
+                >
                     <GraphIcon />
                 </NavLink>
             </li>
@@ -37,6 +39,6 @@ const NavigationHeader = () => (
             </li>
         </ul>
     </header>
-);
+)
 
-export default NavigationHeader;
+export default NavigationHeader

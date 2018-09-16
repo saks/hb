@@ -1,45 +1,45 @@
 // @flow
 
-import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom';
-import React, { Component } from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import * as Actions from '../actions';
-import LoginDialog from '../components/LoginDialog';
-import RecordsList from '../components/RecordsList';
-import TagsList from '../components/TagsList';
-import RecordForm from '../components/RecordForm';
-import Budgets from '../components/Budgets';
-import Spinner from '../components/Spinner';
-import AddRecordButton from '../components/AddRecordButton';
-import RecordModel from '../models/Record';
-import './../App.css';
+import { HashRouter as Router, Route, Redirect, Switch } from 'react-router-dom'
+import React, { Component } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import * as Actions from '../actions'
+import LoginDialog from '../components/LoginDialog'
+import RecordsList from '../components/RecordsList'
+import TagsList from '../components/TagsList'
+import RecordForm from '../components/RecordForm'
+import Budgets from '../components/Budgets'
+import Spinner from '../components/Spinner'
+import AddRecordButton from '../components/AddRecordButton'
+import RecordModel from '../models/Record'
+import './../App.css'
 
-import NavigationHeader from '../components/NavigationHeader';
+import NavigationHeader from '../components/NavigationHeader'
 
-import type { RouterHistory } from 'react-router-dom';
-import type { Element } from 'react';
-import type { Action, ThunkAction } from '../types/Action';
-import type { State } from '../types/State';
-import type { Dispatch } from '../types/Dispatch';
+import type { RouterHistory } from 'react-router-dom'
+import type { Element } from 'react'
+import type { Action, ThunkAction } from '../types/Action'
+import type { State } from '../types/State'
+import type { Dispatch } from '../types/Dispatch'
 
-type ActionsMap = { [string]: () => Action & ThunkAction };
+type ActionsMap = { [string]: () => Action & ThunkAction }
 
-type Props = State & { +actions: ActionsMap };
+type Props = State & { +actions: ActionsMap }
 
 class App extends Component<Props, void> {
     componentDidMount() {
         if (this.isAuthenticated()) {
-            this.props.actions.loadDataForRecordsPage();
-            this.props.actions.loadDataForBudgetsPage();
-            this.props.actions.loadDataForTagsPage();
+            this.props.actions.loadDataForRecordsPage()
+            this.props.actions.loadDataForBudgetsPage()
+            this.props.actions.loadDataForTagsPage()
         } else {
-            this.props.actions.openAuthDialog();
+            this.props.actions.openAuthDialog()
         }
     }
 
     isAuthenticated() {
-        return null !== this.props.auth.token;
+        return null !== this.props.auth.token
     }
 
     newRecordForm(attrs, history: RouterHistory): Element<typeof RecordForm> {
@@ -50,12 +50,12 @@ class App extends Component<Props, void> {
                 submit={this.props.actions.submitRecordForm}
                 tags={this.props.tags.list}
             />
-        );
+        )
     }
 
     render() {
-        const props = this.props;
-        const actions = props.actions;
+        const props = this.props
+        const actions = props.actions
         return (
             <Router>
                 <React.Fragment>
@@ -98,12 +98,12 @@ class App extends Component<Props, void> {
                                 <Route
                                     path="/records/:recordId"
                                     render={({ history, match }) => {
-                                        const id = parseInt(match.params.recordId, 10);
-                                        const attrs = props.records.list.find(r => r.id === id);
+                                        const id = parseInt(match.params.recordId, 10)
+                                        const attrs = props.records.list.find(r => r.id === id)
                                         if (undefined === attrs) {
-                                            return <Redirect to="/records" />;
+                                            return <Redirect to="/records" />
                                         } else {
-                                            return this.newRecordForm(attrs, history);
+                                            return this.newRecordForm(attrs, history)
                                         }
                                     }}
                                 />
@@ -125,17 +125,17 @@ class App extends Component<Props, void> {
                     <Route path="/records" exact component={AddRecordButton} />
                 </React.Fragment>
             </Router>
-        );
+        )
     }
 }
 
-const mapStateToProps = (state: State): State => state;
+const mapStateToProps = (state: State): State => state
 
 const mapDispatchToProps = (dispatch: Dispatch): { actions: ActionsMap } => ({
     actions: bindActionCreators(Actions, dispatch),
-});
+})
 
 export default connect(
     mapStateToProps,
     mapDispatchToProps
-)(App);
+)(App)

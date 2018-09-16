@@ -1,13 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import Budget from './Budget';
-import type { Attrs } from '../types/Budget';
+import Budget from './Budget'
+import type { Attrs } from '../types/Budget'
 
 export default class Budgets extends Component<{| list: Array<Attrs> |}> {
     get budgets() {
-        return this.props.list.map(attrs => <Budget attrs={attrs} key={attrs.name} />);
+        return this.props.list.map(attrs => <Budget attrs={attrs} key={attrs.name} />)
     }
 
     render() {
@@ -18,6 +18,6 @@ export default class Budgets extends Component<{| list: Array<Attrs> |}> {
                 </div>
                 <div id="budget-cards">{this.budgets}</div>
             </div>
-        );
+        )
     }
 }

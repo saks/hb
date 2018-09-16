@@ -1,67 +1,67 @@
 // @flow
 
-import React, { Component } from 'react';
-import DeleteIcon from './DeleteIcon';
+import React, { Component } from 'react'
+import DeleteIcon from './DeleteIcon'
 
-import type { ThunkAction } from '../types/Action';
+import type { ThunkAction } from '../types/Action'
 
 type Props = {
     list: Array<string>,
     sync: (list: Array<string>) => ThunkAction,
-};
+}
 
 type State = {
     newTagName: string,
-};
+}
 
 export default class TagsList extends Component<Props, State> {
-    tagNameInput: { current: null | HTMLInputElement };
+    tagNameInput: { current: null | HTMLInputElement }
 
     constructor(props: Props) {
-        super(props);
+        super(props)
 
-        this.tagNameInput = React.createRef();
-        this.state = { newTagName: '' };
+        this.tagNameInput = React.createRef()
+        this.state = { newTagName: '' }
     }
 
     deleteTag(event: SyntheticEvent<HTMLAnchorElement>) {
-        const toDelete = event.currentTarget.dataset.name;
-        const newList = this.listToSync({ delete: toDelete });
-        this.props.sync(newList);
+        const toDelete = event.currentTarget.dataset.name
+        const newList = this.listToSync({ delete: toDelete })
+        this.props.sync(newList)
     }
 
     async addNewTag(event: SyntheticEvent<HTMLButtonElement>) {
-        const newTag = this.state.newTagName;
-        const newList = this.listToSync({ add: newTag });
+        const newTag = this.state.newTagName
+        const newList = this.listToSync({ add: newTag })
 
-        await this.props.sync(newList);
+        await this.props.sync(newList)
 
-        this.setState({ newTagName: '' });
-        this.focus();
+        this.setState({ newTagName: '' })
+        this.focus()
     }
 
     focus() {
         if (this.tagNameInput.current) {
-            this.tagNameInput.current.focus();
+            this.tagNameInput.current.focus()
         }
     }
 
     handleNewTagNameChange(event: SyntheticInputEvent<HTMLInputElement>) {
-        this.setState({ newTagName: event.target.value });
+        this.setState({ newTagName: event.target.value })
     }
 
     listToSync(options: {| delete?: string, add?: string |}): Array<string> {
-        const newList = new Set(this.props.list);
+        const newList = new Set(this.props.list)
 
         if (options.delete) {
-            newList.delete(options.delete);
+            newList.delete(options.delete)
         }
 
         if (options.add) {
-            newList.add(options.add);
+            newList.add(options.add)
         }
 
-        return Array.from(newList);
+        return Array.from(newList)
     }
 
     get list() {
@@ -74,7 +74,7 @@ export default class TagsList extends Component<Props, State> {
                     </span>
                 </td>
             </tr>
-        ));
+        ))
     }
 
     render() {
@@ -99,7 +99,8 @@ export default class TagsList extends Component<Props, State> {
                                 <button
                                     className="btn btn-default"
                                     type="button"
-                                    onClick={this.addNewTag.bind(this)}>
+                                    onClick={this.addNewTag.bind(this)}
+                                >
                                     add
                                 </button>
                             </span>
@@ -115,6 +116,6 @@ export default class TagsList extends Component<Props, State> {
                     </div>
                 </div>
             </div>
-        );
+        )
     }
 }

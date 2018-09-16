@@ -75,17 +75,33 @@
         "test": "node --expose-wasm scripts/test.js --env=jsdom",
         "cov": "node scripts/test.js --coverage --env=jsdom",
         "storybook": "start-storybook -p 9009 -s public",
-        "build-storybook": "build-storybook -s public"
+        "build-storybook": "build-storybook -s public",
+        "precommit": "lint-staged",
+        "fmt": "prettier --write './**/*.js'"
     },
     "browserslist": {
-        "development": ["last 1 version"],
-        "production": ["last 1 version", "> 5%"]
+        "development": [
+            "last 1 version"
+        ],
+        "production": [
+            "last 1 version",
+            "> 5%"
+        ]
     },
     "jest": {
-        "collectCoverageFrom": ["src/**/*.{js,jsx,mjs}"],
-        "setupFiles": ["<rootDir>/config/polyfills.js"],
-        "testMatch": ["**/__tests__/**/*.{js,jsx,mjs}", "**/?(*.)(spec|test).{js,jsx,mjs}"],
-        "roots": ["<rootDir>/src"],
+        "collectCoverageFrom": [
+            "src/**/*.{js,jsx,mjs}"
+        ],
+        "setupFiles": [
+            "<rootDir>/config/polyfills.js"
+        ],
+        "testMatch": [
+            "**/__tests__/**/*.{js,jsx,mjs}",
+            "**/?(*.)(spec|test).{js,jsx,mjs}"
+        ],
+        "roots": [
+            "<rootDir>/src"
+        ],
         "testEnvironment": "node",
         "testURL": "http://localhost",
         "transform": {
@@ -102,7 +118,16 @@
             "^react-native$": "react-native-web",
             "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
         },
-        "moduleFileExtensions": ["web.js", "js", "json", "web.jsx", "jsx", "node", "mjs", "wasm"]
+        "moduleFileExtensions": [
+            "web.js",
+            "js",
+            "json",
+            "web.jsx",
+            "jsx",
+            "node",
+            "mjs",
+            "wasm"
+        ]
     },
     "devDependencies": {
         "enzyme": "^3.6.0",
@@ -110,9 +135,19 @@
         "fetch-mock": "6.5.2",
         "flow": "*",
         "flow-bin": "*",
+        "husky": "^0.14.3",
+        "lint-staged": "^7.2.2",
         "node-fetch": "^2.2.0",
+        "prettier": "^1.14.2",
+        "prettifier": "^0.4.0",
         "redux-mock-store": "^1.5.3",
         "sinon": "^6.2.0",
         "webpack-cli": "*"
+    },
+    "lint-staged": {
+        "*.js": [
+            "prettier --write",
+            "git add"
+        ]
     }
 }

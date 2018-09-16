@@ -1,3 +1,3 @@
-import $ from './import-jquery';
-import 'bootstrap-material-design';
-$('body').bootstrapMaterialDesign();
+import $ from './import-jquery'
+import 'bootstrap-material-design'
+$('body').bootstrapMaterialDesign()

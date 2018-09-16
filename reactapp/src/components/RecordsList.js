@@ -1,13 +1,13 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
-import RecordModel from '../models/Record';
-import Record from './Record';
+import RecordModel from '../models/Record'
+import Record from './Record'
 
-import type { RouterHistory } from 'react-router-dom';
-import type { Attrs } from '../types/Record';
-import type { ThunkAction } from '../types/Action';
+import type { RouterHistory } from 'react-router-dom'
+import type { Attrs } from '../types/Record'
+import type { ThunkAction } from '../types/Action'
 
 type Props = {
     list: Array<Attrs>,
@@ -15,14 +15,14 @@ type Props = {
     visitNextPage: () => ThunkAction,
     visitPrevPage: () => ThunkAction,
     history: RouterHistory,
-};
+}
 
 export default class RecordsList extends Component<Props, void> {
     get renderedRecords() {
         return this.props.list.map(attrs => {
-            const model = RecordModel.from(attrs);
-            return <Record model={model} key={model.id} history={this.props.history} />;
-        });
+            const model = RecordModel.from(attrs)
+            return <Record model={model} key={model.id} history={this.props.history} />
+        })
     }
 
     render() {
@@ -39,7 +39,8 @@ export default class RecordsList extends Component<Props, void> {
                                 <span
                                     className="page-link visit-prev-page"
                                     tabIndex="-1"
-                                    onClick={this.props.visitPrevPage}>
+                                    onClick={this.props.visitPrevPage}
+                                >
                                     Previous
                                 </span>
                             </li>
@@ -51,7 +52,8 @@ export default class RecordsList extends Component<Props, void> {
                             <li className="page-item">
                                 <span
                                     className="page-link visit-next-page"
-                                    onClick={this.props.visitNextPage}>
+                                    onClick={this.props.visitNextPage}
+                                >
                                     Next
                                 </span>
                             </li>
@@ -59,6 +61,6 @@ export default class RecordsList extends Component<Props, void> {
                     </nav>
                 </div>
             </div>
-        );
+        )
     }
 }

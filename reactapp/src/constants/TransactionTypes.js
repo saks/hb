@@ -1,4 +1,4 @@
 // @flow
 
-export const EXP = 'EXP';
-export const INC = 'INC';
+export const EXP = 'EXP'
+export const INC = 'INC'

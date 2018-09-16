@@ -1,8 +1,8 @@
-require('../../test/helpers.js');
+require('../../test/helpers.js')
 
-import React from 'react';
-import Budgets from './Budgets';
-import Budget from './Budget';
+import React from 'react'
+import Budgets from './Budgets'
+import Budget from './Budget'
 
 const attrs = [
     {
@@ -23,18 +23,18 @@ const attrs = [
         average_per_day: 322.58,
         left_average_per_day: 111.81,
     },
-];
+]
 
 describe('<Budgets>', () => {
-    let wrapper;
+    let wrapper
 
-    beforeEach(() => (wrapper = shallow(<Budgets list={attrs} />)));
+    beforeEach(() => (wrapper = shallow(<Budgets list={attrs} />)))
 
     it('renders name', () => {
-        expect(wrapper.find('h2').text()).toEqual('Budgets');
-    });
+        expect(wrapper.find('h2').text()).toEqual('Budgets')
+    })
 
     it('renders list of budgets', () => {
-        expect(wrapper.find(Budget)).toHaveLength(2);
-    });
-});
+        expect(wrapper.find(Budget)).toHaveLength(2)
+    })
+})
