@@ -21,6 +21,7 @@ matrix:
         directories:
           - reactapp/node_modules
           - /home/travis/.cargo
+          - /home/travis/.rustup
       node_js:
         - "8.9.1"
       before_install:
