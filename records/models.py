@@ -1,13 +1,11 @@
 import logging
 
-from django.db import models
 from django.conf import settings
-from django.utils import timezone
 from django.contrib.postgres.fields import ArrayField
+from django.db import models
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
 from djmoney.models.fields import MoneyField
-
 
 TRANSACTION_TYPE = (
     ('EXP', _('Expences')),
@@ -25,9 +23,12 @@ class Record(models.Model):
         Transaction type determines EXP(Expences) or INC(Income) the record is.
     '''
 
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    tags = ArrayField(models.CharField(max_length=20))
-    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    tags = ArrayField(
+        models.TextField(max_length=20), null=False, blank=True, default=[])
+    amount = MoneyField(
+        max_digits=15, decimal_places=2, default_currency='CAD')
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
@@ -36,7 +37,7 @@ class Record(models.Model):
         '''
             Return Redis key where stored sorted set of tags frequency usage.
         '''
-        return settings.REDIS_KEY_USER_TAGS % (self.user_id,)
+        return settings.REDIS_KEY_USER_TAGS % (self.user_id, )
 
     def __str__(self):
         return '%s %s' % (self.amount, ', '.join(self.tags))
