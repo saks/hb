@@ -9,7 +9,8 @@ class User(AbstractUser):
     User model.
     Uses old table 'auth_user'.
     '''
-    tags = ArrayField(models.CharField(max_length=30), null=True, blank=True)
+    tags = ArrayField(
+        models.TextField(max_length=20), null=False, blank=True, default=[])
 
     class Meta:
         db_table = 'auth_user'
