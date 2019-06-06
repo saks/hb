@@ -2,3 +2,4 @@
 *.swp
 Session.vim
 .mypy_cache
+node_modules
