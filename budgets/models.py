@@ -22,7 +22,7 @@ class BudgetAbstract(models.Model):
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     comment = models.TextField(null=True, blank=True)
     tags_type = models.CharField(choices=TAGS_TYPE, max_length=4)
-    tags = ArrayField(models.CharField(max_length=20), null=True, blank=True)
+    tags = ArrayField(models.TextField(max_length=20), null=True, blank=True)
 
     class Meta:
         abstract = True
