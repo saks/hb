@@ -1,16 +1,20 @@
 from django.contrib import admin
 
-from budgets.models import Budget
+from budgets.models import (
+    Budget,
+    YearBudget,
+)
 
 
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('name', 'spent', 'left', )
-    list_filter = (
-        'start_date',
-    )
-    ordering = ('start_date', )
+    list_display = ('get_name', 'spent', 'left', )
 
-    fields = ('name', 'start_date', 'amount', 'tags_type', 'tags', 'user', )
+    def get_name(self, obj):
+        has_year = hasattr(obj, 'year')
+        if has_year:
+            return '{} {}'.format(obj.name, obj.year)
+        return obj.name
 
 
 admin.site.register(Budget, BudgetAdmin)
+admin.site.register(YearBudget, BudgetAdmin)

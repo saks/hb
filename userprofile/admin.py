@@ -4,8 +4,13 @@ from django.contrib.auth.admin import UserAdmin
 from userprofile.models import User
 
 
+def tags(obj):
+    return [tag for tag in obj.get_user_tags_order()]
+tags.short_description = 'Tags'
+
+
 class UserAdmin(UserAdmin):
-    pass
+    list_display = UserAdmin.list_display + (tags, )
 
 
 admin.site.register(User, UserAdmin)
