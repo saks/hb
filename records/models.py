@@ -48,7 +48,7 @@ class Record(models.Model):
         log.debug('Remove tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.tags:
-            pipe.zincrby(self.redis_tags_key, tag, -1)
+            pipe.zincrby(self.redis_tags_key, -1, tag)
 
         # remove 0 score tags
         pipe.zremrangebyscore(self.redis_tags_key, 0, 0)
@@ -61,5 +61,5 @@ class Record(models.Model):
         log.debug('Add tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.tags:
-            pipe.zincrby(self.redis_tags_key, tag, 1)
+            pipe.zincrby(self.redis_tags_key, 1, tag)
         pipe.execute()
