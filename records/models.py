@@ -26,7 +26,7 @@ class Record(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tags = ArrayField(
-        models.TextField(max_length=20), null=False, blank=True, default=[])
+        models.TextField(max_length=20), null=False, blank=True, default=list)
     amount = MoneyField(
         max_digits=15, decimal_places=2, default_currency='CAD')
     comment = models.TextField(null=True, blank=True)
