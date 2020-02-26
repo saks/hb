@@ -7,7 +7,7 @@ from records.models import Record
 class RecordAdmin(admin.ModelAdmin):
 
     list_display = ('id', 'user', 'created_at', 'transaction_type',
-                    'tags', 'amount',)
+                    'tags', 'amount', 'comment')
     list_editable = ('amount', 'user', 'created_at')
     list_per_page = 10
     list_filter = (
@@ -15,7 +15,7 @@ class RecordAdmin(admin.ModelAdmin):
         'transaction_type',
     )
     ordering = ('-created_at', )
-    fields = ('amount', 'tags', 'transaction_type', 'user', )
+    fields = ('amount', 'tags', 'transaction_type', 'user', 'comment')
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(RecordAdmin, self).get_form(request, obj, **kwargs)

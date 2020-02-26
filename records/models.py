@@ -28,6 +28,7 @@ class Record(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tags = ArrayField(models.CharField(max_length=20))
     amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
+    comment = models.TextField(null=True, blank=True)
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
