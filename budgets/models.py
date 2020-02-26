@@ -72,7 +72,6 @@ class Budget(BudgetAbstract):
                             verbose_name=_(u'Budget name'))
     start_date = models.DateField()
 
-
     def __str__(self):
         return '%r: %r' % (self.user, self.amount)
 
