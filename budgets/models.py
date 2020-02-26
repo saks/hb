@@ -1,18 +1,15 @@
-from datetime import date
-from decimal import Decimal, ROUND_DOWN
 from calendar import monthrange
+from datetime import date
+from decimal import ROUND_DOWN, Decimal
 
-from django.utils import timezone
-from django.db import models
-from django.db.models import Sum
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
+from django.db import models
+from django.db.models import Sum
+from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
 from djmoney.models.fields import MoneyField
-
 from records.models import Record
-
 
 TAGS_TYPE = (
     ('INCL', 'Tags Include'),
@@ -75,19 +72,23 @@ class Budget(BudgetAbstract):
                             verbose_name=_(u'Budget name'))
     start_date = models.DateField()
 
+
     def __str__(self):
         return '%r: %r' % (self.user, self.amount)
 
     @property
     def average_per_day(self):
         days = monthrange(date.today().year, date.today().month)[1]
-        return (self.amount.amount/days).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+        return (self.amount.amount / days).quantize(
+            Decimal('.01'), rounding=ROUND_DOWN)
 
     @property
     def left_average_per_day(self):
         days = monthrange(date.today().year, date.today().month)[1]
-        rest_days = days - date.today().day + 1  # we need to take into account spendings for today
-        return (self.left/rest_days).quantize(Decimal('.01'), rounding=ROUND_DOWN)
+        rest_days = days - date.today(
+        ).day + 1  # we need to take into account spendings for today
+        return (self.left / rest_days).quantize(
+            Decimal('.01'), rounding=ROUND_DOWN)
 
 
 def year_choices():

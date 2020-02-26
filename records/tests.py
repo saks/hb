@@ -23,6 +23,7 @@ class RecordsTests(TestCase):
     def _add_user(self, username='test'):
         userModel = get_user_model()
         user = userModel(username=username)
+        user.tags = ['cafe', 'fun', 'books']
         user.save()
         return user
 
@@ -44,27 +45,30 @@ class RecordsTests(TestCase):
         user = self._add_user(username='addrecord')
         self._add_record(user=user, tags=['cafe', 'fun'])
         self._add_record(user=user, tags=['cafe'])
-        self.assertEqual(list(user.get_user_tags_order()), ['cafe', 'fun'])
+        self.assertEqual(list(user.get_ordered_tags()), ['cafe', 'fun', 'books'])
 
     def test_04_redis_data_change_order(self):
         user = self._add_user(username='changerecord')
         self._add_record(user=user, tags=['cafe', 'fun'])
         self._add_record(user=user, tags=['fun'])
-        self.assertEqual(list(user.get_user_tags_order()), ['fun', 'cafe'])
+        self.assertEqual(list(user.get_ordered_tags()), ['fun', 'cafe', 'books'])
 
     def test_05_redis_data_on_update_record(self):
         user = self._add_user(username='updaterecord')
         record = self._add_record(user=user, tags=['cafe', 'fun'])
         self._add_record(user=user, tags=['fun'])
-        self.assertEqual(list(user.get_user_tags_order()), ['fun', 'cafe'])
+        self.assertEqual(list(user.get_ordered_tags()), ['fun', 'cafe', 'books'])
         record.tags = ['fun', 'books']
         record.save()
-        self.assertEqual(list(user.get_user_tags_order()), ['fun', 'books'])
+        self.assertEqual(list(user.get_ordered_tags()), ['fun', 'books', 'cafe'])
 
     def test_06_redis_data_on_delete(self):
         user = self._add_user(username='deleterecord')
-        record = self._add_record(user=user, tags=['cafe', 'fun'])
-        self._add_record(user=user, tags=['cafe'])
-        self.assertEqual(list(user.get_user_tags_order()), ['cafe', 'fun'])
-        record.delete()
-        self.assertEqual(list(user.get_user_tags_order()), ['cafe'])
+        self._add_record(user=user, tags=['cafe', 'fun'])
+        r1 = self._add_record(user=user, tags=['cafe'])
+        r2 = self._add_record(user=user, tags=['cafe'])
+        self._add_record(user=user, tags=['fun'])
+        self.assertEqual(list(user.get_ordered_tags()), ['cafe', 'fun', 'books'])
+        r1.delete()
+        r2.delete()
+        self.assertEqual(list(user.get_ordered_tags()), ['fun', 'cafe', 'books'])
