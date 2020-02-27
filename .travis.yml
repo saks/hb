@@ -15,16 +15,3 @@ matrix:
       #    - python manage.py migrate
       #  - prospector
       script: python manage.py test --settings=hbapi.settings.travis
-    - language: node_js
-      cache:
-        yarn: true
-        directories:
-          - reactapp/node_modules
-      node_js:
-        - "8.9.1"
-      before_install:
-        - export TZ=America/Vancouver
-      before_script:
-        - cd reactapp
-      script:
-        - npm test
