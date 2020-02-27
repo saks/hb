@@ -43,12 +43,13 @@ INSTALLED_APPS = [
     'records.apps.RecordsConfig',
     'budgets.apps.BudgetsConfig',
     'userprofile.apps.UserprofileConfig',
-    'bootstrap3',
+    'bootstrap4',
     'djoser',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

@@ -26,9 +26,10 @@ class Record(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tags = ArrayField(
-        models.TextField(max_length=20), null=False, blank=True, default=[])
+        models.TextField(max_length=20), null=False, blank=True, default=list)
     amount = MoneyField(
         max_digits=15, decimal_places=2, default_currency='CAD')
+    comment = models.TextField(null=True, blank=True)
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
 
@@ -49,7 +50,7 @@ class Record(models.Model):
         log.debug('Remove tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.tags:
-            pipe.zincrby(self.redis_tags_key, tag, -1)
+            pipe.zincrby(self.redis_tags_key, -1, tag)
 
         # remove 0 score tags
         pipe.zremrangebyscore(self.redis_tags_key, 0, 0)
@@ -62,5 +63,5 @@ class Record(models.Model):
         log.debug('Add tags weights')
         pipe = settings.REDIS_CONN.pipeline()
         for tag in self.tags:
-            pipe.zincrby(self.redis_tags_key, tag, 1)
+            pipe.zincrby(self.redis_tags_key, 1, tag)
         pipe.execute()

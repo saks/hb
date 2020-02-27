@@ -18,8 +18,7 @@ class RecordSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Record
-        fields = ('id', 'user', 'tags', 'amount', 'transaction_type',
-                  'created_at')
+        fields = ('id', 'user', 'tags', 'amount', 'transaction_type', 'comment', 'created_at')
 
     def get_amount(self, obj):
         return {

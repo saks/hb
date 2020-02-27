@@ -1,4 +1,4 @@
-{% load i18n admin_urls admin_static admin_modify bootstrap3 %}
+{% load i18n admin_urls static admin_modify bootstrap4 %}
 
 <!DOCTYPE html>
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
@@ -80,7 +80,7 @@
           Save
         </button>
         <button name="_addanother" type="submit" class="btn btn-default">
-          {% bootstrap_icon "plus" %} Save and add another
+          Save and add another
         </button>
       {% endbuttons %}
     </form>
