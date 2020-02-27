@@ -4,7 +4,7 @@ from userprofile.models import User
 
 
 def tags(obj):
-    return [tag for tag in obj.get_user_tags_order()]
+    return [tag for tag in obj.get_ordered_tags()]
 
 
 tags.short_description = 'Tags'
