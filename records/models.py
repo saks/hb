@@ -12,7 +12,7 @@ TRANSACTION_TYPE = (
     ('INC', _('Income')),
 )
 
-log = logging.getLogger('apps')
+log = logging.getLogger(__name__)
 
 
 class Record(models.Model):
