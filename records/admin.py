@@ -1,5 +1,4 @@
 from datetime import date
-from collections import defaultdict
 from decimal import Decimal
 
 from django.contrib.admin.widgets import AdminDateWidget
@@ -82,7 +81,6 @@ class RecordAdmin(admin.ModelAdmin):
         return records
 
     def _get_stat_by_tag(self, date_filter):
-        result = defaultdict(Decimal)
         records = self._get_expense_records(date_filter)
         # get current year records and cal by tags
         records = records.annotate(
