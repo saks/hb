@@ -72,21 +72,24 @@ class RecordAdmin(admin.ModelAdmin):
         return records
 
     def _get_stat_by_tag_combo(self, date_filter):
-        records = self._get_expense_records(date_filter)
-        records = records.annotate(
-            tag_combo=Func(F('tags'), Value('-'), function='array_to_string')
-        ).values('tag_combo').annotate(
-            tag_name=F('tag_combo'), total=Sum('amount')
-        ).values('tag_name', 'total')
+        records = self._get_expense_records(date_filter).order_by('tags')
+        records = (
+            records.annotate(
+                tag_combo=Func(F('tags'), Value('-'), function='array_to_string')
+            )
+            .values('tag_combo')
+            .annotate(tag_name=F('tag_combo'), total=Sum('amount'))
+            .values('tag_name', 'total')
+        )
         return records
 
     def _get_stat_by_tag(self, date_filter):
         records = self._get_expense_records(date_filter)
         # get current year records and cal by tags
-        records = records.annotate(
-            tag_name=Func(F('tags'), function='unnest')
-        ).values('tag_name').annotate(
-            total=Sum('amount')
+        records = (
+            records.annotate(tag_name=Func(F('tags'), function='unnest'))
+            .values('tag_name')
+            .annotate(total=Sum('amount'))
         )
         return records
 
