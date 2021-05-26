@@ -1,0 +1,38 @@
+{% extends "admin/change_form.html" %}
+{% load admin_modify %}
+{% load i18n admin_urls static admin_list %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  {{ media.css }}
+{% endblock %}
+
+{% block extra_head %}
+  {{ block.super }}
+  {{ media.js }}
+  {{ date_range_form.media }}
+{% endblock %}
+
+{% block content %}
+  <form action="" method="get">
+      {{ date_range_form.as_table }}
+      <input type="submit" value="OK">
+  </form>
+  <br/>
+  <table>
+    <thead>
+      <tr>
+        <th>Tag Name</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for tag_name, value in stats.items %}
+        <tr>
+          <td>{{ tag_name }}</td>
+          <td>{{ value }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

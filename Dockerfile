@@ -1,12 +1,12 @@
-FROM python:3.8
+FROM python:3-slim
 
 RUN apt-get update && apt-get install -y \
         gcc \
         gettext \
+        git \
         postgresql-contrib postgresql-client libpq-dev python3-dev \
 --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y git-core
 
 ENV DJANGO_VERSION 3.0.3
 ENV PYTHONUNBUFFERED 1
