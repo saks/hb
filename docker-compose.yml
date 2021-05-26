@@ -1,28 +1,46 @@
-version: "2"
+version: "3.9"
 services:
   db:
     image: "postgres"
+    container_name: db
     volumes:
       - "pg_data:/var/lib/postgresql/data"
+    networks:
+      - djangonetwork
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
 
   redis:
     image: "redis:alpine"
     command: "redis-server --bind 0.0.0.0"
     volumes:
       - "redis_data:/data"
+    networks:
+      - djangonetwork
 
   web:
-    build: "."
+    build: .
+    container_name: web
     volumes:
       - ".:/code"
     environment:
       - "PYLINTHOME=/tmp"
     ports:
       - "8008:8008"
+    depends_on:
+      - db
+      - redis
     links:
-      - "db"
-      - "redis"
+      - db:db
+      - redis
+    networks:
+      - djangonetwork
 
 volumes:
   pg_data:
   redis_data:
+
+networks:
+  djangonetwork:
+    driver: bridge

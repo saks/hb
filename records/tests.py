@@ -39,7 +39,7 @@ class RecordsTests(TestCase):
 
     def test_02_comma_separated_tags(self):
         record = self._add_record(user=self.user, tags=['cafe', 'fun'])
-        self.assertEqual(str(record), 'C$10.00 cafe, fun')
+        self.assertEqual(str(record), 'CA$10.00 cafe, fun')
 
     def test_03_redis_data_on_record_add(self):
         user = self._add_user(username='addrecord')

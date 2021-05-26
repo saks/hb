@@ -83,6 +83,7 @@ WSGI_APPLICATION = 'hbapi.wsgi.application'
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
 DATABASES = {}
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 AUTH_USER_MODEL = 'userprofile.User'
 
