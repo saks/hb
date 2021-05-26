@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from django.db.models import Func, F, Value, Sum
+from django.db.models import Func, F, Value, Sum, CharField
 from django.urls import path
 from django import forms
 
@@ -75,7 +75,9 @@ class RecordAdmin(admin.ModelAdmin):
         records = self._get_expense_records(date_filter).order_by('tags')
         records = (
             records.annotate(
-                tag_combo=Func(F('tags'), Value('-'), function='array_to_string')
+                tag_combo=Func(
+                    F('tags'), Value('-'), function='array_to_string', output_field=CharField()
+                )
             )
             .values('tag_combo')
             .annotate(tag_name=F('tag_combo'), total=Sum('amount'))
