@@ -27,10 +27,10 @@
       </tr>
     </thead>
     <tbody>
-      {% for tag_name, value in stats.items %}
+      {% for stat in stats %}
         <tr>
-          <td>{{ tag_name }}</td>
-          <td>{{ value }}</td>
+          <td>{{ stat.tag_name }}</td>
+          <td>{{ stat.total }}</td>
         </tr>
       {% endfor %}
     </tbody>

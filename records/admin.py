@@ -5,7 +5,7 @@ from decimal import Decimal
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from django.db.models import Func, F
+from django.db.models import Func, F, Value, Sum
 from django.urls import path
 from django import forms
 
@@ -21,6 +21,7 @@ class DateRangeForm(forms.Form):
         widget=AdminDateWidget(attrs={'type': 'date'}),
         initial=date.today()
     )
+    show_combo_stat = forms.BooleanField(initial=False, required=False)
 
 
 class RecordAdmin(admin.ModelAdmin):
@@ -44,7 +45,6 @@ class RecordAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def stat_by_tags(self, request):
-        result = defaultdict(Decimal)
         # filter records
         date_range_form = DateRangeForm()
         if request.GET:
@@ -52,28 +52,45 @@ class RecordAdmin(admin.ModelAdmin):
         if date_range_form.is_valid():
             date_filter = date_range_form.cleaned_data
 
-            records = Record.objects.filter(
-                created_at__gte=date_filter['date_from'],
-                created_at__lte=date_filter['date_to']
-            )
-            # get current year records and cal by tags
-            records = records.annotate(
-                tag_name=Func(F('tags'), function='unnest')
-            ).values('tag_name', 'amount').distinct()
-
-            # sum up and group.
-            for rec in records:
-                result[rec['tag_name']] += rec['amount']
-
         context = dict(
-           # Include common variables for rendering the admin template.
-           self.admin_site.each_context(request),
-           # Anything else you want in the context...
-           opts=Record._meta,
-           stats=dict(result),
-           date_range_form=date_range_form,
+            # Include common variables for rendering the admin template.
+            self.admin_site.each_context(request),
+            # Anything else you want in the context...
+            opts=Record._meta,
+            stats=self._get_stat_by_tag_combo(date_filter)
+            if date_filter['show_combo_stat']
+            else self._get_stat_by_tag(date_filter),
+            date_range_form=date_range_form,
         )
         return TemplateResponse(request, 'admin/records/stat_by_tags.html', context)
+
+    def _get_expense_records(self, date_filter):
+        records = Record.objects.filter(
+            created_at__gte=date_filter['date_from'],
+            created_at__lte=date_filter['date_to'],
+            transaction_type='EXP',
+        )
+        return records
+
+    def _get_stat_by_tag_combo(self, date_filter):
+        records = self._get_expense_records(date_filter)
+        records = records.annotate(
+            tag_combo=Func(F('tags'), Value('-'), function='array_to_string')
+        ).values('tag_combo').annotate(
+            tag_name=F('tag_combo'), total=Sum('amount')
+        ).values('tag_name', 'total')
+        return records
+
+    def _get_stat_by_tag(self, date_filter):
+        result = defaultdict(Decimal)
+        records = self._get_expense_records(date_filter)
+        # get current year records and cal by tags
+        records = records.annotate(
+            tag_name=Func(F('tags'), function='unnest')
+        ).values('tag_name').annotate(
+            total=Sum('amount')
+        )
+        return records
 
     def get_form(self, request, obj=None, **kwargs):
         form = super(RecordAdmin, self).get_form(request, obj, **kwargs)
