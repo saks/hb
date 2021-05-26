@@ -4,7 +4,7 @@ from decimal import Decimal
 from django.contrib.admin.widgets import AdminDateWidget
 from django.contrib import admin
 from django.template.response import TemplateResponse
-from django.db.models import Func, F, Value, Sum
+from django.db.models import Func, F, Value, Sum, CharField
 from django.urls import path
 from django import forms
 
@@ -72,21 +72,26 @@ class RecordAdmin(admin.ModelAdmin):
         return records
 
     def _get_stat_by_tag_combo(self, date_filter):
-        records = self._get_expense_records(date_filter)
-        records = records.annotate(
-            tag_combo=Func(F('tags'), Value('-'), function='array_to_string')
-        ).values('tag_combo').annotate(
-            tag_name=F('tag_combo'), total=Sum('amount')
-        ).values('tag_name', 'total')
+        records = self._get_expense_records(date_filter).order_by('tags')
+        records = (
+            records.annotate(
+                tag_combo=Func(
+                    F('tags'), Value('-'), function='array_to_string', output_field=CharField()
+                )
+            )
+            .values('tag_combo')
+            .annotate(tag_name=F('tag_combo'), total=Sum('amount'))
+            .values('tag_name', 'total')
+        )
         return records
 
     def _get_stat_by_tag(self, date_filter):
         records = self._get_expense_records(date_filter)
         # get current year records and cal by tags
-        records = records.annotate(
-            tag_name=Func(F('tags'), function='unnest')
-        ).values('tag_name').annotate(
-            total=Sum('amount')
+        records = (
+            records.annotate(tag_name=Func(F('tags'), function='unnest'))
+            .values('tag_name')
+            .annotate(total=Sum('amount'))
         )
         return records
 
