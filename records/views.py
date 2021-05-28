@@ -7,13 +7,11 @@ from .serializers import RecordSerializer
 
 class RecordViewSet(viewsets.ModelViewSet):
     serializer_class = RecordSerializer
-    permission_classes = (permissions.IsAuthenticated, )
+    permission_classes = (permissions.IsAuthenticated,)
     queryset = Record.objects.order_by('-created_at').all()
 
     def get_queryset(self):
-        return Record.objects \
-                     .filter(user=self.request.user) \
-                     .order_by('-created_at')
+        return Record.objects.filter(user=self.request.user).order_by('-created_at')
 
     def _save(self, serializer):
         '''

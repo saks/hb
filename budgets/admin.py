@@ -7,7 +7,11 @@ from budgets.models import (
 
 
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('get_name', 'spent', 'left', )
+    list_display = (
+        'get_name',
+        'spent',
+        'left',
+    )
 
     def get_name(self, obj):
         has_year = hasattr(obj, 'year')

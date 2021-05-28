@@ -11,22 +11,29 @@ from .models import Record
 
 class RecordSerializer(serializers.HyperlinkedModelSerializer):
 
-    user = serializers.HyperlinkedRelatedField(
-        read_only=True, view_name='user-detail')
+    user = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail')
     amount = serializers.SerializerMethodField()
     created_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Record
-        fields = ('id', 'user', 'tags', 'amount', 'transaction_type', 'comment', 'created_at')
+        fields = (
+            'id',
+            'user',
+            'tags',
+            'amount',
+            'transaction_type',
+            'comment',
+            'created_at',
+        )
 
     def get_amount(self, obj):
         return {
             'amount': obj.amount.amount,
             'currency': {
                 'code': obj.amount.currency.code,
-                'name': obj.amount.currency.name
-            }
+                'name': obj.amount.currency.name,
+            },
         }
 
     def get_created_at(self, obj):

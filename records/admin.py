@@ -14,33 +14,37 @@ from records.models import Record
 class DateRangeForm(forms.Form):
     date_from = forms.DateField(
         widget=AdminDateWidget(attrs={'type': 'date'}),
-        initial=date(date.today().year, 1, 1)
+        initial=date(date.today().year, 1, 1),
     )
     date_to = forms.DateField(
-        widget=AdminDateWidget(attrs={'type': 'date'}),
-        initial=date.today()
+        widget=AdminDateWidget(attrs={'type': 'date'}), initial=date.today()
     )
     show_combo_stat = forms.BooleanField(initial=False, required=False)
 
 
 class RecordAdmin(admin.ModelAdmin):
 
-    list_display = ('id', 'user', 'created_at', 'transaction_type',
-                    'tags', 'amount', 'comment')
+    list_display = (
+        'id',
+        'user',
+        'created_at',
+        'transaction_type',
+        'tags',
+        'amount',
+        'comment',
+    )
     list_editable = ('amount', 'user', 'created_at')
     list_per_page = 10
     list_filter = (
         'created_at',
         'transaction_type',
     )
-    ordering = ('-created_at', )
+    ordering = ('-created_at',)
     fields = ('amount', 'tags', 'transaction_type', 'user', 'comment')
 
     def get_urls(self):
         urls = super().get_urls()
-        my_urls = [
-            path('stat_by_tags/', self.admin_site.admin_view(self.stat_by_tags))
-        ]
+        my_urls = [path('stat_by_tags/', self.admin_site.admin_view(self.stat_by_tags))]
         return my_urls + urls
 
     def stat_by_tags(self, request):
@@ -76,7 +80,10 @@ class RecordAdmin(admin.ModelAdmin):
         records = (
             records.annotate(
                 tag_combo=Func(
-                    F('tags'), Value('-'), function='array_to_string', output_field=CharField()
+                    F('tags'),
+                    Value('-'),
+                    function='array_to_string',
+                    output_field=CharField(),
                 )
             )
             .values('tag_combo')

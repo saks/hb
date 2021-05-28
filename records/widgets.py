@@ -2,7 +2,6 @@ from bitfield.forms import BitFieldCheckboxSelectMultiple
 
 
 class TagsWidget(BitFieldCheckboxSelectMultiple):
-
     def _get_tags_dict(self, tags_list):
         tags_dict = {}
 

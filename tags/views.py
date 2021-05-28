@@ -8,7 +8,8 @@ class TagsView(APIView):
     """
     A view that returns the count of active users in JSON.
     """
-    renderer_classes = (JSONRenderer, )
+
+    renderer_classes = (JSONRenderer,)
 
     def get(self, request, format=None):  # return all tags
         return Response({'tags': request.user.get_ordered_tags()})
