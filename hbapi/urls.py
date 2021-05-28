@@ -16,25 +16,23 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib import admin
+
 # for local static serve
 from django.contrib.staticfiles import views
 from django.urls import reverse_lazy
 from django.views.generic.base import RedirectView
 
-favicon_view = RedirectView.as_view(
-    url='/static/img/favicon.ico', permanent=True)
+favicon_view = RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)
 
 urlpatterns = [
-    url(r'^$',
-        RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
     url(r'^favicon\.ico$', favicon_view),
     url(r'^admin/', admin.site.urls),
     url(r'^api/records/', include('records.urls')),
     url(r'^api/user/', include('userprofile.urls')),
     url(r'^api/budgets/', include('budgets.urls')),
     url(r'^api/tags/', include('tags.urls')),
-    url(r'^api/auth/',
-        include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^auth/', include('djoser.urls')),
     url(r'^auth/', include('djoser.urls.jwt')),
 ]

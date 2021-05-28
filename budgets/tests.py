@@ -18,8 +18,12 @@ class BudgetsTests(TestCase):
         self.other_user.save()
 
     def _add_budget(self):
-        budget = Budget(user=self.user, amount=100, tags_type='EXCL',
-                        start_date=datetime.date(2016, 7, 1))
+        budget = Budget(
+            user=self.user,
+            amount=100,
+            tags_type='EXCL',
+            start_date=datetime.date(2016, 7, 1),
+        )
         budget.tags = ['cafe']
         budget.save()
         return budget
@@ -27,8 +31,9 @@ class BudgetsTests(TestCase):
     def _add_record(self, amount, transaction_type='EXP', tags=None):
         tags = tags or []
 
-        record = Record(user=self.user, transaction_type=transaction_type,
-                        amount=amount, tags=tags)
+        record = Record(
+            user=self.user, transaction_type=transaction_type, amount=amount, tags=tags
+        )
         record.save()
         return record
 
@@ -104,8 +109,12 @@ class BudgetsTests(TestCase):
 
     @freeze_time("2016-08-12")
     def test_05_include_budget_and_no_records(self):
-        budget = Budget(user=self.user, amount=100, tags_type='INCL',
-                        start_date=datetime.date(2016, 7, 1))
+        budget = Budget(
+            user=self.user,
+            amount=100,
+            tags_type='INCL',
+            start_date=datetime.date(2016, 7, 1),
+        )
         budget.tags = ['books']
         budget.save()
         self.assertEqual(budget.spent, 0)
@@ -115,8 +124,12 @@ class BudgetsTests(TestCase):
 
     @freeze_time("2016-08-12")
     def test_06_include_budget_with_records(self):
-        budget = Budget(user=self.user, amount=100, tags_type='INCL',
-                        start_date=datetime.date(2016, 7, 1))
+        budget = Budget(
+            user=self.user,
+            amount=100,
+            tags_type='INCL',
+            start_date=datetime.date(2016, 7, 1),
+        )
         budget.tags = ['books']
         budget.save()
         # add record
@@ -130,8 +143,13 @@ class BudgetsTests(TestCase):
 
     def test_07_budget_with_name(self):
         name = u'Test name'
-        budget = Budget(name=name, user=self.user, amount=100, tags_type='INCL',
-                        start_date=datetime.date(2016, 7, 1))
+        budget = Budget(
+            name=name,
+            user=self.user,
+            amount=100,
+            tags_type='INCL',
+            start_date=datetime.date(2016, 7, 1),
+        )
         budget.tags = ['books']
         budget.save()
         budget.refresh_from_db()

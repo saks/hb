@@ -7,7 +7,7 @@ from records.models import Record
 @receiver(pre_save, sender=Record, dispatch_uid='records_update_tags_weight')
 def update_tags_weight(sender, **kwargs):
     '''
-        Update frequency of tags usage.
+    Update frequency of tags usage.
     '''
     instance = kwargs['instance']
     _tags_updated = False

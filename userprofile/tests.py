@@ -6,7 +6,6 @@ from userprofile.models import User
 
 @override_settings(REDIS_KEY_USER_TAGS='test_tags_%s')
 class UserTests(TestCase):
-
     def setUp(self):
         self._flush_redis()
         self.user = User(username='test')
@@ -34,7 +33,9 @@ class UserTests(TestCase):
 
     def test_02_get_user_tags_list(self):
         self._add_data_to_redis()
-        self.assertEqual(list(self.user.get_tags_order_by_frequency()), ['books', 'tax', 'home'])
+        self.assertEqual(
+            list(self.user.get_tags_order_by_frequency()), ['books', 'tax', 'home']
+        )
 
     def test_03_ordered_tags(self):
         self.user.tags = ['tax', 'new', 'books']  # tag 'home' is old.

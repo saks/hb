@@ -7,7 +7,6 @@ from records.models import Record
 
 @override_settings(REDIS_KEY_USER_TAGS='test_tags_%s')
 class RecordsTests(TestCase):
-
     def setUp(self):
         self._flush_redis()
         self.user = self._add_user()

@@ -9,8 +9,10 @@ class User(AbstractUser):
     User model.
     Uses old table 'auth_user'.
     '''
+
     tags = ArrayField(
-        models.TextField(max_length=20), null=False, blank=True, default=list)
+        models.TextField(max_length=20), null=False, blank=True, default=list
+    )
 
     class Meta:
         db_table = 'auth_user'
@@ -20,7 +22,7 @@ class User(AbstractUser):
         '''
         Return Redis key where stored sorted set of tags frequency usage.
         '''
-        return settings.REDIS_KEY_USER_TAGS % (self.id, )
+        return settings.REDIS_KEY_USER_TAGS % (self.id,)
 
     def get_tags_order_by_frequency(self):
         '''

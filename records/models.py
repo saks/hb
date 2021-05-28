@@ -17,18 +17,17 @@ log = logging.getLogger(__name__)
 
 class Record(models.Model):
     '''
-        Record model defines the storage of income/expences records.
+    Record model defines the storage of income/expences records.
 
-        Amount field is MoneyField. Determines amount of money and currency. CAD by default.
-        Transaction type determines EXP(Expences) or INC(Income) the record is.
+    Amount field is MoneyField. Determines amount of money and currency. CAD by default.
+    Transaction type determines EXP(Expences) or INC(Income) the record is.
     '''
 
-    user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     tags = ArrayField(
-        models.TextField(max_length=20), null=False, blank=True, default=list)
-    amount = MoneyField(
-        max_digits=15, decimal_places=2, default_currency='CAD')
+        models.TextField(max_length=20), null=False, blank=True, default=list
+    )
+    amount = MoneyField(max_digits=15, decimal_places=2, default_currency='CAD')
     comment = models.TextField(null=True, blank=True)
     transaction_type = models.CharField(choices=TRANSACTION_TYPE, max_length=3)
     created_at = models.DateTimeField(default=timezone.now, blank=True)
@@ -36,16 +35,16 @@ class Record(models.Model):
     @property
     def redis_tags_key(self):
         '''
-            Return Redis key where stored sorted set of tags frequency usage.
+        Return Redis key where stored sorted set of tags frequency usage.
         '''
-        return settings.REDIS_KEY_USER_TAGS % (self.user_id, )
+        return settings.REDIS_KEY_USER_TAGS % (self.user_id,)
 
     def __str__(self):
         return '%s %s' % (self.amount, ', '.join(self.tags))
 
     def remove_tags_weights(self):
         '''
-            Remove tags from frequency tags set.
+        Remove tags from frequency tags set.
         '''
         log.debug('Remove tags weights')
         pipe = settings.REDIS_CONN.pipeline()
@@ -58,7 +57,7 @@ class Record(models.Model):
 
     def add_tags_weights(self):
         '''
-            Add tags to usage frequency set.
+        Add tags to usage frequency set.
         '''
         log.debug('Add tags weights')
         pipe = settings.REDIS_CONN.pipeline()

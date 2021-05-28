@@ -12,7 +12,7 @@ tags.short_description = 'Tags'
 
 class UserAdmin(UserAdmin):
 
-    list_display = UserAdmin.list_display + (tags, )
+    list_display = UserAdmin.list_display + (tags,)
     fieldsets = None
     fields = ('tags', 'username', 'password')
 
