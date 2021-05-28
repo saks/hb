@@ -13,13 +13,12 @@ from records.models import Record
 
 class DateRangeForm(forms.Form):
     date_from = forms.DateField(
-        widget=AdminDateWidget(attrs={'type': 'date'}),
-        initial=date(date.today().year, 1, 1),
+        widget=AdminDateWidget(attrs={'type': 'date'})
     )
     date_to = forms.DateField(
-        widget=AdminDateWidget(attrs={'type': 'date'}), initial=date.today()
+        widget=AdminDateWidget(attrs={'type': 'date'})
     )
-    show_combo_stat = forms.BooleanField(initial=False, required=False)
+    show_combo_stat = forms.BooleanField(required=False)
 
 
 class RecordAdmin(admin.ModelAdmin):
@@ -48,12 +47,21 @@ class RecordAdmin(admin.ModelAdmin):
         return my_urls + urls
 
     def stat_by_tags(self, request):
-        # filter records
-        date_range_form = DateRangeForm()
+        # default data
+        initial = {
+            'date_from': date(date.today().year, 1, 1),
+            'date_to': date.today(),
+            'show_combo_stat': False,
+        }
         if request.GET:
-            date_range_form = DateRangeForm(request.GET)
+            initial = request.GET
+
+        # filter records
+        date_range_form = DateRangeForm(data=initial)
         if date_range_form.is_valid():
             date_filter = date_range_form.cleaned_data
+        else:
+            date_filter = initial
 
         context = dict(
             # Include common variables for rendering the admin template.
