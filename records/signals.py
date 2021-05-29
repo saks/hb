@@ -10,6 +10,9 @@ def update_tags_weight(sender, **kwargs):
     Update frequency of tags usage.
     '''
     instance = kwargs['instance']
+    # sort tags
+    instance.tags = sorted(instance.tags)
+
     _tags_updated = False
 
     # remove weights if update

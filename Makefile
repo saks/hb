@@ -1,5 +1,8 @@
 all: pep pylint test
 
+start:
+	docker-compose up -d
+
 test:
 	@bin/exec test
 
@@ -38,7 +41,8 @@ pylint:
 sh:
 	@bin/docker_exec bash
 
-shell: sh
+shell:
+	docker exec -it web bash 
 
 .PHONY: pep all pylint test build run migrate setup createsuperuser production_dbshell sh \
 	production_shell psql shell c

@@ -8,20 +8,17 @@ from django.db.models import Func, F, Value, Sum, CharField
 from django.urls import path
 from django import forms
 
+from base.admin import BaseAdmin
 from records.models import Record
 
 
 class DateRangeForm(forms.Form):
-    date_from = forms.DateField(
-        widget=AdminDateWidget(attrs={'type': 'date'})
-    )
-    date_to = forms.DateField(
-        widget=AdminDateWidget(attrs={'type': 'date'})
-    )
+    date_from = forms.DateField(widget=AdminDateWidget(attrs={'type': 'date'}))
+    date_to = forms.DateField(widget=AdminDateWidget(attrs={'type': 'date'}))
     show_combo_stat = forms.BooleanField(required=False)
 
 
-class RecordAdmin(admin.ModelAdmin):
+class RecordAdmin(BaseAdmin):
 
     list_display = (
         'id',
@@ -37,6 +34,7 @@ class RecordAdmin(admin.ModelAdmin):
     list_filter = (
         'created_at',
         'transaction_type',
+        'tags',
     )
     ordering = ('-created_at',)
     fields = ('amount', 'tags', 'transaction_type', 'user', 'comment')
