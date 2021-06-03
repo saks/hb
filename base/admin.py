@@ -29,3 +29,25 @@ class BaseAdmin(admin.ModelAdmin, CSVAdminMixin):
         actions = super().get_actions(request)
         actions['export_as_csv'] = self.get_action('export_as_csv')
         return actions
+
+
+class ArrayFieldListFilter(admin.SimpleListFilter):
+    '''Filter by ArrayField'''
+
+    title = 'Tags'
+    parameter_name = 'tags'
+
+    def lookups(self, request, model_admin):
+        keywords = model_admin.model.objects.values_list(self.parameter_name, flat=True)
+        keywords = [(kw, kw) for sublist in keywords for kw in sublist if kw]
+        keywords = sorted(set(keywords))
+        return keywords
+
+    def queryset(self, request, queryset):
+        lookup_value = self.value()  # clicked value
+        if lookup_value:
+            qry_filter = {
+                '{}__contains'.format(self.parameter_name): [lookup_value],
+            }
+            queryset = queryset.filter(**qry_filter)
+        return queryset
