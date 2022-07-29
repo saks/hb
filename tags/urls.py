@@ -1,9 +1,8 @@
-from django.conf.urls import url
-from django.urls import path
+from django.urls import re_path
 from rest_framework import routers
 
 from . import views
 
 urlpatterns = [
-    url(r'^$', views.TagsView.as_view()),  # index
+    re_path(r'^$', views.TagsView.as_view()),  # index
 ]

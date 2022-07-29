@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
 from django.conf import settings
-from django.conf.urls import include, url
+from django.urls import re_path, include
 from django.contrib import admin
 
 # for local static serve
@@ -25,19 +25,19 @@ from django.views.generic.base import RedirectView
 favicon_view = RedirectView.as_view(url='/static/img/favicon.ico', permanent=True)
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
-    url(r'^favicon\.ico$', favicon_view),
-    url(r'^admin/', admin.site.urls),
-    url(r'^api/records/', include('records.urls')),
-    url(r'^api/user/', include('userprofile.urls')),
-    url(r'^api/budgets/', include('budgets.urls')),
-    url(r'^api/tags/', include('tags.urls')),
-    url(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^auth/', include('djoser.urls')),
-    url(r'^auth/', include('djoser.urls.jwt')),
+    re_path(r'^$', RedirectView.as_view(url=reverse_lazy('admin:index'), permanent=True)),
+    re_path(r'^favicon\.ico$', favicon_view),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^api/records/', include('records.urls')),
+    re_path(r'^api/user/', include('userprofile.urls')),
+    re_path(r'^api/budgets/', include('budgets.urls')),
+    re_path(r'^api/tags/', include('tags.urls')),
+    re_path(r'^api/auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^auth/', include('djoser.urls')),
+    re_path(r'^auth/', include('djoser.urls.jwt')),
 ]
 
 if settings.DEBUG:
     urlpatterns += [
-        url(r'^static/(?P<path>.*)$', views.serve),
+        re_path(r'^static/(?P<path>.*)$', views.serve),
     ]
