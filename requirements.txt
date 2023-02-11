@@ -13,7 +13,7 @@ djoser==2.0.5
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==5.2.0
 # dev related
-ipython==8.4.0
+ipython==8.10.0
 freezegun==1.2.1
 black==22.6.0
 prospector==1.7.7
